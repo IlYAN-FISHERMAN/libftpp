@@ -1,5 +1,4 @@
-#include "pool.hpp"
-#include <iostream>
+#include "../include/pool.hh"
 
 class TestObject {
 public:
@@ -10,7 +9,7 @@ public:
     void sayHello() const { std::cout << "Hello from TestObject" << std::endl; }
 };
 
-int main() {
+int testPool() {
     // Create a Pool for TestObject
     Pool<TestObject> myPool;
 

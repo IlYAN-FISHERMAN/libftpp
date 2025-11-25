@@ -1,4 +1,3 @@
-add_library(io_monitor STATIC IoStat.cc IoMap.cc IoAggregate.cc
-                              IoAggregateMap.cc)
+# add_library(libftpp STATIC)
 
-target_include_directories(io_monitor PUBLIC ${CMAKE_SOURCE_DIR}/include)
+# target_include_directories(libftpp PUBLIC ${CMAKE_SOURCE_DIR}/include)

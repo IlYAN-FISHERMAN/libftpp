@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.16...3.30 FATAL_ERROR)
 
 project(
-  IoMonitor
-  DESCRIPTION "IoMonitor class for logfile"
+  libftpp
+  DESCRIPTION "my cpp library "
   LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -20,15 +20,11 @@ set(gtest_force_shared_crt
     CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(
-    -Wall
-    -Wextra
-    -Werror
-    -Wpedantic
-    -O2
-    -g3
-    -std=c++17)
+    -Wall -Wextra -Werror -Wpedantic
+    # -O2 -g3
+    -std=c++23)
 endif()
 
 include_directories(include)
