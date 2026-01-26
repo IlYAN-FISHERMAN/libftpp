@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2025/09/26 19:14:34 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/01/26 13:30:49 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@
 template <typename TType>
 class Pool{
 	public:
-		class Object{
-			private:
-				TType* _obj;
-				Object* next;
-				Object* prev;
-			public :
-			TType* operator->(){return _obj;};
+		struct Object{
+			TType _obj;
+			Object* next;
+			Object* prev;
+			Object(TType obj) : _obj(obj), next(NULL), prev(NULL){}
+			Object(){}
+			TType* operator->(){return &_obj;};
 		};
 	private:
 		Object* _pool;
@@ -37,13 +37,20 @@ class Pool{
 		/// withing the Pool
 		//--------------------------------------------
 		void resize(const size_t &numberOfObjectStored){
-			if (numberOfObjectStored == _len)
+			if (numberOfObjectStored <= _len || numberOfObjectStored == 0)
 				return ;
-			Object* begin = _pool;
-			for (size_t i = 0; i < _len; i++)
-				;
-			for (size_t i = 0; i < numberOfObjectStored; i++)
-			_pool[i] = Object();
+			for (auto it = _pool; it;){
+				auto tmp = it;
+				if (it->next)
+					it = it->next;
+				delete tmp;
+			}
+			_pool = new Object();
+			size_t i = numberOfObjectStored - 1;
+			for (auto it = _pool; i > 1; i--){
+				it->next = new Object();
+				it = it->next;
+			}
 		;}
 
 		//--------------------------------------------
@@ -51,14 +58,13 @@ class Pool{
 		/// pre-allocated object, using the constructor
 		/// with parameters as defined by TArgs definition.
 		//--------------------------------------------
-		template<typename TArgs>
-		Pool::Object acquire(TArgs && p_args){
-			(void)p_args;
-			return Pool::Object();
-		}
+		// template<typename TArgs>
+		// Pool::Object acquire(TArgs && p_args){
+		// 	return Object(p_args);
+		// }
 
 		template<typename... TArgs>
 		Pool::Object acquire(TArgs &&...p_args){
-		return acquire(p_args...);
-	}
+			return Object(p_args...);
+		}
 };

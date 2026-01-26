@@ -5,7 +5,7 @@ project(
   DESCRIPTION "my cpp library "
   LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -21,11 +21,11 @@ set(gtest_force_shared_crt
 FetchContent_MakeAvailable(googletest)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(
-    -Wall -Wextra -Werror -Wpedantic
-    # -O2 -g3
-    -std=c++23)
+  add_compile_options(-Wall -Wextra -Werror)
 endif()
+
+add_compile_options(-fsanitize=address -g3)
+add_link_options(-fsanitize=address)
 
 include_directories(include)
 add_subdirectory(src)
