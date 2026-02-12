@@ -448,7 +448,22 @@ int myTestPool() {
 	return 0;
 }
 
+int benchPoolTest(){
+	int len = 100000000;
 
+	// for (auto it = 0; it < len; it++){
+	// 	auto *tmp = new TestObject();
+	// 	delete tmp;
+	// }
+
+	Pool<TestObject> io;
+	io.resize(len);
+	for (auto it = 0; it < len; it++){
+		auto tmp = io.acquire();
+	}
+
+	return 0;
+}
 
 
 int testPool() {

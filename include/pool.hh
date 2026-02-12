@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/12 19:51:28 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/12 22:58:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@
 template <typename TType>
 class Pool{
 	public:
+		struct freeList{
+			freeList* next;
+		};
+
 		class Object{
 		protected :
 			TType					*__obj;
@@ -67,6 +71,8 @@ class Pool{
 
 		std::size_t size() noexcept{return _size;}
 
+		bool empty() noexcept{return _pool.empty();}
+
 		//--------------------------------------------
 		/// Allocates a certain number of TType objects
 		/// withing the Pool
@@ -74,26 +80,26 @@ class Pool{
 		void resize(const size_t &numberOfObjectStored) noexcept(false){
 			if (numberOfObjectStored < 0 || numberOfObjectStored == _maxSize)
 				return ;
-			if (_pool.empty()){
-				_pool.push_back(_alloc.allocate(numberOfObjectStored));
-				_poolSize.push_back(numberOfObjectStored);
-				_maxSize = numberOfObjectStored;
-				for (std::size_t it = 0; it < _maxSize; it++)
-					_freeList.push_back((_pool.back() + it));
-			} else if (!_pool.empty()){
+			if (!_pool.empty()){
 				if (numberOfObjectStored < _maxSize){
 					_maxSize = numberOfObjectStored;
 				} else if (numberOfObjectStored > _maxSize){
 					std::size_t max(std::accumulate(_poolSize.begin(), _poolSize.end(), static_cast<size_t>(0)));
 					if (numberOfObjectStored > max){
 						std::size_t newSizePool = numberOfObjectStored - max;
-						_pool.push_back(_alloc.allocate(newSizePool));
+						_pool.push_back(std::move(_alloc.allocate(newSizePool)));
 						_poolSize.push_back(newSizePool);
 						for (std::size_t it = 0; it < newSizePool; it++)
 							_freeList.push_back((_pool.back() + it));
 					}
 					_maxSize = numberOfObjectStored;
 				}
+			} else if (_pool.empty()){
+				_pool.push_back(_alloc.allocate(numberOfObjectStored));
+				_poolSize.push_back(numberOfObjectStored);
+				_maxSize = numberOfObjectStored;
+				for (std::size_t it = 0; it < _maxSize; it++)
+					_freeList.push_back((_pool.back() + it));
 			}
 		}
 

@@ -16,7 +16,8 @@ int main(void) {
 	int code = 0;
 
 	// code = testPool();
-	code = myTestPool();
+	// code = myTestPool();
+	code = benchPoolTest();
 	std::cout << "code: " << code << std::endl;
 	return code;
 }

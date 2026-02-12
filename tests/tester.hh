@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/12 15:55:42 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/12 22:26:39 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 #include <utility>
 
 int testPool();
+int benchPoolTest();
 int myTestPool();
 
 
