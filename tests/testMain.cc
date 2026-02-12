@@ -11,15 +11,12 @@
 //      EXPECT_EQ(testIoAggregateMapInteract(), 0);
 // }
 
-int main(int ac, char **av) {
-        srand(static_cast<unsigned int>(time(NULL)));
-        int code = 0;
-        (void)ac;
-        (void)av;
-        (void)code;
+int main(void) {
+	srand(static_cast<unsigned int>(time(NULL)));
+	int code = 0;
 
-        code = testPool();
-        std::cout << "code: " << code << std::endl;
-    // ::testing::InitGoogleTest(&ac, av);
-    // return RUN_ALL_TESTS();
+	// code = testPool();
+	code = myTestPool();
+	std::cout << "code: " << code << std::endl;
+	return code;
 }
