@@ -11,20 +11,22 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
-add_link_options(
-  -g
-  -O0
-  -fsanitize=address,undefined
-  -fsanitize=pointer-compare
-  -fsanitize=pointer-subtract
-  -fsanitize=bounds
-  -fsanitize=nonnull-attribute
-  -fno-omit-frame-pointer
-  -fgpu-sanitize
-  -shared-libsan
-  -fsanitize-address-use-after-scope)
-
-# add_link_options(-g -O0)
+if(UNIX AND NOT APPLE)
+  add_link_options(-g -O0)
+elseif(APPLE)
+  add_link_options(
+    -g
+    -O0
+    -fsanitize=address,undefined
+    -fsanitize=pointer-compare
+    -fsanitize=pointer-subtract
+    -fsanitize=bounds
+    -fsanitize=nonnull-attribute
+    -fno-omit-frame-pointer
+    -fgpu-sanitize
+    -shared-libsan
+    -fsanitize-address-use-after-scope)
+endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
   add_compile_options(-Wall -Wextra -Werror)
