@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/12 22:58:26 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/14 15:48:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ class Pool{
 						std::size_t newSizePool = numberOfObjectStored - max;
 						_pool.push_back(std::move(_alloc.allocate(newSizePool)));
 						_poolSize.push_back(newSizePool);
+						_freeList.reserve(max);
 						for (std::size_t it = 0; it < newSizePool; it++)
 							_freeList.push_back((_pool.back() + it));
 					}
@@ -98,6 +99,7 @@ class Pool{
 				_pool.push_back(_alloc.allocate(numberOfObjectStored));
 				_poolSize.push_back(numberOfObjectStored);
 				_maxSize = numberOfObjectStored;
+				_freeList.reserve(numberOfObjectStored);
 				for (std::size_t it = 0; it < _maxSize; it++)
 					_freeList.push_back((_pool.back() + it));
 			}

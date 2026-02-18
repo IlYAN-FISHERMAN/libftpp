@@ -1,4 +1,15 @@
-// #include <gtest/gtest.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   testMain.cc                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/18 15:13:47 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "tester.hh"
 
 /// Only for debugging, interaction mode with command line
@@ -17,7 +28,9 @@ int main(void) {
 
 	// code = testPool();
 	// code = myTestPool();
-	code = benchPoolTest();
+	// code = benchPoolTest();
+
+	code = testDataBuffer();
 	std::cout << "code: " << code << std::endl;
 	return code;
 }

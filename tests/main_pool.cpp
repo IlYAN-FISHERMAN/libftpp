@@ -1,15 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_pool.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/17 14:40:58 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/pool.hh"
 #include "tester.hh"
+#include <cmath>
 
-class TestObject {
+class TestPoolObject {
 public:
-    TestObject() { std::cout << "TestObject default constructor" << std::endl; }
-    TestObject(int value) { std::cout << "TestObject constructor with value [" << value << "]"<< std::endl;}
-    TestObject(int value, double lol) { std::cout << "TestObject constructor with value [" << value << "] and" << lol << std::endl;}
-    ~TestObject() { std::cout << "TestObject destructor" << std::endl; }
+    TestPoolObject() { std::cout << "TestPoolObject default constructor" << std::endl; }
+    TestPoolObject(int value) { std::cout << "TestPoolObject constructor with value [" << value << "]"<< std::endl;}
+    TestPoolObject(int value, double lol) { std::cout << "TestPoolObject constructor with value [" << value << "] and" << lol << std::endl;}
+    ~TestPoolObject() { std::cout << "TestPoolObject destructor" << std::endl; }
 
-    void sayHello() const { std::cout << "Hello from TestObject" << std::endl; }
-    void saybye() const { std::cout << "bye from TestObject" << std::endl; }
+    void sayHello() const { std::cout << "Hello from TestPoolObject" << std::endl; }
+    void saybye() const { std::cout << "bye from TestPoolObject" << std::endl; }
 };
 
 //--------------------------------------------
@@ -309,30 +322,30 @@ int myTestPool() {
 		std::cout << "\033[31m" << e.what() << "\033[0m" << std::endl;
 	}
 	
-    Pool<TestObject> myPool;
+    Pool<TestPoolObject> myPool;
 	// Resize the pool to pre-allocate 5 objects
-	// Should output the 5 "TestObject constructor" (not in my version sorry)
+	// Should output the 5 "TestPoolObject constructor" (not in my version sorry)
     myPool.resize(5);
 
     // Acquire an object from the pool
-    Pool<TestObject>::Object obj1 = myPool.acquire(15);
-    obj1->sayHello();  // Should output: "Hello from TestObject"
+    Pool<TestPoolObject>::Object obj1 = myPool.acquire(15);
+    obj1->sayHello();  // Should output: "Hello from TestPoolObject"
 	obj1->saybye();
 
     {
         // Acquire another object in a different scope
-        Pool<TestObject>::Object obj2 = myPool.acquire();
+        Pool<TestPoolObject>::Object obj2 = myPool.acquire();
 		std::cout << "addr of obj2: " << obj2.get() << std::endl;
-        obj2->sayHello();  // Should also output: "Hello from TestObject"
+        obj2->sayHello();  // Should also output: "Hello from TestPoolObject"
         // obj2 is released back to the pool when it goes out of scope
     }
 
     // Acquire another object; this should give us the object that obj2 pointed to
-    Pool<TestObject>::Object obj3 = myPool.acquire();
+    Pool<TestPoolObject>::Object obj3 = myPool.acquire();
 	std::cout << "addr of obj3: " << obj3.get() << std::endl;
-    Pool<TestObject>::Object obj4 = myPool.acquire();
+    Pool<TestPoolObject>::Object obj4 = myPool.acquire();
 	std::cout << "addr of obj4: " << obj4.get() << std::endl;
-    obj3->sayHello();  // Should output: "Hello from TestObject"
+    obj3->sayHello();  // Should output: "Hello from TestPoolObject"
 
     // obj1 and obj3 are released back to the pool when the program ends
 	}
@@ -343,9 +356,9 @@ int myTestPool() {
 	// Second part
 	{
 	std::cout << std::endl << C_GREEN << "[Test 2]" << C_RESET << std::endl << std::endl;
-		Pool<TestObject> pool;
+		Pool<TestPoolObject> pool;
 		pool.resize(10);
-		std::vector<Pool<TestObject>::Object> tmp;
+		std::vector<Pool<TestPoolObject>::Object> tmp;
 
 		{
 			try{
@@ -451,42 +464,42 @@ int myTestPool() {
 int benchPoolTest(){
 	int len = 100000000;
 
-	// for (auto it = 0; it < len; it++){
-	// 	auto *tmp = new TestObject();
-	// 	delete tmp;
-	// }
-
-	Pool<TestObject> io;
-	io.resize(len);
 	for (auto it = 0; it < len; it++){
-		auto tmp = io.acquire();
+		auto *tmp = new IoStat(1, "eos", 1, 1);
+		delete tmp;
 	}
+
+	// Pool<IoStat> io;
+	// io.resize(len);
+	// for (auto it = 0; it < len; it++){
+	// 	auto tmp = io.acquire(1, "eos", 1, 1);
+	// }
 
 	return 0;
 }
 
 
 int testPool() {
-    // Create a Pool for TestObject
-	Pool<TestObject> myPool;
+    // Create a Pool for TestPoolObject
+	Pool<TestPoolObject> myPool;
 
     // obj1 and obj3 are released back to the pool when the program ends
 	myPool.resize(5);
 
      // Acquire an object from the pool
-	 Pool<TestObject>::Object obj1 = myPool.acquire(15);
-	obj1->sayHello();  // Should output: "Hello from TestObject"
+	 Pool<TestPoolObject>::Object obj1 = myPool.acquire(15);
+	obj1->sayHello();  // Should output: "Hello from TestPoolObject"
 
 	{
          // Acquire another object in a different scope
-    	Pool<TestObject>::Object obj2 = myPool.acquire();
-    	obj2->sayHello();  // Should also output: "Hello from TestObject"
+    	Pool<TestPoolObject>::Object obj2 = myPool.acquire();
+    	obj2->sayHello();  // Should also output: "Hello from TestPoolObject"
          // obj2 is released back to the pool when it goes out of scope
     }
 
 	// Acquire another object; this should give us the object that obj2 pointed to
-    Pool<TestObject>::Object obj3 = myPool.acquire();
-    obj3->sayHello();  // Should output: "Hello from TestObject"
+    Pool<TestPoolObject>::Object obj3 = myPool.acquire();
+    obj3->sayHello();  // Should output: "Hello from TestPoolObject"
 
     // obj1 and obj3 are released back to the pool when the program ends
 	return 0;
