@@ -14,7 +14,6 @@ set(CMAKE_BUILD_TYPE Debug)
 add_link_options(
   -g
   -O0
-  -\#\#\#
   -fsanitize=address,undefined
   -fsanitize=pointer-compare
   -fsanitize=pointer-subtract

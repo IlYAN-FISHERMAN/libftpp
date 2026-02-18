@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:06:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/18 16:55:31 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/18 20:27:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,8 @@ class DataBuffer{
 				throw std::logic_error("no more object to deserialize");
 			std::vector<std::byte> byte(_bytes.front());
 			_bytes.pop();
-			std::string tmp;
-			tmp.resize(sizeof(byte.size()));
-			memmove(tmp.data(), byte.data(), sizeof(std::string));
+			char tmp[sizeof(std::string)];
+			memcpy(&tmp, byte.data(), sizeof(std::string));
 			data = tmp;
 			return *this;
 		}
