@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:06:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/18 20:27:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/18 19:30:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ class DataBuffer{
 
 		DataBuffer& operator<<(std::string &data) noexcept(false){
 			std::vector<std::byte> byte(sizeof(std::string));
-			memcpy(byte.data(), &data, sizeof(std::string));
+			memcpy(byte.data(), data.c_str(), sizeof(std::string));
 			_bytes.push(byte);
 			return *this;
 		}
@@ -58,7 +58,7 @@ class DataBuffer{
 				throw std::logic_error("no more object to deserialize");
 			std::vector<std::byte> byte(_bytes.front());
 			_bytes.pop();
-			char tmp[sizeof(std::string)];
+			char tmp[100000];
 			memcpy(&tmp, byte.data(), sizeof(std::string));
 			data = tmp;
 			return *this;
