@@ -32,6 +32,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
   add_compile_options(-Wall -Wextra -Werror)
 endif()
 
-add_executable(lib tests/testMain.cc tests/main_pool.cpp
-                   tests/main_data_buffer.cpp src/data_buffer.cc)
-target_include_directories(lib PRIVATE include)
+set(SOURCES tests/testMain.cc tests/main_pool.cpp tests/main_data_buffer.cpp)
+
+set(${SOURCES} data_structures/data_buffer/data_buffer.cc)
+
+add_executable(libftpp ${SOURCES})
+
+target_include_directories(libftpp PRIVATE data_structures)
+target_include_directories(libftpp PRIVATE design_patterns)
+target_include_directories(libftpp PRIVATE iostream)
+target_include_directories(libftpp PRIVATE mathematics)
+target_include_directories(libftpp PRIVATE networks)
+target_include_directories(libftpp PRIVATE thread)
