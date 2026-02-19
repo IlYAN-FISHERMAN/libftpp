@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 19:54:02 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 20:30:40 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -487,7 +487,7 @@ int deleteTestPool(){
 		pool->resize(10);
 		Pool<TestPoolObject>::Object obj(pool->acquire());
 		delete pool;
-		(*obj).sayHello();
+		obj->sayHello();
 		std::cout << "capacity: " << pool->capacity() << std::endl;
 		std::cout << "max: " << pool->maxSize() << std::endl;
 		std::cout << "used: " << pool->size() << std::endl << std::endl;
