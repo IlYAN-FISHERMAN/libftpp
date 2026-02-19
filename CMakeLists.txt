@@ -9,23 +9,31 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE Debug)
 
-if(UNIX AND NOT APPLE)
-  add_link_options(-g -O0)
-elseif(APPLE)
-  add_link_options(
-    -g
-    -O0
-    -fsanitize=address,undefined
-    -fsanitize=pointer-compare
-    -fsanitize=pointer-subtract
-    -fsanitize=bounds
-    -fsanitize=nonnull-attribute
-    -fno-omit-frame-pointer
-    -fgpu-sanitize
-    -shared-libsan
-    -fsanitize-address-use-after-scope)
+if(DEFINED CMAKE_BUILD_TYPE)
+  if(UNIX
+     AND NOT APPLE
+     AND CMAKE_BUILD_TYPE MATCHES "Debug")
+    add_link_options(-g -O0)
+    message(WARNING "Linux debug compilation")
+  elseif(APPLE AND CMAKE_BUILD_TYPE MATCHES "ASan")
+    add_link_options(
+      -g
+      -O0
+      -fsanitize=address,undefined
+      -fsanitize=pointer-compare
+      -fsanitize=pointer-subtract
+      -fsanitize=bounds
+      -fsanitize=nonnull-attribute
+      -fno-omit-frame-pointer
+      -fgpu-sanitize
+      -shared-libsan
+      -fsanitize-address-use-after-scope)
+    message(WARNING "Macos ASan debug compilation")
+  elseif(APPLE AND CMAKE_BUILD_TYPE MATCHES "Debug")
+    add_link_options(-g -O0)
+    message(WARNING "Macos debug compilation")
+  endif()
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
@@ -34,7 +42,7 @@ endif()
 
 set(SOURCES tests/testMain.cc tests/main_pool.cpp tests/main_data_buffer.cpp)
 
-set(${SOURCES} data_structures/data_buffer/data_buffer.cc)
+set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
 add_executable(libftpp ${SOURCES})
 

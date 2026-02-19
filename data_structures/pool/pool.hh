@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/14 15:48:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 12:22:23 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,33 +21,29 @@
 template <typename TType>
 class Pool{
 	public:
-		struct freeList{
-			freeList* next;
-		};
-
 		class Object{
-		protected :
-			TType					*__obj;
-			std::vector<TType *>	&__freeList;
-			std::allocator<TType>	&__alloc;
-			std::size_t				&__size;
-			
-			friend Pool;
+			protected :
+				TType					*__obj;
+				std::vector<TType *>	&__freeList;
+				std::allocator<TType>	&__alloc;
+				std::size_t				&__size;
+				
+				friend Pool;
 
-			explicit Object(TType *, std::vector<TType *> &, std::allocator<TType> &, std::size_t &);
+				explicit Object(TType *, std::vector<TType *> &, std::allocator<TType> &, std::size_t &);
 
-			Object() = delete;
-			Object(const Object &) = delete;
-			Object& operator=(const Object &) = delete;
+				Object() = delete;
+				Object(const Object &) = delete;
+				Object& operator=(const Object &) = delete;
 
-		public :
-			~Object();
-			Object& operator=(Object &&) noexcept;
-			Object(Object &&) noexcept;
+			public :
+				~Object();
+				Object& operator=(Object &&) noexcept;
+				Object(Object &&) noexcept;
 
-			TType*	operator->();
-			TType*	get();
-			TType&	operator*();
+				TType*	operator->();
+				TType*	get();
+				TType&	operator*();
 		};
 	private:
 		std::vector<TType*>								_pool;
@@ -57,53 +53,33 @@ class Pool{
 		std::vector<TType *>							_freeList;
 		std::size_t										_maxSize;
 		std::size_t										_size;
+
+		Pool(const Pool&) = delete;
+		Pool& operator=(const Pool&) = delete;
+
 	public:
-		Pool() : _size(0){}
+		Pool();
 
-		~Pool(){
-			for (std::size_t it = 0; it < _pool.size(); it++)
-				_alloc.deallocate(_pool[it], _poolSize[it]);
-		}
+		~Pool();
+	
+		Pool(Pool&&);
 
-		std::size_t capacity() noexcept{return ((_size >= _maxSize) ? 0 : _maxSize - _size);}
+		Pool& operator=(Pool&&);
 
-		std::size_t maxSize() noexcept{return _maxSize;}
 
-		std::size_t size() noexcept{return _size;}
+		std::size_t capacity() noexcept;
 
-		bool empty() noexcept{return _pool.empty();}
+		std::size_t maxSize() noexcept;
+
+		std::size_t size() noexcept;
+
+		bool empty() noexcept;
 
 		//--------------------------------------------
 		/// Allocates a certain number of TType objects
 		/// withing the Pool
 		//--------------------------------------------
-		void resize(const size_t &numberOfObjectStored) noexcept(false){
-			if (numberOfObjectStored < 0 || numberOfObjectStored == _maxSize)
-				return ;
-			if (!_pool.empty()){
-				if (numberOfObjectStored < _maxSize){
-					_maxSize = numberOfObjectStored;
-				} else if (numberOfObjectStored > _maxSize){
-					std::size_t max(std::accumulate(_poolSize.begin(), _poolSize.end(), static_cast<size_t>(0)));
-					if (numberOfObjectStored > max){
-						std::size_t newSizePool = numberOfObjectStored - max;
-						_pool.push_back(std::move(_alloc.allocate(newSizePool)));
-						_poolSize.push_back(newSizePool);
-						_freeList.reserve(max);
-						for (std::size_t it = 0; it < newSizePool; it++)
-							_freeList.push_back((_pool.back() + it));
-					}
-					_maxSize = numberOfObjectStored;
-				}
-			} else if (_pool.empty()){
-				_pool.push_back(_alloc.allocate(numberOfObjectStored));
-				_poolSize.push_back(numberOfObjectStored);
-				_maxSize = numberOfObjectStored;
-				_freeList.reserve(numberOfObjectStored);
-				for (std::size_t it = 0; it < _maxSize; it++)
-					_freeList.push_back((_pool.back() + it));
-			}
-		}
+		void resize(const size_t &numberOfObjectStored) noexcept(false);
 
 		//--------------------------------------------
 		/// Creates a Pool::Object containing a
@@ -111,16 +87,7 @@ class Pool{
 		/// with parameters as defined by TArgs definition.
 		//--------------------------------------------
 		template<typename... TArgs>
-		Pool::Object acquire(TArgs &&...p_args) noexcept(false){
-			if (_size >= _maxSize || _freeList.size() <= 0)
-				throw std::out_of_range("out of range");
-
-			Object node(_freeList.back(), _freeList, _alloc, _size);
-			_freeList.pop_back();
-			_traits.construct(_alloc, node.__obj, p_args...);
-			_size++;
-			return node;
-		}
+		Pool::Object acquire(TArgs &&...p_args) noexcept(false);
 };
 
 #include "pool.tpp"
