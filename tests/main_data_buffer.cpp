@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:38 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/18 19:23:59 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 10:39:45 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int testDataBuffer() {
 
     // This should work as expected
     try {
-		std::cout << "test\n";
         myBuffer >> deserializedObj1 >> deserializedObj2;
         std::cout << "Deserialized obj1: x = " << deserializedObj1.x << ", y = " << deserializedObj1.y << std::endl;
         std::cout << "Deserialized obj2: x = " << deserializedObj2.x << ", y = " << deserializedObj2.y << std::endl;
