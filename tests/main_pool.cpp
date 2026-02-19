@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 16:45:24 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 17:40:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -505,7 +505,7 @@ int myTestPool() {
 				Pool<TestPoolObject>::Object obj(pool->acquire());
 				delete pool;
 				obj->sayHello();
-			}catch(std::runtime_error &e){
+			}catch(std::exception &e){
 				std::cout << e.what() << std::endl;
 			}
 		}

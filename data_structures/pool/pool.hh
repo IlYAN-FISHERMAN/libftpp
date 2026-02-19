@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 12:22:23 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 17:29:19 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,27 @@
 #include <utility>
 #include <numeric>
 #include <vector>
+#include <memory>
 
 #pragma once
 
 template <typename TType>
 class Pool{
 	public:
+		struct PoolAlive{
+			bool alive;
+			PoolAlive() : alive(true){};
+		};
+
 		class Object{
 			protected :
-				TType					*__obj;
-				std::vector<TType *>	&__freeList;
-				std::allocator<TType>	&__alloc;
-				std::size_t				&__size;
+				TType							*__obj;
+				Pool							&__pool;
+				std::weak_ptr<PoolAlive>		__alive;
 				
 				friend Pool;
 
-				explicit Object(TType *, std::vector<TType *> &, std::allocator<TType> &, std::size_t &);
+				explicit Object(TType *, Pool &);
 
 				Object() = delete;
 				Object(const Object &) = delete;
@@ -53,6 +58,7 @@ class Pool{
 		std::vector<TType *>							_freeList;
 		std::size_t										_maxSize;
 		std::size_t										_size;
+		std::shared_ptr<PoolAlive>						_alive;
 
 		Pool(const Pool&) = delete;
 		Pool& operator=(const Pool&) = delete;

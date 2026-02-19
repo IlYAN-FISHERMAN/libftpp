@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/09 23:01:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 13:04:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 17:41:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 
 template<typename TType>
-Pool<TType>::Pool() : _maxSize(0), _size(0){}
+Pool<TType>::Pool() : _maxSize(0), _size(0), _alive(std::make_shared<PoolAlive>()){}
 
 template<typename TType>
 Pool<TType>::Pool(Pool &&other) : _pool(std::move(other._pool)), _poolSize(std::move(other._poolSize)),
@@ -29,8 +29,20 @@ Pool<TType>::Pool(Pool &&other) : _pool(std::move(other._pool)), _poolSize(std::
 }
 
 template<typename TType>
+Pool<TType>::~Pool(){
+	for (std::size_t it = 0; it < _pool.size(); it++)
+		_alloc.deallocate(_pool[it], _poolSize[it]);
+	if (_alive)
+		std::cout << (_alive->alive ? "true" : "false") << std::endl;
+}
+
+
+template<typename TType>
 Pool<TType>& Pool<TType>::operator=(Pool && other){
 	if (this != &other){
+		for (std::size_t it = 0; it < _pool.size(); it++)
+			_alloc.deallocate(_pool[it], _poolSize[it]);
+
 		_pool = std::move(other._pool);
 		_poolSize = std::move(other._poolSize);
 		_freeList = std::move(other._freeList);
@@ -48,40 +60,40 @@ Pool<TType>& Pool<TType>::operator=(Pool && other){
 }
 
 template<typename TType>
-Pool<TType>::~Pool(){
-	for (std::size_t it = 0; it < _pool.size(); it++)
-		_alloc.deallocate(_pool[it], _poolSize[it]);
+Pool<TType>::Object::Object(TType *obj, Pool &pool) : __obj(obj), __pool(pool), __alive(__pool._alive){}
+
+template<typename TType>
+Pool<TType>::Object::Object(Object &&other) noexcept
+: __obj(std::move(other.__obj)), __pool(other.__pool), __alive(other.__alive){
+	other.__obj = nullptr;
 }
 
 template<typename TType>
 Pool<TType>::Object::~Object(){
-	if (__obj){
-		__freeList.push_back(__obj);
-		if (__size > 0)
-			__size--;
-		std::allocator_traits<std::allocator<TType>>::destroy(__alloc, __obj);
-	}
-}
 
-template<typename TType>
-Pool<TType>::Object::Object(Object &&other) noexcept
-: __obj(std::move(other.__obj)), __freeList(other.__freeList), __alloc(other.__alloc), __size(other.__size){
-	other.__obj = nullptr;
+	auto lock = __alive.lock();
+	if (!lock)
+		return;
+	if ((lock || lock->alive) && __obj){
+		__pool._freeList.push_back(__obj);
+		if (__pool._size > 0)
+			__pool._size--;
+		std::allocator_traits<std::allocator<TType>>::destroy(__pool._alloc, __obj);
+	}
 }
 
 template<typename TType>
 Pool<TType>::Object&	Pool<TType>::Object::operator=(Object &&other) noexcept{
 	if (this != &other){
-		if (__obj){
-			__freeList.push_back(__obj);
-			if (__size > 0)
-				__size--;
-			std::allocator_traits<std::allocator<TType>>::destroy(__alloc, __obj);
+	auto lock = __alive.lock();
+		if ((lock || lock->alive) && __obj){
+			__pool._freeList.push_back(__obj);
+			if (__pool._size > 0)
+				__pool._size--;
+			std::allocator_traits<std::allocator<TType>>::destroy(__pool._alloc, __obj);
 		}
 		__obj = std::move(other.__obj);
-		__freeList = other.__freeList;
-		__alloc = other.__alloc;
-		__size = other.__size;
+		__pool = other.__pool;
 
 		other.__obj = nullptr;
 	}
@@ -130,7 +142,7 @@ Pool<TType>::Object Pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
 	if (_size >= _maxSize || _freeList.size() <= 0)
 		throw std::out_of_range("out of range");
 
-	Object node(_freeList.back(), _freeList, _alloc, _size);
+	Object node(_freeList.back(), *this);
 	_freeList.pop_back();
 	_traits.construct(_alloc, node.__obj, p_args...);
 	_size++;
@@ -138,11 +150,15 @@ Pool<TType>::Object Pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
 }
 
 template<typename TType>
-Pool<TType>::Object::Object(TType *obj, std::vector<TType *> &freelist, std::allocator<TType> &alloc, std::size_t &size)
-: __obj(obj), __freeList(freelist), __alloc(alloc), __size(size){}
+TType*	Pool<TType>::Object::operator->(){
+	auto lock = __alive.lock();
+	if (!lock || !__alive.lock().get()->alive)
+		throw std::logic_error("Pool was destroyed");
+	if (!__obj)
+		throw std::range_error("Object is empty");
 
-template<typename TType>
-TType*	Pool<TType>::Object::operator->(){return __obj;}
+	return __obj;
+}
 
 template<typename TType>
 TType&	Pool<TType>::Object::operator*(){return *__obj;}
