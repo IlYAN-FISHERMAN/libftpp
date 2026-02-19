@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:38 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 10:39:45 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 09:48:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int testDataBuffer() {
 
     TestDataBufferObject obj1;
     obj1.x = 42;
-    obj1.y = "Hello guawihd hvawhidsjh hvawhijd *";
+    obj1.y = "Hello";
 
     TestDataBufferObject obj2;
     obj2.x = 99;

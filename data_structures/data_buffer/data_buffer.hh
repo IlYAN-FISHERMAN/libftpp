@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:06:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 10:44:27 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 09:49:59 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,29 +38,31 @@ class DataBuffer{
 		DataBuffer& operator>>(T &data) noexcept(false){
 			if (_bytes.empty())
 				throw std::logic_error("no more object to deserialize");
+			// if (_bytes.front().size() < sizeof(std::string))
+			// 	throw std::logic_error("can't deserialize");
 			std::vector<std::byte> byte(_bytes.front());
 			_bytes.pop();
-			T tmp;
-			memcpy(&tmp, byte.data(), sizeof(T));
-			data = tmp;
+			memcpy(&data, byte.data(), sizeof(T));
 			return *this;
 		}
 
-		DataBuffer& operator<<(std::string &data) noexcept(false){
-			std::vector<std::byte> byte(sizeof(std::string));
-			memcpy(byte.data(), data.c_str(), sizeof(std::string));
-			_bytes.push(byte);
-			return *this;
-		}
+		// DataBuffer& operator<<(std::string &data) noexcept(false){
+		// 	std::vector<std::byte> byte(sizeof(std::string));
+		// 	memcpy(byte.data(), data.c_str(), sizeof(std::string));
+		// 	_bytes.push(byte);
+		// 	return *this;
+		// }
 
-		DataBuffer& operator>>(std::string &data) noexcept(false){
-			if (_bytes.empty())
-				throw std::logic_error("no more object to deserialize");
-			std::vector<std::byte> byte(_bytes.front());
-			_bytes.pop();
-			char tmp[100000];
-			memcpy(&tmp, byte.data(), sizeof(std::string));
-			data = tmp;
-			return *this;
-		}
+		// DataBuffer& operator>>(std::string &data) noexcept(false){
+		// 	if (_bytes.empty())
+		// 		throw std::logic_error("no more object to deserialize");
+		// 	// if (_bytes.front().size() < sizeof(std::string))
+		// 	// 	throw std::logic_error("can't deserialize");
+		// 	std::vector<std::byte> byte(_bytes.front());
+		// 	_bytes.pop();
+		// 	char tmp[100000];
+		// 	memcpy(&tmp, byte.data(), sizeof(std::string));
+		// 	data = tmp;
+		// 	return *this;
+		// }
 };
