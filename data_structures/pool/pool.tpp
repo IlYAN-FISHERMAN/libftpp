@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/09 23:01:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 17:41:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 19:49:31 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,48 +19,16 @@ template<typename TType>
 Pool<TType>::Pool() : _maxSize(0), _size(0), _alive(std::make_shared<PoolAlive>()){}
 
 template<typename TType>
-Pool<TType>::Pool(Pool &&other) : _pool(std::move(other._pool)), _poolSize(std::move(other._poolSize)),
-		   _freeList(std::move(other._freeList)), _maxSize(other.maxSize()), _size(other.size()){
-	other._pool.clear();
-	other._poolSize.clear();
-	other._freeList.clear();
-	other._maxSize = 0;
-	other._size = 0;
-}
-
-template<typename TType>
 Pool<TType>::~Pool(){
 	for (std::size_t it = 0; it < _pool.size(); it++)
 		_alloc.deallocate(_pool[it], _poolSize[it]);
 	if (_alive)
-		std::cout << (_alive->alive ? "true" : "false") << std::endl;
+		_alive->alive = false;
 }
 
 
 template<typename TType>
-Pool<TType>& Pool<TType>::operator=(Pool && other){
-	if (this != &other){
-		for (std::size_t it = 0; it < _pool.size(); it++)
-			_alloc.deallocate(_pool[it], _poolSize[it]);
-
-		_pool = std::move(other._pool);
-		_poolSize = std::move(other._poolSize);
-		_freeList = std::move(other._freeList);
-		_maxSize = other._maxSize;
-		_size = other._size;
-
-		other._pool.clear();
-		other._poolSize.clear();
-		other._freeList.clear();
-		other._maxSize = 0;
-		other._size = 0;
-
-	}
-	return *this;
-}
-
-template<typename TType>
-Pool<TType>::Object::Object(TType *obj, Pool &pool) : __obj(obj), __pool(pool), __alive(__pool._alive){}
+Pool<TType>::Object::Object(TType *obj, Pool *pool) : __obj(obj), __pool(pool), __alive(pool->_alive){}
 
 template<typename TType>
 Pool<TType>::Object::Object(Object &&other) noexcept
@@ -75,10 +43,12 @@ Pool<TType>::Object::~Object(){
 	if (!lock)
 		return;
 	if ((lock || lock->alive) && __obj){
-		__pool._freeList.push_back(__obj);
-		if (__pool._size > 0)
-			__pool._size--;
-		std::allocator_traits<std::allocator<TType>>::destroy(__pool._alloc, __obj);
+		if (__pool){
+			__pool->_freeList.push_back(__obj);
+			if (__pool->_size > 0)
+				__pool->_size--;
+		}
+		std::allocator_traits<std::allocator<TType>>::destroy(__pool->_alloc, __obj);
 	}
 }
 
@@ -87,10 +57,10 @@ Pool<TType>::Object&	Pool<TType>::Object::operator=(Object &&other) noexcept{
 	if (this != &other){
 	auto lock = __alive.lock();
 		if ((lock || lock->alive) && __obj){
-			__pool._freeList.push_back(__obj);
-			if (__pool._size > 0)
-				__pool._size--;
-			std::allocator_traits<std::allocator<TType>>::destroy(__pool._alloc, __obj);
+			__pool->_freeList.push_back(__obj);
+			if (__pool->_size > 0)
+				__pool->_size--;
+			std::allocator_traits<std::allocator<TType>>::destroy(__pool->_alloc, __obj);
 		}
 		__obj = std::move(other.__obj);
 		__pool = other.__pool;
@@ -142,11 +112,11 @@ Pool<TType>::Object Pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
 	if (_size >= _maxSize || _freeList.size() <= 0)
 		throw std::out_of_range("out of range");
 
-	Object node(_freeList.back(), *this);
+	Object node(_freeList.back(), this);
 	_freeList.pop_back();
 	_traits.construct(_alloc, node.__obj, p_args...);
 	_size++;
-	return node;
+	return (node);
 }
 
 template<typename TType>

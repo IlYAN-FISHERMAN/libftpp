@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 17:29:19 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 19:53:09 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <numeric>
 #include <vector>
 #include <memory>
+#include <set>
 
 #pragma once
 
@@ -24,18 +25,18 @@ class Pool{
 	public:
 		struct PoolAlive{
 			bool alive;
-			PoolAlive() : alive(true){};
+			PoolAlive() : alive(true){}
 		};
 
 		class Object{
 			protected :
 				TType							*__obj;
-				Pool							&__pool;
+				Pool							*__pool;
 				std::weak_ptr<PoolAlive>		__alive;
 				
 				friend Pool;
 
-				explicit Object(TType *, Pool &);
+				explicit Object(TType *, Pool *);
 
 				Object() = delete;
 				Object(const Object &) = delete;
@@ -49,6 +50,7 @@ class Pool{
 				TType*	operator->();
 				TType*	get();
 				TType&	operator*();
+				bool	ok();
 		};
 	private:
 		std::vector<TType*>								_pool;
@@ -62,16 +64,12 @@ class Pool{
 
 		Pool(const Pool&) = delete;
 		Pool& operator=(const Pool&) = delete;
+		Pool(Pool&&) = delete;
+		Pool& operator=(Pool&&) = delete;
 
 	public:
 		Pool();
-
 		~Pool();
-	
-		Pool(Pool&&);
-
-		Pool& operator=(Pool&&);
-
 
 		std::size_t capacity() noexcept;
 

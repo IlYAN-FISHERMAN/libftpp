@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 17:40:08 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 19:54:02 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,13 +380,14 @@ int myTestPool() {
 				std::cout << "capacity: " << pool.capacity() << std::endl;
 				std::cout << "max: " << pool.maxSize() << std::endl;
 				std::cout << "used: " << pool.size() << std::endl << std::endl;
-				auto obj3(pool.acquire());
-			} catch (std::logic_error &e){
+				auto obj3(pool.acquire()); // ERROR
+				return -1;
+			} catch (std::exception &e){
 				std::cout << "\033[31m" << e.what() << "\033[0m" << std::endl;
 			}
 
 			try{
-				std::cout << "[TEST 2.1]" << std::endl << std::endl;
+				std::cout << std::endl << "[TEST 2.1]" << std::endl << std::endl;
 
 				for (auto it = 0; it < 4; it ++)
 					tmp.pop_back();
@@ -421,39 +422,24 @@ int myTestPool() {
 					tmp.push_back(std::move(obj2));
 				}
 				std::cout << "error if you see this" << std::endl;
+				return -1;
 
-			} catch (std::logic_error &e){
+			} catch (std::exception &e){
 				std::cout << "\033[31m" << e.what() << "\033[0m" << std::endl;
 			}
 
 			try{
 				std::cout << "[TEST 2.2]" << std::endl;
-				std::cout << "copy object" << std::endl;
-				std::cout << "[BEFORE COPY]" << std::endl;
 				std::cout << "\tcapacity: " << pool.capacity() << std::endl;
 				std::cout << "\tmax: " << pool.maxSize() << std::endl;
 				std::cout << "\tused: " << pool.size() << std::endl << std::endl;
-				Pool<TestPoolObject> pool2 = std::move(pool);
-				std::cout << "[AFTER COPY]" << std::endl;
-				std::cout << "\tcapacity: " << pool.capacity() << std::endl;
-				std::cout << "\tmax: " << pool.maxSize() << std::endl;
-				std::cout << "\tused: " << pool.size() << std::endl << std::endl;
-				std::cout << "[POOL 2 AFTER COPY]" << std::endl;
-				std::cout << "\tcapacity: " << pool2.capacity() << std::endl;
-				std::cout << "\tmax: " << pool2.maxSize() << std::endl;
-				std::cout << "\tused: " << pool2.size() << std::endl << std::endl;
 
-				std::cout << "[resize 100 for pool && 50 for pool2]" << std::endl;
+				std::cout << "[resize 100 for pool]" << std::endl;
 				pool.resize(100);
-				pool2.resize(50);
 				std::cout << "[POOL]" << std::endl;
 				std::cout << "capacity: " << pool.capacity() << std::endl;
 				std::cout << "max: " << pool.maxSize() << std::endl;
 				std::cout << "used: " << pool.size() << std::endl << std::endl;
-				std::cout << "[POOL2]" << std::endl;
-				std::cout << "capacity: " << pool2.capacity() << std::endl;
-				std::cout << "max: " << pool2.maxSize() << std::endl;
-				std::cout << "used: " << pool2.size() << std::endl << std::endl;
 				std::cout << "[CLEAR DATA]" << std::endl;
 				while (!tmp.empty())
 					tmp.pop_back();
@@ -462,54 +448,51 @@ int myTestPool() {
 				std::cout << "capacity: " << pool.capacity() << std::endl;
 				std::cout << "max: " << pool.maxSize() << std::endl;
 				std::cout << "used: " << pool.size() << std::endl << std::endl;
-				std::cout << "[POOL2]" << std::endl;
-				std::cout << "capacity: " << pool2.capacity() << std::endl;
-				std::cout << "max: " << pool2.maxSize() << std::endl;
-				std::cout << "used: " << pool2.size() << std::endl << std::endl;
 
-				std::cout << std::endl << "[use all data from pool|pool2]" << std::endl;
+				std::cout << std::endl << "[use all data from pool]" << std::endl;
 				std::cout << "[POOL]" << std::endl;
 				while (pool.capacity() > 0)
 					tmp.push_back(pool.acquire());
-				std::cout << "[POOL2]" << std::endl;
-				while (pool2.capacity() > 0)
-					tmp.push_back(pool2.acquire());
 				std::cout << "[POOL]" << std::endl;
 				std::cout << "capacity: " << pool.capacity() << std::endl;
 				std::cout << "max: " << pool.maxSize() << std::endl;
 				std::cout << "used: " << pool.size() << std::endl << std::endl;
-				std::cout << "[POOL2]" << std::endl;
-				std::cout << "capacity: " << pool2.capacity() << std::endl;
-				std::cout << "max: " << pool2.maxSize() << std::endl;
-				std::cout << "used: " << pool2.size() << std::endl << std::endl;
 				while (!tmp.empty())
 					tmp.pop_back();
 				std::cout << std::endl << "[POOL]" << std::endl;
 				std::cout << "capacity: " << pool.capacity() << std::endl;
 				std::cout << "max: " << pool.maxSize() << std::endl;
 				std::cout << "used: " << pool.size() << std::endl << std::endl;
-				std::cout << "[POOL2]" << std::endl;
-				std::cout << "capacity: " << pool2.capacity() << std::endl;
-				std::cout << "max: " << pool2.maxSize() << std::endl;
-				std::cout << "used: " << pool2.size() << std::endl << std::endl;
-			} catch (std::logic_error &e){
+			} catch (std::exception &e){
 				std::cout << "\033[31m" << e.what() << "\033[0m" << std::endl;
 			}
 		}
 		{
 			try
 			{
-				std::cout << "[TEST 2.3]" << std::endl;
-				Pool<TestPoolObject>* pool = new Pool<TestPoolObject>();
-				pool->resize(2);
-				Pool<TestPoolObject>::Object obj(pool->acquire());
-				delete pool;
-				obj->sayHello();
 			}catch(std::exception &e){
 				std::cout << e.what() << std::endl;
 			}
 		}
 		std::cout << std::endl << C_GREEN << "[Test 2 succedded]" << C_RESET << std::endl << std::endl;
+	}
+
+	return 0;
+}
+
+int deleteTestPool(){
+	try{
+		std::cout << "[TEST 2.3]" << std::endl;
+		Pool<TestPoolObject>* pool = new Pool<TestPoolObject>();
+		pool->resize(10);
+		Pool<TestPoolObject>::Object obj(pool->acquire());
+		delete pool;
+		(*obj).sayHello();
+		std::cout << "capacity: " << pool->capacity() << std::endl;
+		std::cout << "max: " << pool->maxSize() << std::endl;
+		std::cout << "used: " << pool->size() << std::endl << std::endl;
+	} catch(std::exception &e){
+		std::cout << e.what() << std::endl;
 	}
 
 	return 0;
