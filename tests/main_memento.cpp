@@ -1,7 +1,7 @@
-#include "memento.hpp"
+#include "../design_patterns/memento/memento.hh"
 #include <iostream>
 
-class TestClass : public Memento {
+class TestMementoClass : public Memento {
     friend class Memento;
 
 public:
@@ -19,13 +19,13 @@ private:
 
 };
 
-int main() {
-    TestClass myObject;
+int testMemento() {
+    TestMementoClass myObject;
     myObject.x = 42;
     myObject.y = "Hello";
 
     // Save the current state
-    TestClass::Snapshot savedState = myObject.save();
+    TestMementoClass::Snapshot savedState = myObject.save();
 
     // Modify the object
     myObject.x = 100;
@@ -37,7 +37,7 @@ int main() {
 
     // Restore the object to its saved state
     myObject.load(savedState);
-    
+ 
     // Output the restored object
 	// Expected Output: "Restored state: x = 42, y = Hello"
     std::cout << "Restored state: x = " << myObject.x << ", y = " << myObject.y << std::endl;

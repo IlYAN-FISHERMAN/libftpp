@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 19:50:44 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 20:39:02 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,12 @@ int main(void) {
 
 	// code = testPool();
 	// code = myTestPool();
-	code = deleteTestPool();
+	// code = deleteTestPool();
 	// code = benchPoolTest();
 
 	// code = testDataBuffer();
+	
+	code = testMemento();
 	std::cout << "code: " << code << std::endl;
 	return code;
 }

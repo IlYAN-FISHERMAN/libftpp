@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 20:30:40 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/19 20:38:38 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -482,7 +482,6 @@ int myTestPool() {
 
 int deleteTestPool(){
 	try{
-		std::cout << "[TEST 2.3]" << std::endl;
 		Pool<TestPoolObject>* pool = new Pool<TestPoolObject>();
 		pool->resize(10);
 		Pool<TestPoolObject>::Object obj(pool->acquire());
