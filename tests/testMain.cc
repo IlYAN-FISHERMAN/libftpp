@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/20 21:29:29 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/20 21:58:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ int main(void) {
 	// code = myTestObserver();
 
 	code = testSingleton();
-	code = myTestSingleton();
 
 	std::cout << "code: " << code << std::endl;
 	return code;
