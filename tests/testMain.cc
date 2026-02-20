@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 20:39:02 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/20 16:21:42 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int main(void) {
 
 	// code = testDataBuffer();
 	
-	code = testMemento();
+	// code = testMemento();
+	code = myTestMemento();
 	std::cout << "code: " << code << std::endl;
 	return code;
 }

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 20:39:13 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/20 16:21:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int testDataBuffer();
 int myTestDataBuffer();
 
 int testMemento();
+int myTestMemento();
 
 
 //--------------------------------------------
