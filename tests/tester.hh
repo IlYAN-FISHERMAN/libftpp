@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/20 19:52:50 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/20 21:29:44 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ int myTestMemento();
 
 int testObserver();
 int myTestObserver();
+
+int testSingleton();
+int myTestSingleton();
 
 //--------------------------------------------
 /// The current name of the class when us

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "singleton.hpp"
+#include "../design_patterns/singleton/singleton.hh"
 
 class MyClass {
 public:
@@ -13,7 +13,12 @@ public:
     }
 };
 
-int main() {
+int myTestSingleton() {
+
+	return 0;
+}
+
+int testSingleton() {
     try
     {
         // This should throw an exception as instance is not yet created

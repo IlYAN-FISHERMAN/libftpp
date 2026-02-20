@@ -6,12 +6,11 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 19:51:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/20 21:14:36 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/20 21:21:43 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <functional>
-#include <any>
 
 template<typename TEvent, typename ...TType>
 class Observer{
@@ -19,6 +18,19 @@ class Observer{
 		std::unordered_multimap<TEvent, std::function<void(TType&...)>>	_events;
 
 	public:
+		Observer(){};
+		
+		~Observer(){};
+	
+		Observer(const Observer &other) : _events(other._events){};
+
+		Observer& operator=(const Observer &other){
+			if (this != &other){
+				_events = other._events;
+			}
+			return *this;
+		};
+
 		void subscribe(const TEvent& event, const std::function<void(TType...)> lambda){
 			_events.insert({event, lambda});
 		}

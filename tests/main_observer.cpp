@@ -2,6 +2,7 @@
 #include "../tests/tester.hh"
 #include <iostream>
 #include <random>
+#include <any>
 
 enum class EventType {
     EVENT_ONE,
@@ -10,8 +11,19 @@ enum class EventType {
 };
 
 int myTestObserver() {
+	Observer<EventType, std::any> observer;
+	Observer<EventType, const char*, IoStat, double> big;
+	Observer<EventType, const char*, IoStat, double> cpy;
+
+	IoStat io(1, "fdf", 10, 11);
+	std::mt19937_64	mt{};
+	std::random_device rd;
+	mt.seed(rd());
+
+	for (size_t it = 0, nb = (mt() % 1000) + 10; it < nb; it++)
+		io.add(mt() % 1000, IoStat::Marks::READ);
+
 	{
-		Observer<EventType, std::any> observer;
 		observer.subscribe(EventType::EVENT_ONE, [](std::any data){
 			std::cout << "Event One triggered with: " << std::any_cast<const char *>(data) << std::endl;
 		});
@@ -24,21 +36,21 @@ int myTestObserver() {
 		observer.notify(EventType::EVENT_TWO, 42.24);
 	}
 	{
-		Observer<EventType, const char*, IoStat, double> big;
 
 		big.subscribe(EventType::EVENT_ONE, [&](const char *str, IoStat io, double second){
 			std::cout << "[EVENT1]: " << str << std::endl << io << std::endl << "second: " << second << std::endl;
 		});
-		IoStat io(1, "fdf", 10, 11);
-		std::mt19937_64	mt{};
-		std::random_device rd;
-		mt.seed(rd());
-
-		for (size_t it = 0, nb = (mt() % 1000) + 10; it < nb; it++)
-			io.add(mt() % 1000, IoStat::Marks::READ);
 
 		big.notify(EventType::EVENT_ONE, "fill data", io, 10.4);
 	}
+
+	cpy = big;
+
+	for (size_t it = 0, nb = (mt() % 1000) + 10; it < nb; it++)
+		io.add(mt() % 1000, IoStat::Marks::READ);
+
+	cpy.notify(EventType::EVENT_ONE, "fill data", io, 10.4);
+
 	return 0;
 }
 

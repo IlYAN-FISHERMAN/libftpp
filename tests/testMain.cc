@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/20 20:51:56 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/20 21:29:29 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,11 @@ int main(void) {
 	// code = myTestMemento();
 
 	// code = testObserver();
-	code = myTestObserver();
+	// code = myTestObserver();
+
+	code = testSingleton();
+	code = myTestSingleton();
+
 	std::cout << "code: " << code << std::endl;
 	return code;
 }

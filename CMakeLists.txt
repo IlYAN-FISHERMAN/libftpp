@@ -40,8 +40,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
   add_compile_options(-Wall -Wextra -Werror)
 endif()
 
-set(SOURCES tests/testMain.cc tests/main_pool.cpp tests/main_data_buffer.cpp
-            tests/main_memento.cpp tests/main_observer.cpp)
+set(SOURCES
+    tests/testMain.cc tests/main_pool.cpp tests/main_data_buffer.cpp
+    tests/main_memento.cpp tests/main_observer.cpp tests/main_singleton.cpp)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
