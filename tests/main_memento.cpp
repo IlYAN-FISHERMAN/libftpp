@@ -65,7 +65,6 @@ int myTestMemento() {
 		// Output the restored object
 		// Expected Output: "Restored state: x = 42, y = Hello"
 		std::cout << "Restored state: x = " << myObject.x << ", y = " << myObject.y << "\n" << myObject.io << std::endl;
-		return 0;
 	}
 	{
 		std::cout << C_GREEN << "[TEST 1]" << C_RESET << std::endl;
@@ -74,19 +73,19 @@ int myTestMemento() {
 		myObject.x = 42;
 		myObject.y = "bonjour a tous";
 
-		auto saveBefore = myObject.save();
 		for (size_t it = 0, nb = (mt() % 1000) + 10; it < nb; it++)
 			myObject.io.add(mt() % 1000, IoStat::Marks::READ);
 		myObject.y = "small test";
-		std::cout << myObject.y << std::endl;
+		std::cout << "IO: " << myObject.io << std::endl;
 
-		auto saveAfter = myObject.save();
+		auto saveBefore = myObject.save();
 		myObject.io.cleanOldsMarks(IoStat::Marks::READ, 0);
 		std::cout << "Current state: x = " << myObject.x << ", y = " << myObject.y << "\n" << myObject.io << std::endl;
 		std::cout << "SAVE" << std::endl;
 		myObject.load(saveBefore);
 		std::cout << "Current state: x = " << myObject.x << ", y = " << myObject.y << "\n" << myObject.io << std::endl;
 	}
+	return 0;
 }
 
 int testMemento() {
