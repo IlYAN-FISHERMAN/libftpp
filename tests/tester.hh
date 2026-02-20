@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/20 16:21:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/20 19:52:50 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int myTestDataBuffer();
 int testMemento();
 int myTestMemento();
 
+int testObserver();
+int myTestObserver();
 
 //--------------------------------------------
 /// The current name of the class when us

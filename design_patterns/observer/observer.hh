@@ -1,0 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   observer.hh                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/20 19:51:27 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/20 21:14:36 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <functional>
+#include <any>
+
+template<typename TEvent, typename ...TType>
+class Observer{
+	private:
+		std::unordered_multimap<TEvent, std::function<void(TType&...)>>	_events;
+
+	public:
+		void subscribe(const TEvent& event, const std::function<void(TType...)> lambda){
+			_events.insert({event, lambda});
+		}
+
+		void notify(const TEvent& event, TType ...data){
+			auto elements = _events.equal_range(event);
+			for (auto func = elements.first; func != elements.second; func++)
+				func->second(data...);
+		}
+};
