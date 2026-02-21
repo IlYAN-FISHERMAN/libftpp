@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 10:24:57 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/21 20:40:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/21 19:44:12 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ class StateMachine{
 					addTransition((*_index.base()), state, []{});
 				throw std::invalid_argument("Handle transition not found");
 			}
-			std::__wrap_iter<StateMachine<TState>::Transition *> it = std::find(_transition.begin(), _transition.end(), Transition(*_index, state));
+			auto it = std::find(_transition.begin(), _transition.end(), Transition(*_index, state));
 			(*it.base())();
 			_index = std::find(_existingStates.begin(), _existingStates.end(), (*it.base()).final);
 		}
