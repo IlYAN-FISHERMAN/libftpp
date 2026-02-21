@@ -1,6 +1,6 @@
 #include <iostream>
 #include <thread>
-#include "thread_safe_iostream.hpp"
+#include "../iostream/thread_safe_iostream.hh"
 
 void printNumbers(const std::string& p_prefix) {
     threadSafeCout.setPrefix(p_prefix);
@@ -9,7 +9,7 @@ void printNumbers(const std::string& p_prefix) {
     }
 }
 
-int main() {
+int testThreadSafeIostream() {
     std::string prefix1 = "[Thread 1] ";
     std::string prefix2 = "[Thread 2] ";
 
