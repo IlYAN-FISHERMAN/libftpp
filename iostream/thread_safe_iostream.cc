@@ -6,20 +6,15 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:00 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 14:11:19 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 14:32:48 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "thread_safe_iostream.hh"
 
-std::string& threadSafeCout::prefix() {
-	thread_local std::string p;
-	return p;
-}
+thread_local std::stringstream threadSafeCout::_msg;
+thread_local std::string threadSafeCout::_prefix;
 
-static inline std::mutex mutex;
+std::string threadSafeCout::prefix() const{return _prefix;}
 
-std::stringstream&  threadSafeCout::msg() {
-	thread_local std::stringstream b;
-	return b;
-}
+void threadSafeCout::setPrefix(const std::string &str){_prefix = str;}

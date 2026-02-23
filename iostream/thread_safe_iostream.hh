@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 14:15:56 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 14:48:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,19 @@
 class threadSafeCout {
 	private :
 		static inline std::mutex _mutex;
+		static thread_local std::stringstream _msg;
+		static thread_local std::string _prefix;
 
-		static std::stringstream& msg();
-
+		threadSafeCout& operator=(const threadSafeCout&) = delete;
+		threadSafeCout& operator=(const threadSafeCout&&) = delete;
 	public :
-		threadSafeCout(){}
 
-		static std::string& prefix();
+		std::string prefix() const;
 
 		template<typename T>
 		threadSafeCout& operator<<(T &data){
-			msg() << data;
+			std::lock_guard<std::mutex> lock(_mutex);
+			_msg << data;
 			return *this;
 		}
 
@@ -36,19 +38,23 @@ class threadSafeCout {
 		threadSafeCout& operator<<(std::ostream& (*func)(std::ostream&)){
 			std::lock_guard<std::mutex> lock(_mutex);
 
-			std::cout << prefix() << msg().str() << func;
-			msg().str("");
-			msg().clear();
+			std::cout << _prefix << _msg.str() << func;
+			_msg.str("");
+			_msg.clear();
 
 			return *this;
 		}
 
-		void setPrefix(const std::string &str){
-			prefix() = str;
-		};
+		void setPrefix(const std::string &str);
 
 		template<typename T>
-		void prompt(const std::string& question, T& dest);
+		void prompt(const std::string& question, T& dest){
+			std::lock_guard<std::mutex> lock(_mutex);
+
+			std::cout << _prefix << question;
+			std::cout.flush();
+			std::cin >> dest;
+		}
 };
 
-static threadSafeCout	threadSafeCout;
+static thread_local class threadSafeCout threadSafeCout;
