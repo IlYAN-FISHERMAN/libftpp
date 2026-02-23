@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 17:32:10 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 18:38:13 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ class threadSafeCout {
 
 		threadSafeCout& operator=(const threadSafeCout&) = delete;
 		threadSafeCout& operator=(const threadSafeCout&&) = delete;
-	public :
 
+	public :
 		std::string prefix() const;
 
 		template<typename T>

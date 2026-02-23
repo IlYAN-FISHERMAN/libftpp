@@ -51,7 +51,8 @@ set(SOURCES
     tests/main_state_machine.cpp
     tests/main_thread_safe_iostream.cpp
     tests/main_thread_safe_queue.cpp
-    tests/main_thread.cpp)
+    tests/main_thread.cpp
+    tests/main_worker_pool.cpp)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
@@ -59,7 +60,8 @@ set(SOURCES ${SOURCES} design_patterns/memento/memento.cc)
 
 set(SOURCES ${SOURCES} iostream/thread_safe_iostream.cc)
 
-set(SOURCES ${SOURCES} threading/thread/thread.cc)
+set(SOURCES ${SOURCES} threading/thread/thread.cc
+            threading/worker_pool/worker_pool.cc)
 
 add_executable(libftpp ${SOURCES})
 

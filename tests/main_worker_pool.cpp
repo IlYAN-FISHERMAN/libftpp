@@ -1,8 +1,6 @@
-#include "worker_pool.hpp"
-#include <iostream>
-#include "thread_safe_iostream.hpp"
+#include "../threading/worker_pool/worker_pool.hh"
 
-int main() {
+int testWorkerPool() {
     WorkerPool pool(4);
 
     auto job = []() {
