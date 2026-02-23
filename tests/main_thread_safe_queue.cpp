@@ -1,6 +1,6 @@
 #include <iostream>
 #include <thread>
-#include "thread_safe_queue.hpp"
+#include "../threading/threading.hpp"
 
 void testPush(ThreadSafeQueue<int>& p_queue, int p_value) {
     p_queue.push_back(p_value);
@@ -16,7 +16,12 @@ void testPop(ThreadSafeQueue<int>& p_queue) {
     }
 }
 
-int main() {
+int myTestThreadSafeQueue() {
+
+	return 0;
+}
+
+int testThreadSafeQueue() {
     ThreadSafeQueue<int> myQueue;
 
     std::thread thread1(testPush, std::ref(myQueue), 10);

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 14:48:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 16:37:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,7 @@ class threadSafeCout {
 		}
 
 
-		threadSafeCout& operator<<(std::ostream& (*func)(std::ostream&)){
-			std::lock_guard<std::mutex> lock(_mutex);
-
-			std::cout << _prefix << _msg.str() << func;
-			_msg.str("");
-			_msg.clear();
-
-			return *this;
-		}
+		threadSafeCout& operator<<(std::ostream& (*func)(std::ostream&));
 
 		void setPrefix(const std::string &str);
 
@@ -53,7 +45,7 @@ class threadSafeCout {
 
 			std::cout << _prefix << question;
 			std::cout.flush();
-			std::cin >> dest;
+			std::getline(std::cin, dest);
 		}
 };
 

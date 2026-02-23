@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 14:22:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 16:49:24 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ int main(void) {
 	// code = myTestStateMachine();
 	
 	// code = testThreadSafeIostream();
-	code = myTestThreadSafeIostream();
+	// code = myTestThreadSafeIostream();
+
+	code = testThreadSafeQueue();
 
 	std::cout << "code: " << code << std::endl;
 	return code;

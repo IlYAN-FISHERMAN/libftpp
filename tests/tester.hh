@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/21 21:21:27 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 16:49:04 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ int myTestStateMachine();
 
 int testThreadSafeIostream();
 int myTestThreadSafeIostream();
+
+int testThreadSafeQueue();
+int myTestThreadSafeQueue();
 
 //--------------------------------------------
 /// The current name of the class when us
