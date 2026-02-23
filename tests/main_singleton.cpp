@@ -13,11 +13,6 @@ public:
     }
 };
 
-int myTestSingleton() {
-
-	return 0;
-}
-
 int testSingleton() {
     try
     {

@@ -6,39 +6,49 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/21 21:19:10 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 14:15:56 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <mutex>
+#include <sstream>
+#include <thread>
 
-class threadSafeCout{
+class threadSafeCout {
 	private :
-		std::string	_prefix;
-		mutable std::mutex	_mutex;
-	public :
+		static inline std::mutex _mutex;
 
-		// template<typename T>
-		// friend const class threadSafeCout& operator<<(const class threadSafeCout &os, T &data);
+		static std::stringstream& msg();
+
+	public :
+		threadSafeCout(){}
+
+		static std::string& prefix();
 
 		template<typename T>
-		threadSafeCout& operator<<(const T data){
-			std::lock_guard<std::mutex> lock(_mutex);
-			std::cout << data;
+		threadSafeCout& operator<<(T &data){
+			msg() << data;
 			return *this;
 		}
+
 
 		threadSafeCout& operator<<(std::ostream& (*func)(std::ostream&)){
 			std::lock_guard<std::mutex> lock(_mutex);
-			std::cout << func;
+
+			std::cout << prefix() << msg().str() << func;
+			msg().str("");
+			msg().clear();
+
 			return *this;
 		}
 
-		void setPrefix(const std::string&);
+		void setPrefix(const std::string &str){
+			prefix() = str;
+		};
 
-		// template<typename T>
-		// void prompt(const std::string& question, T& dest);
+		template<typename T>
+		void prompt(const std::string& question, T& dest);
 };
 
-static threadSafeCout threadSafeCout;
+static threadSafeCout	threadSafeCout;

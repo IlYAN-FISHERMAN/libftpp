@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 21:17:14 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/20 21:56:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 12:55:19 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,8 @@ class Singleton{
 		
 		template<typename ... TArgs>
 		static void instantiate(TArgs&& ...p_args) noexcept(false){
-			if (_instance)
+			if (_instance) // Remove this ?
 				throw std::logic_error("Instance already created");
 			_instance = std::make_shared<TType>(p_args...);
 		};
 };
-
-
