@@ -6,9 +6,11 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 16:42:56 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 16:43:44 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 17:32:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 #include "persistent_worker/persistent_worker.hh"
 #include "thread/thread.hh"

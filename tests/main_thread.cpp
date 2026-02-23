@@ -1,7 +1,6 @@
 #include <iostream>
 #include <chrono>
-#include "thread.hpp"
-#include "thread_safe_iostream.hpp"
+#include "../threading/thread/thread.hh"
 
 void myFunction1() {
     for (int i = 0; i < 5; ++i) {
@@ -15,12 +14,14 @@ void myFunction2() {
     }
 }
 
-int main() {
-    Thread thread1("Thread1", myFunction1);
-    Thread thread2("Thread2", myFunction2);
+int testThread() {
+    Thread thread1("Thread1: ", myFunction1);
+    Thread thread2("Thread2: ", myFunction2);
 
     thread1.start();
     thread2.start();
+
+	threadSafeCout << "simple test" << std::endl;
 
     thread1.stop();
     thread2.stop();

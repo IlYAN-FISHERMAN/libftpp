@@ -49,13 +49,17 @@ set(SOURCES
     tests/main_observer.cpp
     tests/main_singleton.cpp
     tests/main_state_machine.cpp
-    tests/main_thread_safe_iostream.cpp)
+    tests/main_thread_safe_iostream.cpp
+    tests/main_thread_safe_queue.cpp
+    tests/main_thread.cpp)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
 set(SOURCES ${SOURCES} design_patterns/memento/memento.cc)
 
 set(SOURCES ${SOURCES} iostream/thread_safe_iostream.cc)
+
+set(SOURCES ${SOURCES} threading/thread/thread.cc)
 
 add_executable(libftpp ${SOURCES})
 

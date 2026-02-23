@@ -6,9 +6,11 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 16:37:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/23 17:32:10 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 #include <iostream>
 #include <mutex>
@@ -28,12 +30,11 @@ class threadSafeCout {
 		std::string prefix() const;
 
 		template<typename T>
-		threadSafeCout& operator<<(T &data){
+		threadSafeCout& operator<<(T data){
 			std::lock_guard<std::mutex> lock(_mutex);
 			_msg << data;
 			return *this;
 		}
-
 
 		threadSafeCout& operator<<(std::ostream& (*func)(std::ostream&));
 
