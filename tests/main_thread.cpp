@@ -1,6 +1,16 @@
-#include <iostream>
-#include <chrono>
-#include "../threading/thread/thread.hh"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_thread.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/24 15:51:14 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/24 15:52:46 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tester.hh"
 
 void myFunction1() {
     for (int i = 0; i < 5; ++i) {

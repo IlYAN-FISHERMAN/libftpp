@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 16:44:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 17:32:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/24 16:31:44 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <queue>
 #include <mutex>
+#include <utility>
 
 template<typename TType>
 class ThreadSafeQueue{
@@ -36,6 +37,16 @@ class ThreadSafeQueue{
 			return *this;
 		}
 	
+		void push_back(TType&& newElement) noexcept{
+			std::lock_guard<std::mutex> lock(_mutex);
+			_queue.push_back(std::forward<TType>(newElement));
+		};
+
+		void push_front(TType&& newElement) noexcept{
+			std::lock_guard<std::mutex> lock(_mutex);
+			_queue.push_front(std::forward<TType>(newElement));
+		}
+
 		void push_back(const TType& newElement) noexcept{
 			std::lock_guard<std::mutex> lock(_mutex);
 			_queue.push_back(newElement);
@@ -50,7 +61,7 @@ class ThreadSafeQueue{
 			std::lock_guard<std::mutex> lock(_mutex);
 			if (_queue.size() <= 0)
 				throw std::runtime_error("Empty queue");
-			auto pop = _queue.back();
+			auto pop = std::move(_queue.back());
 			_queue.pop_back();
 			return pop;
 		};
@@ -59,8 +70,13 @@ class ThreadSafeQueue{
 			std::lock_guard<std::mutex> lock(_mutex);
 			if (_queue.size() <= 0)
 				throw std::runtime_error("Empty queue");
-			auto pop = _queue.front();
+			auto pop = std::move(_queue.front());
 			_queue.pop_front();
 			return pop;
 		};
+
+		bool empty(){ 
+			std::lock_guard<std::mutex> lock(_mutex);
+			return _queue.empty();
+		}
 };

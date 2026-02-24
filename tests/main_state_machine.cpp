@@ -1,5 +1,16 @@
-#include <iostream>
-#include "../design_patterns/state_machine/state_machine.hh"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_state_machine.cpp                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/24 15:50:55 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/24 15:52:38 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tester.hh"
 
 enum class State {
     Idle,

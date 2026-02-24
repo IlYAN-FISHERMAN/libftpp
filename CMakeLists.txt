@@ -42,6 +42,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
 endif()
 
 set(SOURCES
+    tests/IoStat.cc
     tests/testMain.cc
     tests/main_pool.cpp
     tests/main_data_buffer.cpp

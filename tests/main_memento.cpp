@@ -1,8 +1,16 @@
-#include "../design_patterns/memento/memento.hh"
-#include <iostream>
-#include "../tests/tester.hh"
-#include <random>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_memento.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/24 15:49:43 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/24 15:52:14 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "tester.hh"
 
 class TestMementoClass : public Memento {
     friend class Memento;

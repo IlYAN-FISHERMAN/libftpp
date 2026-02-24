@@ -6,31 +6,40 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 18:57:00 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/24 15:53:13 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <algorithm>
 #include <iostream>
 #include <deque>
 #include <unordered_map>
-#include <vector>
 #include <string>
 #include <memory>
 #include <cstdint>
 #include <sys/types.h>
-#include <iostream>
 #include <ctime>
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
-#include <iomanip>
 #include <utility>
+#include <vector>
+#include <iomanip>
+#include <algorithm>
+#include <random>
+#include <random>
+#include <any>
+
+#include "../data_structures/data_structures.hpp"
+#include "../design_patterns/design_patterns.hh"
+#include "../threading/threading.hpp"
+#include "../iostream/thread_safe_iostream.hh"
+
 
 int testPool();
 int deleteTestPool();
+
 int benchPoolTest();
 int myTestPool();
 
@@ -86,7 +95,7 @@ struct IoMark {
 	}
 };
 
-class IoStat {
+class IoStat : public WorkerPool::IJobs{
 		public: enum class Marks : uint8_t{
 			READ,
 			WRITE
@@ -271,6 +280,8 @@ class IoStat {
 		/// from the IoStat::Marks enumerator
 		//--------------------------------------------
 		ssize_t getSize(Marks enumMark) const;
+
+		virtual void execute() override;
 };
 
 

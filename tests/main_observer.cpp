@@ -1,8 +1,16 @@
-#include "../design_patterns/observer/observer.hh"
-#include "../tests/tester.hh"
-#include <iostream>
-#include <random>
-#include <any>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_observer.cpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/24 15:49:56 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/24 15:52:19 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tester.hh"
 
 enum class EventType {
     EVENT_ONE,

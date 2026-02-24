@@ -1,8 +1,16 @@
-#include <iostream>
-#include <thread>
-#include <functional>
-#include "../threading/threading.hpp"
-#include "../iostream/thread_safe_iostream.hh"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_thread_safe_queue.cpp                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/24 15:51:33 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/24 16:04:08 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tester.hh"
 
 static class threadSafeCout cout;
 
@@ -20,6 +28,7 @@ void testPop(ThreadSafeQueue<int>& p_queue) {
 	// cout.setPrefix(id + ": ");
 	// std::this_thread::sleep_for(std::chrono::seconds(1));
     try {
+		threadSafeCout << std::boolalpha << p_queue.empty() << std::endl;
         int value = p_queue.pop_front();
         cout << "Popped value: " << value << std::endl;
     } catch (const std::runtime_error& e) {

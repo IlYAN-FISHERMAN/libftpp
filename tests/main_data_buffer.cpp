@@ -6,11 +6,11 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:38 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 11:44:35 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/24 15:52:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../data_structures/data_structures.hpp"
+#include "tester.hh"
 
 class TestDataBufferObject {
 public:

@@ -1,5 +1,16 @@
-#include <iostream>
-#include "../design_patterns/singleton/singleton.hh"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_singleton.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/24 15:50:44 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/24 15:52:33 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tester.hh"
 
 class MyClass {
 public:

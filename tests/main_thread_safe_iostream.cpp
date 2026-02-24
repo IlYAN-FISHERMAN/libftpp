@@ -1,7 +1,16 @@
-#include <iostream>
-#include <thread>
-#include <vector>
-#include "../iostream/thread_safe_iostream.hh"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_thread_safe_iostream.cpp                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/24 15:51:25 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/24 15:52:50 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tester.hh"
 
 void printNumbers(const std::string& p_prefix) {
     threadSafeCout.setPrefix(p_prefix);
