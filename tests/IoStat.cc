@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:46:26 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 16:41:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 13:30:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ void	IoStat::printInfo(std::ostream &os, const std::string &msg){
 /// Add bytes to the corresponding Read/Write deque
 //--------------------------------------------
 void IoStat::add(size_t bytes, IoStat::Marks enumMark){
+	static std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 	IoMark io(bytes);
 	if (enumMark == Marks::READ)
 		_readMarks.push_back(io);
@@ -284,10 +286,11 @@ std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_
 }
 
 void IoStat::execute(){
+	std::mt19937_64	mt{};
+	std::random_device rd;
+	mt.seed(rd());
+
 	for(auto it = 0; it < 1000; it++){
-		std::mt19937_64	mt{};
-		std::random_device rd;
-		mt.seed(rd());
 		(mt() % 2) ? add(mt() % 10000, Marks::READ) : add(mt() % 10000, Marks::WRITE);
 	}
 	threadSafeCout << *this << std::endl;

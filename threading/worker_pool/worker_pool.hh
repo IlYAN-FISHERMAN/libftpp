@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:50:12 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 16:58:24 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 14:10:54 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class WorkerPool{
 		std::condition_variable					_cv;
 		std::size_t								_nbrOfThread;
 		std::atomic<bool>						_stop;
+		std::atomic<size_t>						_workerThread;
 
 		WorkerPool(const WorkerPool &) = delete;
 		WorkerPool& operator=(const WorkerPool&) = delete;
@@ -46,7 +47,10 @@ class WorkerPool{
 		WorkerPool(size_t);
 		~WorkerPool();
 
-		void addJob(const std::function<void()>&jobToExecute);
-		void addJob(std::shared_ptr<IJobs> jobToExecute);
-		void wait();
+		void	addJob(const std::function<void()>&jobToExecute);
+		void	addJob(std::shared_ptr<IJobs> jobToExecute);
+		void	wait();
+
+		size_t	running();
+		size_t	size();
 };

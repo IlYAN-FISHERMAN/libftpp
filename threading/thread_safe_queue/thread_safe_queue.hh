@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 16:44:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 16:31:44 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 14:10:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ class ThreadSafeQueue{
 		std::deque<TType> _queue;
 		static inline std::mutex _mutex;
 	public :
+		class iterator{
+			
+		};
 		ThreadSafeQueue(){}
 		~ThreadSafeQueue(){}
 		ThreadSafeQueue(const ThreadSafeQueue &other){
@@ -57,6 +60,18 @@ class ThreadSafeQueue{
 			_queue.push_front(newElement);
 		}
 
+		template<typename ...TArgs>
+		void emplace_front(TArgs &&...p_args){
+			std::lock_guard<std::mutex> lock(_mutex);
+			return _queue.emplace_front(p_args...);
+		}
+
+		template<typename ...TArgs>
+		void emplace_back(TArgs &&...p_args){
+			std::lock_guard<std::mutex> lock(_mutex);
+			return _queue.emplace_back(p_args...);
+		}
+
 		TType pop_back() noexcept(false){
 			std::lock_guard<std::mutex> lock(_mutex);
 			if (_queue.size() <= 0)
@@ -75,8 +90,28 @@ class ThreadSafeQueue{
 			return pop;
 		};
 
-		bool empty(){ 
+		bool empty() const{
 			std::lock_guard<std::mutex> lock(_mutex);
 			return _queue.empty();
+		}
+
+		size_t size() const{
+			std::lock_guard<std::mutex> lock(_mutex);
+			return _queue.size();
+		}
+
+		size_t max_size() const{
+			std::lock_guard<std::mutex> lock(_mutex);
+			return _queue.max_size();
+		}
+
+		void resize(size_t n){
+			std::lock_guard<std::mutex> lock(_mutex);
+			return _queue.resize(n);
+		}
+
+		void clear(){
+			std::lock_guard<std::mutex> lock(_mutex);
+			_queue.clear();
 		}
 };
