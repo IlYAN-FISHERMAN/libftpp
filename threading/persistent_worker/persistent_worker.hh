@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:55:21 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 19:44:52 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 20:04:40 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class PersistentWorker{
 		std::mutex				_mutex;
 		std::condition_variable	_cv;
 		std::atomic<bool>		_stop;
+		std::atomic<bool>		_erase;
 
 		PersistentWorker(const PersistentWorker &) = delete;
 		PersistentWorker& operator=(const PersistentWorker&) = delete;

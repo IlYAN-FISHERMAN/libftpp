@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 16:07:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 19:47:52 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 20:24:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int testPersistentWorker() {
     PersistentWorker worker;
-	std::shared_ptr<IoStat> io(std::make_shared<IoStat>(1, "eos", 1, 1));
+	std::shared_ptr<IoStat> io = std::make_shared<IoStat>(1, "eos", 1, 1);
 
     auto task1 = []() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -43,11 +43,11 @@ int testPersistentWorker() {
 
     worker.addTask("io", io);
 
-    std::this_thread::sleep_for(std::chrono::seconds(4));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 	worker.removeTask("io");
 
-	threadSafeCout << "\n[END]" << *io << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(4));
-
+	io->execute();
+	threadSafeCout << *io << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     return 0;
 }

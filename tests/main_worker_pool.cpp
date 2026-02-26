@@ -6,14 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:47 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 16:13:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 20:26:58 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 int testWorkerPool() {
-    WorkerPool pool(20);
+    WorkerPool pool(10);
 
     auto job = []() {
 		volatile long long a = 0, b = 1;
@@ -40,7 +40,7 @@ int testWorkerPool() {
  //    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	// };
 
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 10; ++i) {
         pool.addJob(job);
     }
 
@@ -59,7 +59,7 @@ int testWorkerPool() {
 	// pool.wait();
 	// pool.addJob(io);
 	// pool.addJob(io);
-	threadSafeCout << std::endl << "[END]\n" << *io.get() << std::endl;
+	threadSafeCout << std::endl << "[END]\n" << *io << std::endl;
 
 
 	pool.wait();
