@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:46:26 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 13:30:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 13:28:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ IoStat::~IoStat(){}
 //--------------------------------------------
 IoStat& IoStat::operator=(const IoStat &other){
 	if (this != &other){
+		std::scoped_lock lock(_mutex, other._mutex);
 		_fileId = other._fileId;
 		_app = other._app;
 		_uid = other._uid;
@@ -55,9 +56,14 @@ IoStat& IoStat::operator=(const IoStat &other){
 //--------------------------------------------
 /// Constructor by copy constructor
 //--------------------------------------------
-IoStat::IoStat(const IoStat &other) :
-	_fileId(other._fileId), _app(other._app), _uid(other._uid),
-	_gid(other._gid), _readMarks(other._readMarks), _writeMarks(other._writeMarks){
+IoStat::IoStat(const IoStat &other){
+	std::scoped_lock lock(_mutex, other._mutex);
+	_fileId = other._fileId;
+	_app = other._app;
+	_uid = other._uid;
+	_gid = other._gid;
+	_readMarks = other._readMarks;
+	_writeMarks = other._writeMarks;
 }
 
 //--------------------------------------------
@@ -83,8 +89,7 @@ void	IoStat::printInfo(std::ostream &os, const std::string &msg){
 /// Add bytes to the corresponding Read/Write deque
 //--------------------------------------------
 void IoStat::add(size_t bytes, IoStat::Marks enumMark){
-	static std::mutex mutex;
-	std::lock_guard<std::mutex> lock(mutex);
+	std::lock_guard<std::mutex> lock(_mutex);
 	IoMark io(bytes);
 	if (enumMark == Marks::READ)
 		_readMarks.push_back(io);
@@ -97,6 +102,7 @@ void IoStat::add(size_t bytes, IoStat::Marks enumMark){
 /// and cleans the rest
 //--------------------------------------------
 uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
+	std::lock_guard<std::mutex> lock(_mutex);
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE)){
 		if (io::IoStatDebug)
 			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
@@ -143,6 +149,7 @@ uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 /// Calculate the write or read bandwidth
 //--------------------------------------------
 std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_t seconds) const{
+	std::lock_guard<std::mutex> lock(_mutex);
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
 		if constexpr (io::IoStatDebug){
 			if (seconds == 0)
@@ -195,23 +202,33 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_
 //--------------------------------------------
 /// Get current uid
 //--------------------------------------------
-uid_t IoStat::getUid() const {return (_uid);}
+uid_t IoStat::getUid() const {
+	std::lock_guard<std::mutex> lock(_mutex);
+	return (_uid);
+}
 
 //--------------------------------------------
 /// Get current gid
 //--------------------------------------------
-gid_t IoStat::getGid() const {return (_gid);}
+gid_t IoStat::getGid() const {
+	std::lock_guard<std::mutex> lock(_mutex);
+	return (_gid);
+}
 
 //--------------------------------------------
 /// Get current app name
 //--------------------------------------------
-std::string IoStat::getApp() const {return (_app);}
+std::string IoStat::getApp() const {
+	std::lock_guard<std::mutex> lock(_mutex);
+	return (_app);
+}
 
 //--------------------------------------------
 /// Get the size of corresponding
 /// READ or WRITE deck
 //--------------------------------------------
 ssize_t IoStat::getSize(Marks enumMark) const{
+	std::lock_guard<std::mutex> lock(_mutex);
 	if (enumMark == Marks::READ)
 		return _readMarks.size();
 	if (enumMark == Marks::WRITE)
@@ -224,6 +241,7 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 /// READ or WRITE deck
 //--------------------------------------------
 double IoStat::getIOPS(Marks enumMark, size_t seconds) const{
+	std::lock_guard<std::mutex> lock(_mutex);
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE)
 		|| seconds == 0)
 		return -1;

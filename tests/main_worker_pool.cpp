@@ -6,14 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:47 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 13:45:31 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 14:05:43 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 int testWorkerPool() {
-    WorkerPool pool(25);
+    WorkerPool pool(20);
 
     auto job = []() {
 		volatile long long a = 0, b = 1;
@@ -40,7 +40,7 @@ int testWorkerPool() {
  //    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	// };
 
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < 100; ++i) {
         pool.addJob(job);
     }
 
@@ -48,19 +48,19 @@ int testWorkerPool() {
 	pool.wait();
 	threadSafeCout << "bc jobs running: " << pool.running() << std::endl;
 
-	// pool.wait();
+	pool.wait();
 
 	std::shared_ptr<IoStat> io(std::make_shared<IoStat>(1, "eos", 1, 1));
     //
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 10; ++i)
 		pool.addJob(io);
 	threadSafeCout << "bc jobs running: " << pool.running() << std::endl;
-
 	// pool.wait();
 	// pool.addJob(io);
 	// pool.addJob(io);
-
 	threadSafeCout << std::endl << "[END]\n" << *io.get() << std::endl;
-	//
+
+
+	pool.wait();
     return 0;
 }

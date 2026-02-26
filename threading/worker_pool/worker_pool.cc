@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:56:32 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 14:08:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 14:00:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,13 @@ void WorkerPool::wait(){
 }
 
 void WorkerPool::addJob(const std::function<void()> &jobToExecute){
+	std::lock_guard<std::mutex> lock(_mutex);
 	_funcJobs.push_back(jobToExecute);
 	_cv.notify_one();
 }
 
 void WorkerPool::addJob(std::shared_ptr<IJobs> jobToExecute){
+	std::lock_guard<std::mutex> lock(_mutex);
 	_jobs.push_back(jobToExecute);
 	_cv.notify_one();
 }

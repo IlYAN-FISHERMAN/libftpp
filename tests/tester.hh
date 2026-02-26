@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 15:53:13 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 13:19:16 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ class IoStat : public WorkerPool::IJobs{
 		std::deque<IoMark> _writeMarks;
 
 
+		mutable std::mutex _mutex;
 		//--------------------------------------------
 		/// Deleted default constructor
 		//--------------------------------------------
