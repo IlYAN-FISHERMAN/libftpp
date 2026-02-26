@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 16:08:08 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 19:44:22 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ struct IoMark {
 	}
 };
 
-class IoStat : public WorkerPool::IJobs{
+class IoStat : public WorkerPool::IJobs, public PersistentWorker::IJobs{
 		public: enum class Marks : uint8_t{
 			READ,
 			WRITE

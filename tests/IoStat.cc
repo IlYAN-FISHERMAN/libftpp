@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:46:26 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 13:28:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 19:47:00 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,5 +311,5 @@ void IoStat::execute(){
 	for(auto it = 0; it < 1000; it++){
 		(mt() % 2) ? add(mt() % 10000, Marks::READ) : add(mt() % 10000, Marks::WRITE);
 	}
-	threadSafeCout << *this << std::endl;
+	// threadSafeCout << *this << std::endl;
 }

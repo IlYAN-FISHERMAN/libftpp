@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:55:21 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 16:23:15 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 19:44:52 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,13 @@
 #include <set>
 
 class PersistentWorker{
-	private:
+	public :
 		class IJobs{
 			public :
 				virtual ~IJobs() = default;
 				virtual void execute() = 0;
 		};
+	private :
 		std::unordered_multimap<std::string, std::shared_ptr<IJobs>>	_jobs;
 		std::unordered_multimap<std::string, std::function<void()>>		_funcJobs;
 		std::set<std::string> _jobsName;
@@ -41,7 +42,7 @@ class PersistentWorker{
 		PersistentWorker& operator=(const PersistentWorker&) = delete;
 
 		void _workLoop();
-	public:
+	public :
 		PersistentWorker();
 		~PersistentWorker();
 
@@ -49,6 +50,4 @@ class PersistentWorker{
 		void	addTask(const std::string &name, std::shared_ptr<IJobs> jobToExecute);
 
 		void 	removeTask(const std::string& name);
-
-		// size_t	size();
 };
