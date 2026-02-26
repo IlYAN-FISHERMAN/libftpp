@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:56:32 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 16:20:06 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 17:01:54 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,11 @@ WorkerPool::WorkerPool(size_t nbrOfThread) : _nbrOfThread(nbrOfThread), _stop(fa
 }
 
 WorkerPool::~WorkerPool(){
-	_stop.store(true);
-	_cv.notify_all();
+	{
+		std::unique_lock<std::mutex> lock(_mutex);
+		_stop.store(true);
+		_cv.notify_all();
+	}
 
 	for (auto &t : _threads)
 		t.join();
