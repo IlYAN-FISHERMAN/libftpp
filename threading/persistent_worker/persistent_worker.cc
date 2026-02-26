@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:39:33 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 16:50:43 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 16:00:17 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,18 @@ void PersistentWorker::_workLoop(){
 	}
 }
 
-PersistentWorker::PersistentWorker() : _thread(&PersistentWorker::_workLoop, this), _stop(false){}
+PersistentWorker::PersistentWorker() : _stop(false){
+	_thread = std::thread(&PersistentWorker::_workLoop, this);
+}
 
 PersistentWorker::~PersistentWorker(){
-	_stop.store(true);
-	_cv.notify_all();
-	_thread.join();
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_stop.store(true);
+		_cv.notify_all();
+	}
+	if (_thread.joinable())
+		_thread.join();
 }
 
 void PersistentWorker::addTask(const std::string &name, const std::function<void()> &jobToExecute){
@@ -54,6 +60,7 @@ void PersistentWorker::addTask(const std::string &name, std::shared_ptr<IJobs> j
 }
 
 void PersistentWorker::removeTask(const std::string& name){
+	std::lock_guard<std::mutex> lock(_mutex);
 	{
 		auto range = _jobs.equal_range(name);
 		if (range.first != range.second)
