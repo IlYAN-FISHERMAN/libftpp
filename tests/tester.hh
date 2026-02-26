@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 13:19:16 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 16:08:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@
 
 #include "../data_structures/data_structures.hpp"
 #include "../design_patterns/design_patterns.hh"
-#include "../threading/threading.hpp"
 #include "../iostream/thread_safe_iostream.hh"
+#include "../threading/threading.hpp"
 
 
 int testPool();
@@ -65,6 +65,8 @@ int testThreadSafeQueue();
 int testThread();
 
 int testWorkerPool();
+
+int testPersistentWorker();
 
 //--------------------------------------------
 /// The current name of the class when us

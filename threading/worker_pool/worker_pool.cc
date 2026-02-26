@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:56:32 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 14:00:20 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 16:20:06 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@ void WorkerPool::_workLoop(){
 					isIJobs = false;
 				}
 			}catch(std::exception &e){
-					threadSafeCout.setPrefix("Thread job: ");
-					threadSafeCout << e.what() << std::endl;
+				threadSafeCout.setPrefix("Thread job: ");
+				threadSafeCout << e.what() << std::endl;
+				return;
 			}
 			_workerThread++;
 		}
@@ -87,4 +88,5 @@ void WorkerPool::addJob(std::shared_ptr<IJobs> jobToExecute){
 	_cv.notify_one();
 }
 
-size_t WorkerPool::running(){return _workerThread.load();}
+size_t WorkerPool::running() const{return _workerThread.load();}
+size_t WorkerPool::size () const{return _jobs.size() + _funcJobs.size();}

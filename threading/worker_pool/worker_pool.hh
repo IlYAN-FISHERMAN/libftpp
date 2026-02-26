@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:50:12 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 14:16:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 16:11:21 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,6 @@ class WorkerPool{
 		void	addJob(std::shared_ptr<IJobs> jobToExecute);
 		void	wait();
 
-		size_t	running();
-		size_t	size();
+		size_t	running() const;
+		size_t	size() const;
 };

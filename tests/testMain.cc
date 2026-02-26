@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 15:47:10 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 16:30:00 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,9 @@ int main(void) {
 
 	// code = testThread();
 
-	code = testWorkerPool();
+	// code = testWorkerPool();
+
+	code = testPersistentWorker();
 
 	std::cout << "code: " << code << std::endl;
 	return code;

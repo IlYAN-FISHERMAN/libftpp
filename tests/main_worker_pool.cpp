@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:47 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 14:05:43 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 16:13:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,10 @@ int testWorkerPool() {
         pool.addJob(job);
     }
 
-	threadSafeCout << "bc jobs running: " << pool.running() << std::endl;
+	threadSafeCout << "bg jobs running: " << pool.running() << std::endl;
+	threadSafeCout << "size of jobs running: " << pool.size() << std::endl;
 	pool.wait();
-	threadSafeCout << "bc jobs running: " << pool.running() << std::endl;
+	threadSafeCout << "bg jobs running: " << pool.running() << std::endl;
 
 	pool.wait();
 
@@ -54,7 +55,7 @@ int testWorkerPool() {
     //
     for (int i = 0; i < 10; ++i)
 		pool.addJob(io);
-	threadSafeCout << "bc jobs running: " << pool.running() << std::endl;
+	threadSafeCout << "bg jobs running: " << pool.running() << std::endl;
 	// pool.wait();
 	// pool.addJob(io);
 	// pool.addJob(io);
