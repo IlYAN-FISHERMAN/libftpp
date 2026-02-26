@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:39:33 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 20:21:26 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/26 20:29:37 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,11 @@ void PersistentWorker::addTask(const std::string &name, const std::function<void
 }
 
 void PersistentWorker::addTask(const std::string &name, std::shared_ptr<IJobs> jobToExecute){
+	_erase.store(true);
 	std::lock_guard<std::mutex> lock(_mutex);
 	_jobs.insert({name, std::move(jobToExecute)});
 	_jobsName.insert(name);
+	_erase.store(false);
 	_cv.notify_one();
 }
 
