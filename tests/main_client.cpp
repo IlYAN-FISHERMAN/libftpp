@@ -1,11 +1,21 @@
-#include "client.hpp"
-#include "thread_safe_iostream.hpp"
-#include <string>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_client.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/27 13:50:01 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/02/27 18:52:54 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main() {
+#include "tester.hh"
+
+int testClient() {
     Client client;
 
-	client.defineAction(3, [](const Message& msg){
+	client.defineAction(Message::Type::DOUBLE, [](const Message& msg){
         int doubledValue;
         msg >> doubledValue;
         threadSafeCout << "Received a doubled value: " << doubledValue << std::endl;

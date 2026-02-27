@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 16:07:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 20:24:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/02/27 12:11:53 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ int testPersistentWorker() {
     });
 
     worker.addTask("Task2", task2);
+	worker.addTask("Task1", []() {
+        threadSafeCout << "i\'m doing something" << std::endl;
+    });
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 

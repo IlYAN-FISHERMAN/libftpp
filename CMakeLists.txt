@@ -54,7 +54,9 @@ set(SOURCES
     tests/main_thread_safe_queue.cpp
     tests/main_thread.cpp
     tests/main_worker_pool.cpp
-    tests/main_persistent_worker.cpp)
+    tests/main_persistent_worker.cpp
+    tests/main_server.cpp
+    tests/main_client.cpp)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
@@ -65,6 +67,9 @@ set(SOURCES ${SOURCES} iostream/thread_safe_iostream.cc)
 set(SOURCES
     ${SOURCES} threading/thread/thread.cc threading/worker_pool/worker_pool.cc
     threading/persistent_worker/persistent_worker.cc)
+
+set(SOURCES ${SOURCES} network/message/message.cc network/client/client.cc
+            network/server/server.cc)
 
 add_executable(libftpp ${SOURCES})
 
