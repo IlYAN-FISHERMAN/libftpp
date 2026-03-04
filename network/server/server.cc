@@ -6,38 +6,43 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/27 19:13:41 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 11:16:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hh"
 
-static bool sigHandler = false;
+static std::atomic<bool> sigHandler = false;
 static int sigCode = 0;
+static class threadSafeCout cout;
 
 static void handleSigint(int sig){
 	sigHandler = true;
 	sigCode = sig;
 }
 
-void Server::start(const size_t& p_port){
-	_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (_socket < 0)
-		throw std::runtime_error("socket failed");
-    _serv_addr.sin_family = AF_INET;
-    _serv_addr.sin_addr.s_addr = INADDR_ANY;
-    _serv_addr.sin_port = htons(p_port);
+void Server::execute(){
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (_socket < 0)
+			throw std::runtime_error("socket failed");
+		_serv_addr.sin_family = AF_INET;
+		_serv_addr.sin_addr.s_addr = INADDR_ANY;
+		_serv_addr.sin_port = htons(_p_port);
 
-    if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0){
-        throw std::runtime_error("bind failed");
-	} else if (::listen(_socket, 5) < 0)
-		throw std::runtime_error("listen failed");
-	std::signal(2, handleSigint);
-	std::signal(13, handleSigint);
-	std::signal(20, handleSigint);
-	std::cout << "Server started..." << std::endl;
-	std::cout << "Server listening..." << std::endl;
-	while (!sigHandler){
+		if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0){
+			throw std::runtime_error("bind failed");
+		} else if (::listen(_socket, 5) < 0)
+			throw std::runtime_error("listen failed");
+		std::signal(2, handleSigint);
+		std::signal(13, handleSigint);
+		std::signal(20, handleSigint);
+		cout << "Server started..." << std::endl;
+		cout << "Server listening..." << std::endl;
+	}
+	while (!sigHandler.load()){
+		std::lock_guard<std::mutex> lock(_mutex);
 		if (poll(_pollFd.data(), _pollFd.size(), -1) < 0){
 			break;
 		}
@@ -75,6 +80,12 @@ void Server::start(const size_t& p_port){
 	}
 	sigHandler = false;
 	return ;
+}
+
+void Server::start(const size_t& p_port){
+	_p_port = p_port;
+	if (!_loop.containe("server"))
+		_loop.addTask("server", std::shared_ptr<Server>(this));
 }
 
 Server::~Server(){

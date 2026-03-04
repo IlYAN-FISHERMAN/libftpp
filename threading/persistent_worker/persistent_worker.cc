@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:39:33 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 20:29:37 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 11:16:03 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,7 @@ void PersistentWorker::removeTask(const std::string& name){
 	_cv.notify_one();
 }
 
-// size_t PersistentWorker::size() const{return _workerThread.load();}
+bool PersistentWorker::containe(const char *name){
+	std::unique_lock<std::mutex> lock(_mutex);
+	return _jobsName.contains(name);
+}

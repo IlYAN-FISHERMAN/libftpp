@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/27 18:51:48 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/03 09:16:18 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int testServer() {
     Server server;
 
     // Define an action for messages of type 1 (int)
-    server.defineAction(Message::Type::INT, [&server](long long& clientID, const Message& msg){
+    server.defineAction(1, [&server](long long& clientID, const Message& msg){
         int value;
         msg >> value;
         threadSafeCout << "Received an int " << value << " from client " << clientID << std::endl;
@@ -28,7 +28,7 @@ int testServer() {
     });
 
     // Define an action for messages of type 2 (size_t followed by characters)
-    server.defineAction(Message::Type::SIZE_T, [](long long& clientID, const Message& msg){
+    server.defineAction(2, [](long long& clientID, const Message& msg){
         size_t length;
         std::string text;
         msg >> length;
@@ -48,7 +48,7 @@ int testServer() {
 
     Client client;
 
-	client.defineAction(Message::Type::DOUBLE, [](const Message& msg){
+	client.defineAction(3, [](const Message& msg){
         int doubledValue;
         msg >> doubledValue;
         threadSafeCout << "Received a doubled value: " << doubledValue << std::endl;

@@ -6,25 +6,47 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:17:16 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/27 19:01:28 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 10:47:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include <iostream>
+
 #include <sstream>
-#include <arpa/inet.h>
+#include <iterator>
+#include <iostream>
+#include <functional>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <functional>
+#include <curl/curl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <vector>
+#include <cstddef>
+#include <poll.h>
+#include <csignal>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <netdb.h>
+#include <unordered_map>
+#include <pool/pool.hh>
 
 class Message{
 	public:
-		enum Type : int{
-			INT = 1,
-			SIZE_T = 2,
-			DOUBLE = 3,
-		};
+		using Type = int;
 	private:
-		Type _type;
-		std::stringstream _value;
+		Type				_type;
+		std::stringstream	_value;
+		std::istream_iterator<std::stringstream> _index;
 	public:
 		Message(int type);
 		Message();

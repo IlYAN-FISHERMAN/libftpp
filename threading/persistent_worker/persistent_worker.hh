@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:55:21 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 20:04:40 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 11:16:12 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class PersistentWorker{
 		class IJobs{
 			public :
 				virtual ~IJobs() = default;
+
 				virtual void execute() = 0;
 		};
 	private :
@@ -51,4 +52,5 @@ class PersistentWorker{
 		void	addTask(const std::string &name, std::shared_ptr<IJobs> jobToExecute);
 
 		void 	removeTask(const std::string& name);
+		bool	containe(const char *);
 };
