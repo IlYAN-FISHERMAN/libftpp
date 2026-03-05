@@ -17,9 +17,9 @@ if(UNIX
   message(WARNING "Linux debug Compiling")
 elseif(APPLE AND CMAKE_BUILD_TYPE MATCHES "ASan")
   add_link_options(
-    -g
+    -g3
     -O0
-    -fsanitize=address,undefined
+    -fsanitize=address
     -fsanitize=pointer-compare
     -fsanitize=pointer-subtract
     -fsanitize=bounds

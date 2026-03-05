@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 18:38:13 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 20:23:49 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class threadSafeCout {
 		void prompt(const std::string& question, T& dest){
 			std::lock_guard<std::mutex> lock(_mutex);
 
-			std::cout << _prefix << question;
+			std::cout<< question;
 			std::cout.flush();
 			std::getline(std::cin, dest);
 		}

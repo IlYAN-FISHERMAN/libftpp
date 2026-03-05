@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 16:07:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/04 11:17:40 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 11:42:23 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ int testPersistentWorker() {
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     worker.addTask("io", io);
-	threadSafeCout << "containe io: " << std::boolalpha << worker.containe("io");
+	threadSafeCout << "containe io: " << std::boolalpha << worker.containe("io") << std::endl;
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 	worker.removeTask("io");
-	threadSafeCout << "containe io: " << std::boolalpha << worker.containe("io");
+	threadSafeCout << "containe io: " << std::boolalpha << worker.containe("io") << std::endl;
 
 	io->execute();
 	threadSafeCout << *io << std::endl;

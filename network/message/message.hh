@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:17:16 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/04 10:47:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 14:54:19 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <functional>
-#include <curl/curl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -39,6 +38,7 @@
 #include <netdb.h>
 #include <unordered_map>
 #include <pool/pool.hh>
+#include "../iostream/thread_safe_iostream.hh"
 
 class Message{
 	public:

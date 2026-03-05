@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/03 09:16:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/04 17:15:57 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,22 @@
 
 int testServer() {
     Server server;
+    Client client;
 
     // Define an action for messages of type 1 (int)
-    server.defineAction(1, [&server](long long& clientID, const Message& msg){
+    server.defineAction(1, [&server](long long clientID, const Message& msg){
         int value;
         msg >> value;
         threadSafeCout << "Received an int " << value << " from client " << clientID << std::endl;
 
-        // Send back a message of type 3 with double the value
-        Message replyMsg(3);
+        // Send back a message of type 1 with double the value
+        Message replyMsg(1);
         replyMsg << (value * 2);
         server.sendTo(replyMsg, clientID);
     });
 
     // Define an action for messages of type 2 (size_t followed by characters)
-    server.defineAction(2, [](long long& clientID, const Message& msg){
+    server.defineAction(2, [](long long clientID, const Message& msg){
         size_t length;
         std::string text;
         msg >> length;
@@ -42,81 +43,76 @@ int testServer() {
     });
 
     // Start the server on port 8080
-    server.start(8080);
+	try{
+		server.start(8080);
+	} catch(std::runtime_error &e){
+		threadSafeCout << "server: " << e.what() << std::endl;
+		exit(-1);
+	}
 
-   	bool quit = false;
+	try{
+		client.connect("127.0.0.1", 8080);
+	} catch(std::runtime_error &e){
+		threadSafeCout << "client: " << e.what() << std::endl;
+		return(-1);
+	}
 
-    Client client;
-
-	client.defineAction(3, [](const Message& msg){
+	client.defineAction(1, [](const Message& msg){
         int doubledValue;
-        msg >> doubledValue;
+		msg >> doubledValue;
         threadSafeCout << "Received a doubled value: " << doubledValue << std::endl;
     });
 
-    // Connect to the server
-    client.connect("localhost", 8080);
+	client.defineAction(4, [](const Message& msg){
+		std::string str;
+        msg >> str;
+        threadSafeCout << "client received : " << str << std::endl;
+    });
 
-    // Send a message of type 1 (int)
-    Message message1(1);
-    message1 << 42;
-    client.send(message1);
-
-    // Send a message of type 2 (size_t followed by characters)
-    Message message2(2);
-    std::string str = "Hello";
-    message2 << str.size();
-    for (char c : str) {
-        message2 << c;
-    }
-    client.send(message2);
-
-	while (!quit)
+	threadSafeCout << "Client updated." << std::endl;
+	threadSafeCout << "Available operations :" << std::endl;
+	threadSafeCout << " - [Q]uit|exit : close the program" << std::endl;
+	threadSafeCout << " - Any other input to continue updating the client" << std::endl;
+	threadSafeCout << "Usage - (code)|(input)" << std::endl;
+	threadSafeCout.setPrefix("[Client]: ");
+	while (true)
 	{
-		client.update();
-
-		threadSafeCout << "Client updated." << std::endl;
-		threadSafeCout << "Available operations :" << std::endl;
-		threadSafeCout << " - [Q]uit : close the program" << std::endl;
-		threadSafeCout << " - Any other input to continue updating the client" << std::endl;
-
+		// client.update();
 		std::string input;
-		std::getline(std::cin, input);
+		threadSafeCout.prompt("libftpp-> ", input);
 
 		std::transform(input.begin(), input.end(), input.begin(), 
 		               [](unsigned char c){ return std::tolower(c); });
 
-		if (input == "quit" || (input.length() == 1 && input[0] == 'q')) {
-		    quit = true;
+		if (input == "quit" || input == "q" || input == "exit")
+			break;
+		else if(input == "clear" || input == "c"){
+			threadSafeCout << "\033c" << std::flush;
+		} else if (!input.empty()){
+			if (input.find('|') == input.npos){
+				client.send(input);
+			} else {
+				int code = 0;
+				char sep = 0;
+				std::stringstream ss(input);
+				input.clear();
+				if (ss >> code >> sep >> input){
+					if (sep != '|' || !ss.eof()){
+						threadSafeCout << "Argument error" << std::endl;
+						continue;
+					}
+					Message msg(code);
+					msg << input;
+					client.send(msg);
+				} else {
+					threadSafeCout << "Argument error" << std::endl;
+					continue;
+				}
+			}
 		}
+		server.update();
 	}
 
-    // Disconnect from the server
-    client.disconnect();
-
-    return 0;
-
-	client.connect("localhost", 8080);
-	while (!quit)
-	{
-		client.update();
-
-		threadSafeCout << "Server updated." << std::endl;
-		threadSafeCout << "Available operations :" << std::endl;
-		threadSafeCout << " - [Q]uit : close the program" << std::endl;
-		threadSafeCout << " - Any other input to continue updating the server" << std::endl;
-
-		std::string input;
-		threadSafeCout.prompt("", input);
-
-		std::transform(input.begin(), input.end(), input.begin(), 
-		               [](unsigned char c){ return std::tolower(c); });
-
-		if (input == "quit" || (input.length() == 1 && input[0] == 'q')) {
-		    quit = true;
-		}
-	}
-	
     return 0;
 }
 
