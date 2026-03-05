@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 13:50:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/03 09:28:44 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/05 19:36:27 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ int testClient() {
 
 	while (!quit)
 	{
-		client.update();
-
 		threadSafeCout << "Client updated." << std::endl;
 		threadSafeCout << "Available operations :" << std::endl;
 		threadSafeCout << " - [Q]uit : close the program" << std::endl;

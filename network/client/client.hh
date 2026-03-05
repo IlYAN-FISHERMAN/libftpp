@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:52 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/05 11:42:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/05 19:34:47 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,4 @@ class Client{
 		void defineAction(const Message::Type& messageType, const std::function<void(const Message& msg)>& action);
 		void send(const Message& message);
 		void send(std::string&);
-		void update();
 };

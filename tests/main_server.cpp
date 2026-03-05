@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/04 17:15:57 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/05 19:35:22 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,22 @@ int testServer() {
         server.sendTo(replyMsg, clientID);
     });
 
+    server.defineAction(10, [&server](long long clientID, const Message& msg){
+		std::string value;
+        Message replyMsg(10);
+
+        msg >> value;
+		if (value != "ping")
+			replyMsg << "ping?";
+		else{
+			replyMsg << "pong";
+		}
+
+        server.sendTo(replyMsg, clientID);
+    });
+
     // Define an action for messages of type 2 (size_t followed by characters)
-    server.defineAction(2, [](long long clientID, const Message& msg){
+    server.defineAction(2, [&server](long long clientID, const Message& msg){
         size_t length;
         std::string text;
         msg >> length;
@@ -40,6 +54,9 @@ int testServer() {
             text.push_back(c);
         }
         threadSafeCout << "Received a string '" << text << "' of length " << length << " from client " << clientID << std::endl;
+		Message tmp(2);
+		tmp << "message received";
+		server.sendTo(tmp, clientID);
     });
 
     // Start the server on port 8080
@@ -63,21 +80,31 @@ int testServer() {
         threadSafeCout << "Received a doubled value: " << doubledValue << std::endl;
     });
 
+    client.defineAction(2, [](const Message& msg){
+		threadSafeCout << "server say \"" << msg.str() << "\"" << std::endl;
+    });
+
 	client.defineAction(4, [](const Message& msg){
 		std::string str;
         msg >> str;
         threadSafeCout << "client received : " << str << std::endl;
     });
 
-	threadSafeCout << "Client updated." << std::endl;
+	client.defineAction(10, [](const Message& msg){
+		std::string str;
+        msg >> str;
+		threadSafeCout << str << std::endl;
+		if (str == "pong")
+			threadSafeCout << "server work!" << std::endl;
+    });
+
 	threadSafeCout << "Available operations :" << std::endl;
 	threadSafeCout << " - [Q]uit|exit : close the program" << std::endl;
 	threadSafeCout << " - Any other input to continue updating the client" << std::endl;
-	threadSafeCout << "Usage - (code)|(input)" << std::endl;
+	threadSafeCout << "Usage - (code)|(input), (string)" << std::endl << std::endl;
 	threadSafeCout.setPrefix("[Client]: ");
 	while (true)
 	{
-		// client.update();
 		std::string input;
 		threadSafeCout.prompt("libftpp-> ", input);
 
@@ -99,6 +126,7 @@ int testServer() {
 				if (ss >> code >> sep >> input){
 					if (sep != '|' || !ss.eof()){
 						threadSafeCout << "Argument error" << std::endl;
+						threadSafeCout << "error with: " << input << std::endl;
 						continue;
 					}
 					Message msg(code);
@@ -110,7 +138,6 @@ int testServer() {
 				}
 			}
 		}
-		server.update();
 	}
 
     return 0;

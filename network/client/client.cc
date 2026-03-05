@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/04 17:14:47 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/05 19:56:59 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,31 +50,37 @@ void Client::send(const Message& msg){
 	std::string value;
 	msg >> value;
 	std::string data = (std::to_string(msg.type()) + '|' + value + '\n');
-	::send(_socket, data.c_str(), data.size(), 0);
+	threadSafeCout << "send " << ::send(_socket, data.c_str(), data.size(), 0) << " bytes" << std::endl;
 	char buffer[1024];
 	ssize_t n = read(_socket, buffer, sizeof(buffer));
 	if (n > 0) {
 		int code = 0;
 		char sep = 0;
 		std::stringstream ss(buffer);
-		std::string tmp;
-		if (ss >> code >> sep >> tmp){
-			if (sep != '|' || !ss.eof()){
-				threadSafeCout << "Argument error" << std::endl;
+		if (ss.str().find('|') == std::string::npos)
+			threadSafeCout << "received: " << ss.str() << std::endl;
+		else if (ss >> code >> sep){
+			if (sep != '|'){
+				threadSafeCout << "action bad format" << std::endl;
 				return;
 			}
-			Message msg(code);
-			msg << tmp;
-			_actions[code](msg);
-		} else {
-				threadSafeCout << "received: " << std::endl;
-		}
-	} else
+			if (_actions.find(code) != _actions.end()){
+				Message msg(code);
+				std::string reply;
+				std::getline(ss >> std::ws, reply);
+				msg << reply;
+				_actions[code](msg);
+				return;
+			} else
+				threadSafeCout << "action not found" << std::endl;
+		}else
+			threadSafeCout << "action bad format" << std::endl;
+	}else
 		threadSafeCout << "send failed: " << n << std::endl;
 }
 
 void Client::send(std::string &msg){
-	threadSafeCout << "send code: " << ::send(_socket, msg.c_str(), msg.size(), 0) << std::endl;
+	threadSafeCout << "send " << ::send(_socket, msg.c_str(), msg.size(), 0) << " bytes" << std::endl;
 	char buffer[1024];
 	ssize_t n = read(_socket, buffer, sizeof(buffer));
 	if (n > 0) {
@@ -82,24 +88,4 @@ void Client::send(std::string &msg){
 		threadSafeCout << "server reponse: " << reply << std::endl;
 	} else
 		threadSafeCout << "send failed: " << n << std::endl;
-}
-
-void Client::update(){
-	// if (_socket < 0)
-	// 	return;
-	// char buffer[1024];
- //    int received = recv(_socket, buffer, sizeof(buffer)-1, MSG_DONTWAIT);
-	//
-	// if (received > 0){
-	// 	buffer[received] = '\0';
-	// 	std::string line(buffer);
-	// 	size_t sep = line.find('|');
-	// 	if (sep != std::string::npos){
-	// 		int typeInt = std::stoi(line.substr(0, sep));
-	// 		Message msg(typeInt);
-	// 		msg << line.substr(sep+1);
-	// 		if (_actions.count(msg.type()))
-	// 			_actions[msg.type()](msg);
-	// 	}
-	// }
 }

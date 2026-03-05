@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/05 11:44:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/05 19:38:34 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,4 @@ class Server{
 
 		void defineAction(const Message::Type& messageType, const std::function<void(long long clientID, const Message& msg)>& action);
 		void sendTo(const Message& message, long long clientID);
-		// void sendToArray(const Message& message, std::vector<long long> clientIDs);
-		// void sendToAll(const Message& message);
-
-		void update();
 };

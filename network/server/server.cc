@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/05 11:45:21 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/05 19:59:30 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,10 @@ void Server::_workerLoop(){
 		if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0){
 			_exc = std::make_exception_ptr("bind failed");
 			return ;
-		} else if (::listen(_socket, 5) < 0)
+		} else if (::listen(_socket, 5) < 0){
 			_exc =  std::make_exception_ptr("listen failed");
+			return;
+		}
 		_pollFd.push_back(pollfd{_socket, POLLIN, 0});
 		_msg.push_back("");
 		cout << "listening..." << std::endl;
@@ -46,9 +48,7 @@ void Server::_workerLoop(){
 		}
 
 		for(size_t i = 0; i < _pollFd.size(); ++i){
-
 			if (_pollFd[i].revents & POLLIN){
-
 				if (_pollFd[i].fd == _socket){
 					int acpt = accept(_socket, 0x00, 0x00);
 					if (acpt >= 0){
@@ -58,9 +58,9 @@ void Server::_workerLoop(){
 					}
 					continue;
 				}
-
 				char buffer[BUFFER_SIZE]{0};
 				ssize_t n = read(_pollFd[i].fd, buffer, sizeof(buffer));
+				cout << "read " << n << " bytes" << std::endl;
 				if (n <= 0){
 					cout << "close client" << std::endl;
 					close(_pollFd[i].fd);
@@ -68,20 +68,25 @@ void Server::_workerLoop(){
 					_msg.erase(_msg.begin() + i);
 					i--;
 				} else{
-					cout << "read data" << std::endl;
 					_msg[i].append(buffer, n);
 					std::stringstream ss(_msg[i]);
 					int code = 0;
 					char sep = 0;
-					std::string tmp;
-					if (ss >> code >> sep >> tmp){
+					if (ss >> code >> sep){
 						Message msg(code);
-						msg << tmp;
-						if (_actions.find(code) != _actions.end())
+						if (_actions.find(code) != _actions.end() && sep == '|'){
+							std::string tmp;
+							std::getline(ss >> std::ws, tmp);
+							msg << tmp;
 							_actions[code](_pollFd[i].fd, msg);
+						}
+						else{
+							threadSafeCout << "send error: " << ::send(_pollFd[i].fd, "action not found", 15, 0) << std::endl;
+						}
 					}
-					else
+					else{
 						::send(_pollFd[i].fd, _msg[i].c_str(), _msg[i].size(), 0);
+					}
 					_msg[i].clear();
 				}
 			}
@@ -97,6 +102,8 @@ void Server::start(const size_t& p_port){
 		_loop = std::thread(&Server::_workerLoop, this);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	if (!_running.load() && _exc)
+		std::rethrow_exception(_exc);
 }
 
 void Server::disconnect(){
@@ -112,7 +119,7 @@ Server::~Server(){
 	disconnect();
 }
 
-Server::Server(){
+Server::Server() : _exc(nullptr){
 	_running.store(false);
 }
 
@@ -122,17 +129,8 @@ void Server::defineAction(const Message::Type& messageType, const std::function<
 }
 
 void Server::sendTo(const Message& message, long long clientID){
-	std::string value;
-	message >> value;
-	std::string data = (std::to_string(message.type()) + '|' + value + '\n');
+	std::string data = (std::to_string(message.type()) + '|' + message.str() + '\n');
 	threadSafeCout << "message type: " << message.type() << std::endl;
-	::send(clientID, data.c_str(), data.size(), 0);
+	threadSafeCout << "send to client[" << clientID << "] "
+		<< ::send(clientID, data.c_str(), data.size(), 0) << " bytes" << std::endl;
 }
-
-// void sendToArray(const Message& message, std::vector<long long> clientIDs){}
-//
-// void sendToAll(const Message& message){
-//
-// }
-
-void Server::update(){}
