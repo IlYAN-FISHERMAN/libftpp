@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/27 13:50:49 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/06 17:22:09 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@
 #include "../iostream/thread_safe_iostream.hh"
 #include "../threading/threading.hh"
 #include "../network/network.hh"
+#include "../mathematics/mathematics.hh"
 
+
+//--------------------------------------------
 
 int testPool();
 int deleteTestPool();
@@ -46,6 +49,8 @@ int myTestPool();
 
 int testDataBuffer();
 int myTestDataBuffer();
+
+//--------------------------------------------
 
 int testMemento();
 int myTestMemento();
@@ -58,20 +63,34 @@ int testSingleton();
 int testStateMachine();
 int myTestStateMachine();
 
+//--------------------------------------------
+
 int testThreadSafeIostream();
 int myTestThreadSafeIostream();
 
 int testThreadSafeQueue();
-
 int testThread();
-
 int testWorkerPool();
-
 int testPersistentWorker();
 
-int testClient();
+//--------------------------------------------
 
+int testClient();
 int testServer();
+
+//--------------------------------------------
+
+int testIVector2();
+
+int testIVector3();
+
+int testrandom_2D_coordinate_generato();
+
+int perlin_noise_2D();
+
+//--------------------------------------------
+
+
 
 //--------------------------------------------
 /// The current name of the class when us

@@ -1,7 +1,18 @@
-#include <iostream>
-#include "ivector2.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_vector_2.cpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/06 17:12:27 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/06 18:13:25 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main() {
+#include "tester.hh"
+
+int testIVector2() {
     IVector2<int> vec1(3, 4);
     IVector2<int> vec2(1, 2);
     
@@ -27,17 +38,21 @@ int main() {
     // Expected: vec1 / vec2 = (3, 2)
 
     bool isEqual = vec1 == vec2;
-    std::cout << "vec1 == vec2: " << (isEqual ? "true" : "false") << "" << std::endl; 
+    std::cout << "vec1 == vec2: " << std::boolalpha << isEqual << "" << std::endl; 
     // Expected: vec1 == vec2: false
 
     bool isNotEqual = vec1 != vec2;
-    std::cout << "vec1 != vec2: " << (isNotEqual ? "true" : "false") << "" << std::endl; 
+    std::cout << "vec1 != vec2: " << std::boolalpha << isNotEqual << "" << std::endl; 
     // Expected: vec1 != vec2: true
 
     // Test additional methods
     float len = vec1.length();
     std::cout << "Length of vec1: " << len << "" << std::endl; 
     // Expected: Length of vec1: 5 (or sqrt(3*3 + 4*4))
+
+    float len2 = vec2.length();
+    std::cout << "Length of vec2: " << len2 << "" << std::endl; 
+	// Expected ~ 2.23607
 
     auto normVec = vec1.normalize();
     std::cout << "Normalized vec1 = (" << normVec.x << ", " << normVec.y << ")" << std::endl; 
@@ -47,10 +62,13 @@ int main() {
     std::cout << "Dot product of vec1 and vec2: " << dotProd << "" << std::endl; 
     // Expected: Dot product of vec1 and vec2: 11 (or 3*1 + 4*2)
 
-    auto crossProd = vec1.cross();
+    auto crossProd = vec1.cross(); //wrong
     std::cout << "Cross product of vec1: (" << crossProd.x << ", " << crossProd.y << ")" << std::endl; 
     // Expected: Cross product of vec1: (some_value, some_value)
 
-    return 0;
-}
+    auto crossProdReal = vec1.cross(vec2);
+    std::cout << "Cross product of vec1 and vect2: " << crossProdReal << std::endl;
+    // Expected: Cross product of vec1 and vec2 : 2
 
+   return 0;
+}

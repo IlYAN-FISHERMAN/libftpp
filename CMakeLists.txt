@@ -56,7 +56,9 @@ set(SOURCES
     tests/main_worker_pool.cpp
     tests/main_persistent_worker.cpp
     tests/main_server.cpp
-    tests/main_client.cpp)
+    tests/main_client.cpp
+	tests/main_vector_2.cpp
+	tests/main_vector_3.cpp)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 

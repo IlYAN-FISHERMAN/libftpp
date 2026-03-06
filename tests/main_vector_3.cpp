@@ -1,7 +1,18 @@
-#include <iostream>
-#include "ivector3.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_vector_3.cpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/06 18:34:57 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main() {
+#include "tester.hh"
+
+int testIVector3() {
     IVector3<int> vec1(3, 4, 1);
     IVector3<int> vec2(1, 2, 3);
     
@@ -40,7 +51,7 @@ int main() {
 
     auto normVec = vec1.normalize();
     std::cout << "Normalized vec1 = (" << normVec.x << ", " << normVec.y << ", " << normVec.z << ")" << std::endl;
-    // Expected: Normalized vec1 = (some_value, some_value, some_value)
+    // Expected: Normalized vec1 = (0.588348, 0.784465, 0.196116)
 
     float dotProd = vec1.dot(vec2);
     std::cout << "Dot product of vec1 and vec2: " << dotProd << std::endl;
@@ -48,7 +59,7 @@ int main() {
 
     auto crossProd = vec1.cross(vec2);
     std::cout << "Cross product of vec1 and vec2: (" << crossProd.x << ", " << crossProd.y << ", " << crossProd.z << ")" << std::endl;
-    // Expected: Cross product of vec1 and vec2: (some_value, some_value, some_value)
+    // Expected: Cross product of vec1 and vec2: (10, -8, 2)
 
     return 0;
 }
