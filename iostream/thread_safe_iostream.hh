@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/06 16:54:21 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/06 16:00:12 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 class threadSafeCout {
 	private :
 		static inline std::mutex _mutex;
-		static inline std::mutex _stdin;
 		static thread_local std::stringstream _msg;
 		static thread_local std::string _prefix;
 
@@ -44,7 +43,6 @@ class threadSafeCout {
 		template<typename T>
 		void prompt(const std::string& question, T& dest){
 			*this << question << std::flush;
-			std::lock_guard<std::mutex> lock(_stdin);
 			std::getline(std::cin, dest);
 		}
 };
