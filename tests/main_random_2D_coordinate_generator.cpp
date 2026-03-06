@@ -1,7 +1,16 @@
-#include <iostream>
-#include <vector>
-#include <utility>
-#include "random_2D_coordinate_generator.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_random_2D_coordinate_generator.cpp            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/06 18:39:40 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/06 18:39:47 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tester.hh"
 
 int main() {
     Random2DCoordinateGenerator randomGenerator;
