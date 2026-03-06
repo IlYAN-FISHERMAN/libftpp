@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/05 19:56:59 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/06 15:20:35 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void Client::send(const Message& msg){
 	if (n > 0) {
 		int code = 0;
 		char sep = 0;
+		buffer[n] = '\0';
 		std::stringstream ss(buffer);
 		if (ss.str().find('|') == std::string::npos)
 			threadSafeCout << "received: " << ss.str() << std::endl;
