@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/05 19:35:22 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/06 16:48:05 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ int testServer() {
 	threadSafeCout.setPrefix("[Client]: ");
 	while (true)
 	{
+		// std::this_thread::sleep_for(std::chrono::seconds(1000));
 		std::string input;
 		threadSafeCout.prompt("libftpp-> ", input);
 
