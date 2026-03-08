@@ -59,7 +59,8 @@ set(SOURCES
     tests/main_client.cpp
 	tests/main_vector_2.cpp
 	tests/main_vector_3.cpp
-	tests/main_random_2D_coordinate_generator.cpp)
+	tests/main_random_2D_coordinate_generator.cpp
+	tests/main_perlin_2D.cpp)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
@@ -74,7 +75,8 @@ set(SOURCES
 set(SOURCES ${SOURCES} network/message/message.cc network/client/client.cc
             network/server/server.cc)
 
-set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc)
+set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc
+mathematics/perlin_noise_2D/perlin_noise_2D.cc)
 
 add_executable(libftpp ${SOURCES})
 

@@ -1,8 +1,18 @@
-#include <iostream>
-#include <cmath>
-#include "perlin_noise_2D.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_perlin_2D.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/08 10:26:02 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/08 10:26:20 by ilyanar          ###   LAUSANNE.ch       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main() {
+#include "tester.hh"
+
+int testPerlin_noise_2D(){
     PerlinNoise2D perlin;
 
     const int gridSize = 10;
