@@ -58,7 +58,8 @@ set(SOURCES
     tests/main_server.cpp
     tests/main_client.cpp
 	tests/main_vector_2.cpp
-	tests/main_vector_3.cpp)
+	tests/main_vector_3.cpp
+	tests/main_random_2D_coordinate_generator.cpp)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
@@ -72,6 +73,8 @@ set(SOURCES
 
 set(SOURCES ${SOURCES} network/message/message.cc network/client/client.cc
             network/server/server.cc)
+
+set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc)
 
 add_executable(libftpp ${SOURCES})
 

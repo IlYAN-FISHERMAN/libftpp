@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/06 18:24:42 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/07 16:01:22 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ int main(void) {
 	// code = testServer();
 
 	// code = testIVector2();
-	code = testIVector3();
+	// code = testIVector3();
+	code = testRandom_2D_coordinate_generator();
 
 	std::cout << "code: " << code << std::endl;
 	return code;

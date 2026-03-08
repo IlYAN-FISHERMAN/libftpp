@@ -6,13 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:39:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/06 18:39:47 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/07 16:10:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
-int main() {
+int testRandom_2D_coordinate_generator(){
     Random2DCoordinateGenerator randomGenerator;
 
     // Store a list of coordinates to test
