@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 19:53:09 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 10:48:02 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,78 +20,80 @@
 
 #pragma once
 
-template <typename TType>
-class Pool{
-	public:
-		struct PoolAlive{
-			bool alive;
-			PoolAlive() : alive(true){}
-		};
+namespace lpp{
+	template <typename TType>
+	class pool{
+		public:
+			struct poolAlive{
+				bool alive;
+				poolAlive() : alive(true){}
+			};
 
-		class Object{
-			protected :
-				TType							*__obj;
-				Pool							*__pool;
-				std::weak_ptr<PoolAlive>		__alive;
-				
-				friend Pool;
+			class Object{
+				protected :
+					TType							*__obj;
+					pool							*__pool;
+					std::weak_ptr<poolAlive>		__alive;
+					
+					friend pool;
 
-				explicit Object(TType *, Pool *);
+					explicit Object(TType *, pool *);
 
-				Object() = delete;
-				Object(const Object &) = delete;
-				Object& operator=(const Object &) = delete;
+					Object() = delete;
+					Object(const Object &) = delete;
+					Object& operator=(const Object &) = delete;
 
-			public :
-				~Object();
-				Object& operator=(Object &&) noexcept;
-				Object(Object &&) noexcept;
+				public :
+					~Object();
+					Object& operator=(Object &&) noexcept;
+					Object(Object &&) noexcept;
 
-				TType*	operator->();
-				TType*	get();
-				TType&	operator*();
-				bool	ok();
-		};
-	private:
-		std::vector<TType*>								_pool;
-		std::vector<std::size_t>						_poolSize;
-		std::allocator<TType>							_alloc;
-		std::allocator_traits<std::allocator<TType>>	_traits;
-		std::vector<TType *>							_freeList;
-		std::size_t										_maxSize;
-		std::size_t										_size;
-		std::shared_ptr<PoolAlive>						_alive;
+					TType*	operator->();
+					TType*	get();
+					TType&	operator*();
+					bool	ok();
+			};
+		private:
+			std::vector<TType*>								_pool;
+			std::vector<std::size_t>						_poolSize;
+			std::allocator<TType>							_alloc;
+			std::allocator_traits<std::allocator<TType>>	_traits;
+			std::vector<TType *>							_freeList;
+			std::size_t										_maxSize;
+			std::size_t										_size;
+			std::shared_ptr<poolAlive>						_alive;
 
-		Pool(const Pool&) = delete;
-		Pool& operator=(const Pool&) = delete;
-		Pool(Pool&&) = delete;
-		Pool& operator=(Pool&&) = delete;
+			pool(const pool&) = delete;
+			pool& operator=(const pool&) = delete;
+			pool(pool&&) = delete;
+			pool& operator=(pool&&) = delete;
 
-	public:
-		Pool();
-		~Pool();
+		public:
+			pool();
+			~pool();
 
-		std::size_t capacity() noexcept;
+			std::size_t capacity() noexcept;
 
-		std::size_t maxSize() noexcept;
+			std::size_t maxSize() noexcept;
 
-		std::size_t size() noexcept;
+			std::size_t size() noexcept;
 
-		bool empty() noexcept;
+			bool empty() noexcept;
 
-		//--------------------------------------------
-		/// Allocates a certain number of TType objects
-		/// withing the Pool
-		//--------------------------------------------
-		void resize(const size_t &numberOfObjectStored) noexcept(false);
+			//--------------------------------------------
+			/// Allocates a certain number of TType objects
+			/// withing the pool
+			//--------------------------------------------
+			void resize(const size_t &numberOfObjectStored) noexcept(false);
 
-		//--------------------------------------------
-		/// Creates a Pool::Object containing a
-		/// pre-allocated object, using the constructor
-		/// with parameters as defined by TArgs definition.
-		//--------------------------------------------
-		template<typename... TArgs>
-		Pool::Object acquire(TArgs &&...p_args) noexcept(false);
-};
+			//--------------------------------------------
+			/// Creates a pool::Object containing a
+			/// pre-allocated object, using the constructor
+			/// with parameters as defined by TArgs definition.
+			//--------------------------------------------
+			template<typename... TArgs>
+			pool::Object acquire(TArgs &&...p_args) noexcept(false);
+	};
+}
 
 #include "pool.tpp"

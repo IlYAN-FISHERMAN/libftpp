@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:49:56 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 15:52:19 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:13:31 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ enum class EventType {
     EVENT_THREE
 };
 
-int myTestObserver() {
-	Observer<EventType, std::any> observer;
-	Observer<EventType, const char*, IoStat, double> big;
-	Observer<EventType, const char*, IoStat, double> cpy;
+int myTestobserver() {
+	lpp::observer<EventType, std::any> observer;
+	lpp::observer<EventType, const char*, IoStat, double> big;
+	lpp::observer<EventType, const char*, IoStat, double> cpy;
 
 	IoStat io(1, "fdf", 10, 11);
 	std::mt19937_64	mt{};
@@ -62,8 +62,8 @@ int myTestObserver() {
 	return 0;
 }
 
-int testObserver() {
-    Observer<EventType> observer;
+int testobserver() {
+    lpp::observer<EventType> observer;
 
     // Subscribe to EVENT_ONE
     observer.subscribe(EventType::EVENT_ONE, []() {

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 11:13:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/08 10:24:04 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 10:52:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@
 #include <cmath>
 #include <algorithm>
 
-Random2DCoordinateGenerator::Random2DCoordinateGenerator(){
+lpp::random_2D_coordinate_generator::random_2D_coordinate_generator(){
 		srand(time(NULL));
 		__seed = rand() % 1000;
 }
 
-Random2DCoordinateGenerator::~Random2DCoordinateGenerator(){}
+lpp::random_2D_coordinate_generator::~random_2D_coordinate_generator(){}
 
-long long Random2DCoordinateGenerator::operator()(const long long& x, const long long& y, long mod){
+long long lpp::random_2D_coordinate_generator::operator()(const long long& x, const long long& y, long mod){
 	long seed = __seed;
 	std::string tmp;
 	if (mod == 0)
@@ -41,4 +41,4 @@ long long Random2DCoordinateGenerator::operator()(const long long& x, const long
 	return randomValue % mod;
 }
 
-long long Random2DCoordinateGenerator::seed(){return __seed;}
+long long lpp::random_2D_coordinate_generator::seed(){return __seed;}

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/09 23:01:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 20:30:11 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 10:48:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 
 
 template<typename TType>
-Pool<TType>::Pool() : _maxSize(0), _size(0), _alive(std::make_shared<PoolAlive>()){}
+lpp::pool<TType>::pool() : _maxSize(0), _size(0), _alive(std::make_shared<poolAlive>()){}
 
 template<typename TType>
-Pool<TType>::~Pool(){
+lpp::pool<TType>::~pool(){
 	for (std::size_t it = 0; it < _pool.size(); it++)
 		_alloc.deallocate(_pool[it], _poolSize[it]);
 	if (_alive)
@@ -28,16 +28,16 @@ Pool<TType>::~Pool(){
 
 
 template<typename TType>
-Pool<TType>::Object::Object(TType *obj, Pool *pool) : __obj(obj), __pool(pool), __alive(pool->_alive){}
+lpp::pool<TType>::Object::Object(TType *obj, pool *pool) : __obj(obj), __pool(pool), __alive(pool->_alive){}
 
 template<typename TType>
-Pool<TType>::Object::Object(Object &&other) noexcept
+lpp::pool<TType>::Object::Object(Object &&other) noexcept
 : __obj(std::move(other.__obj)), __pool(other.__pool), __alive(other.__alive){
 	other.__obj = nullptr;
 }
 
 template<typename TType>
-Pool<TType>::Object::~Object(){
+lpp::pool<TType>::Object::~Object(){
 
 	auto lock = __alive.lock();
 	if (!lock)
@@ -53,7 +53,7 @@ Pool<TType>::Object::~Object(){
 }
 
 template<typename TType>
-Pool<TType>::Object&	Pool<TType>::Object::operator=(Object &&other) noexcept{
+lpp::pool<TType>::Object&	lpp::pool<TType>::Object::operator=(Object &&other) noexcept{
 	if (this != &other){
 	auto lock = __alive.lock();
 		if ((lock || lock->alive) && __obj){
@@ -71,10 +71,10 @@ Pool<TType>::Object&	Pool<TType>::Object::operator=(Object &&other) noexcept{
 
 //--------------------------------------------
 /// Allocates a certain number of TType objects
-/// withing the Pool
+/// withing the pool
 //--------------------------------------------
 template<typename TType>
-void Pool<TType>::resize(const size_t &numberOfObjectStored) noexcept(false){
+void lpp::pool<TType>::resize(const size_t &numberOfObjectStored) noexcept(false){
 	if (numberOfObjectStored < 0 || numberOfObjectStored == _maxSize)
 		return ;
 	if (!_pool.empty()){
@@ -83,11 +83,11 @@ void Pool<TType>::resize(const size_t &numberOfObjectStored) noexcept(false){
 		} else if (numberOfObjectStored > _maxSize){
 			std::size_t max(std::accumulate(_poolSize.begin(), _poolSize.end(), static_cast<size_t>(0)));
 			if (numberOfObjectStored > max){
-				std::size_t newSizePool = numberOfObjectStored - max;
-				_pool.push_back(std::move(_alloc.allocate(newSizePool)));
-				_poolSize.push_back(newSizePool);
+				std::size_t newSizepool = numberOfObjectStored - max;
+				_pool.push_back(std::move(_alloc.allocate(newSizepool)));
+				_poolSize.push_back(newSizepool);
 				_freeList.reserve(max);
-				for (std::size_t it = 0; it < newSizePool; it++)
+				for (std::size_t it = 0; it < newSizepool; it++)
 					_freeList.push_back((_pool.back() + it));
 			}
 			_maxSize = numberOfObjectStored;
@@ -103,12 +103,12 @@ void Pool<TType>::resize(const size_t &numberOfObjectStored) noexcept(false){
 }
 
 //--------------------------------------------
-/// Creates a Pool::Object containing a
+/// Creates a pool::Object containing a
 /// pre-allocated object, using the constructor
 /// with parameters as defined by TArgs definition.
 //--------------------------------------------
 template<typename TType> template<typename... TArgs>
-Pool<TType>::Object Pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
+lpp::pool<TType>::Object lpp::pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
 	if (_size >= _maxSize || _freeList.size() <= 0)
 		throw std::out_of_range("out of range");
 
@@ -120,10 +120,10 @@ Pool<TType>::Object Pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
 }
 
 template<typename TType>
-TType*	Pool<TType>::Object::operator->(){
+TType*	lpp::pool<TType>::Object::operator->(){
 	auto lock = __alive.lock();
 	if (!lock || !__alive.lock().get()->alive)
-		throw std::logic_error("Pool was destroyed");
+		throw std::logic_error("pool was destroyed");
 	if (!__obj)
 		throw std::range_error("Object is empty");
 
@@ -131,19 +131,19 @@ TType*	Pool<TType>::Object::operator->(){
 }
 
 template<typename TType>
-TType&	Pool<TType>::Object::operator*(){return *__obj;}
+TType&	lpp::pool<TType>::Object::operator*(){return *__obj;}
 
 template<typename TType>
-TType*	Pool<TType>::Object::get(){return __obj;}
+TType*	lpp::pool<TType>::Object::get(){return __obj;}
 
 template<typename TType>
-std::size_t Pool<TType>::capacity() noexcept{return ((_size >= _maxSize) ? 0 : _maxSize - _size);}
+std::size_t lpp::pool<TType>::capacity() noexcept{return ((_size >= _maxSize) ? 0 : _maxSize - _size);}
 
 template<typename TType>
-std::size_t Pool<TType>::maxSize() noexcept{return _maxSize;}
+std::size_t lpp::pool<TType>::maxSize() noexcept{return _maxSize;}
 
 template<typename TType>
-std::size_t Pool<TType>::size() noexcept{return _size;}
+std::size_t lpp::pool<TType>::size() noexcept{return _size;}
 
 template<typename TType>
-bool Pool<TType>::empty() noexcept{return _pool.empty();}
+bool lpp::pool<TType>::empty() noexcept{return _pool.empty();}

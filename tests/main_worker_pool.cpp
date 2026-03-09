@@ -6,14 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:47 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 20:26:58 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:21:50 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 int testWorkerPool() {
-    WorkerPool pool(10);
+	lpp::worker_pool pool(10);
 
     auto job = []() {
 		volatile long long a = 0, b = 1;
@@ -43,11 +43,12 @@ int testWorkerPool() {
     for (int i = 0; i < 10; ++i) {
         pool.addJob(job);
     }
+	lpp::cout.setPrefix("thread 1: ");
 
-	threadSafeCout << "bg jobs running: " << pool.running() << std::endl;
-	threadSafeCout << "size of jobs running: " << pool.size() << std::endl;
+	lpp::cout << "bg jobs running: " << pool.running() << std::endl;
+	lpp::cout << "size of jobs running: " << pool.size() << std::endl;
 	pool.wait();
-	threadSafeCout << "bg jobs running: " << pool.running() << std::endl;
+	lpp::cout << "bg jobs running: " << pool.running() << std::endl;
 
 	pool.wait();
 
@@ -55,11 +56,11 @@ int testWorkerPool() {
     //
     for (int i = 0; i < 10; ++i)
 		pool.addJob(io);
-	threadSafeCout << "bg jobs running: " << pool.running() << std::endl;
+	lpp::cout << "bg jobs running: " << pool.running() << std::endl;
 	// pool.wait();
 	// pool.addJob(io);
 	// pool.addJob(io);
-	threadSafeCout << std::endl << "[END]\n" << *io << std::endl;
+	lpp::cout << std::endl << "[END]\n" << *io << std::endl;
 
 
 	pool.wait();

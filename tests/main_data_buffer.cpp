@@ -6,49 +6,49 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:38 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 15:52:08 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:13:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
-class TestDataBufferObject {
+class Testdata_bufferObject {
 public:
     int x;
     std::string y;
 	double z;
 
-    friend DataBuffer& operator<<(DataBuffer& p_buffer, const TestDataBufferObject& p_object) {
+    friend lpp::data_buffer& operator<<(lpp::data_buffer& p_buffer, const Testdata_bufferObject& p_object) {
         p_buffer << p_object.x << p_object.y << p_object.z;
         return p_buffer;
     }
 
-    friend DataBuffer& operator>>(DataBuffer& p_buffer, TestDataBufferObject& p_object) {
+    friend lpp::data_buffer& operator>>(lpp::data_buffer& p_buffer, Testdata_bufferObject& p_object) {
         p_buffer >> p_object.x >> p_object.y >> p_object.z;
         return p_buffer;
     }
 };
 
-int myTestDataBuffer() {
+int myTestdata_buffer() {
 	return 0;
 }
 
-int testDataBuffer() {
-    DataBuffer myBuffer;
+int testdata_buffer() {
+    lpp::data_buffer myBuffer;
 
-    TestDataBufferObject obj1;
+    Testdata_bufferObject obj1;
     obj1.x = 42;
     obj1.y = "Hello";
 	obj1.z = 52.52;
 
-    TestDataBufferObject obj2;
+    Testdata_bufferObject obj2;
     obj2.x = 99;
     obj2.y = "World";
 	obj2.z = 42.4242;
 
     myBuffer << obj1 << obj2;
 
-    TestDataBufferObject deserializedObj1, deserializedObj2, deserializedObj3;
+    Testdata_bufferObject deserializedObj1, deserializedObj2, deserializedObj3;
 
     // This should work as expected
     try {

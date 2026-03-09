@@ -6,13 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:39:33 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/04 11:16:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 10:55:24 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "persistent_worker.hh"
 
-void PersistentWorker::_workLoop(){
+void lpp::persistent_worker::_workLoop(){
 	while(true){
 		std::unique_lock lock(_mutex);
 		_cv.wait(lock, [&]{
@@ -34,25 +34,25 @@ void PersistentWorker::_workLoop(){
 	}
 }
 
-PersistentWorker::PersistentWorker(){
+lpp::persistent_worker::persistent_worker(){
 	_stop.store(false);
 	_erase.store(false);
-	_thread = std::thread(&PersistentWorker::_workLoop, this);
+	_thread = std::thread(&persistent_worker::_workLoop, this);
 }
 
-PersistentWorker::~PersistentWorker(){
+lpp::persistent_worker::~persistent_worker(){
 	_stop.store(true);
 	_thread.join();
 }
 
-void PersistentWorker::addTask(const std::string &name, const std::function<void()> &jobToExecute){
+void lpp::persistent_worker::addTask(const std::string &name, const std::function<void()> &jobToExecute){
 	std::lock_guard<std::mutex> lock(_mutex);
 	_funcJobs.insert({name, jobToExecute});
 	_jobsName.insert(name);
 	_cv.notify_one();
 }
 
-void PersistentWorker::addTask(const std::string &name, std::shared_ptr<IJobs> jobToExecute){
+void lpp::persistent_worker::addTask(const std::string &name, std::shared_ptr<IJobs> jobToExecute){
 	_erase.store(true);
 	std::lock_guard<std::mutex> lock(_mutex);
 	_jobs.insert({name, std::move(jobToExecute)});
@@ -61,7 +61,7 @@ void PersistentWorker::addTask(const std::string &name, std::shared_ptr<IJobs> j
 	_cv.notify_one();
 }
 
-void PersistentWorker::removeTask(const std::string& name){
+void lpp::persistent_worker::removeTask(const std::string& name){
 	_erase.store(true);
 	std::unique_lock<std::mutex> lock(_mutex);
 	auto range = _jobs.equal_range(name);
@@ -73,7 +73,7 @@ void PersistentWorker::removeTask(const std::string& name){
 	_cv.notify_one();
 }
 
-bool PersistentWorker::containe(const char *name){
+bool lpp::persistent_worker::containe(const char *name){
 	std::unique_lock<std::mutex> lock(_mutex);
 	return _jobsName.contains(name);
 }

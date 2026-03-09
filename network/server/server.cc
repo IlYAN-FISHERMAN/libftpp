@@ -6,18 +6,16 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/06 15:55:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 10:54:51 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hh"
 
-static class threadSafeCout cout;
-
-void Server::_workerLoop(){
+void lpp::server::_workerLoop(){
 	{
 		std::lock_guard<std::mutex> lock(_mutex);
-		cout.setPrefix("[Server]: ");
+		cout.setPrefix("[server]: ");
 		_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if (_socket < 0){
 			_exc = std::make_exception_ptr("socket failed");
@@ -73,7 +71,7 @@ void Server::_workerLoop(){
 					int code = 0;
 					char sep = 0;
 					if (ss >> code >> sep){
-						Message msg(code);
+						message msg(code);
 						if (_actions.find(code) != _actions.end() && sep == '|'){
 							std::string tmp;
 							std::getline(ss >> std::ws, tmp);
@@ -81,7 +79,7 @@ void Server::_workerLoop(){
 							_actions[code](_pollFd[i].fd, msg);
 						}
 						else{
-							threadSafeCout << "send error: " << ::send(_pollFd[i].fd, "action not found", 15, 0) << std::endl;
+							lpp::cout << "send error: " << ::send(_pollFd[i].fd, "action not found", 15, 0) << std::endl;
 						}
 					}
 					else{
@@ -95,18 +93,18 @@ void Server::_workerLoop(){
 	return ;
 }
 
-void Server::start(const size_t& p_port){
+void lpp::server::start(const size_t& p_port){
 	if (!_running.load()){
 		_running.store(true);
 		_p_port = p_port;
-		_loop = std::thread(&Server::_workerLoop, this);
+		_loop = std::thread(&server::_workerLoop, this);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	if (!_running.load() && _exc)
 		std::rethrow_exception(_exc);
 }
 
-void Server::disconnect(){
+void lpp::server::disconnect(){
 	if (_running.load()){
 		_running.store(false);
 		if(_loop.joinable())
@@ -115,22 +113,22 @@ void Server::disconnect(){
 	close(_socket);
 }
 
-Server::~Server(){
+lpp::server::~server(){
 	disconnect();
 }
 
-Server::Server() : _exc(nullptr){
+lpp::server::server() : _exc(nullptr){
 	_running.store(false);
 }
 
-void Server::defineAction(const Message::Type& messageType, const std::function<void(long long clientID, const Message& msg)>& action){
+void lpp::server::defineAction(const message::Type& messageType, const std::function<void(long long clientID, const message& msg)>& action){
 	std::lock_guard<std::mutex> lock(_mutex);
 	_actions[messageType] = action;
 }
 
-void Server::sendTo(const Message& message, long long clientID){
+void lpp::server::sendTo(const message& message, long long clientID){
 	std::string data = (std::to_string(message.type()) + '|' + message.str() + '\n');
-	threadSafeCout << "message type: " << message.type() << std::endl;
-	threadSafeCout << "send to client[" << clientID << "] "
+	lpp::cout << "message type: " << message.type() << std::endl;
+	lpp::cout << "send to client[" << clientID << "] "
 		<< ::send(clientID, data.c_str(), data.size(), 0) << " bytes" << std::endl;
 }

@@ -6,14 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 10:26:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/08 10:26:20 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:13:44 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 int testPerlin_noise_2D(){
-    PerlinNoise2D perlin;
+	lpp::perlin_noise_2D perlin;
 
     const int gridSize = 10;
     char visualChars[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'};

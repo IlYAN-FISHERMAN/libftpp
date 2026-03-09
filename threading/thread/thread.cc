@@ -6,30 +6,30 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:34:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/23 18:33:39 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 11:02:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "thread.hh"
 
-Thread::~Thread(){
+lpp::thread::~thread(){
 	if (_thread.joinable())
 		_thread.join();
 }
 
-Thread::Thread(const std::string& name, std::function<void()> functToExecute) : _name(name), _func(functToExecute){}
+lpp::thread::thread(const std::string& name, std::function<void()> functToExecute) : _name(name), _func(functToExecute){}
 
-void Thread::_runThread(const std::string &name, std::function<void()> functToExecute){
-	threadSafeCout.setPrefix(name);
+void lpp::thread::_runthread(const std::string &name, std::function<void()> functToExecute){
+	lpp::cout.setPrefix(name);
 	functToExecute();
 }
 
-void Thread::start(){
+void lpp::thread::start(){
 	if (!_thread.joinable())
-		_thread = std::thread(_runThread, _name, _func);
+		_thread = std::thread(_runthread, _name, _func);
 }
 
-void Thread::stop(){
+void lpp::thread::stop(){
 	if (_thread.joinable())
 		_thread.join();
 }

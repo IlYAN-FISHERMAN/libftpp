@@ -1,23 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   perlin_noise_2D.hh                                 :+:      :+:    :+:   */
+/*   libftpp.hh                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 10:26:56 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:51:05 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/09 10:06:51 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/09 10:09:10 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-
-namespace lpp{
-	class perlin_noise_2D{
-		private:
-		public:
-			perlin_noise_2D();
-			~perlin_noise_2D();
-
-	};
-}
+#include "data_structures/data_structures.hh"
+#include "design_patterns/design_patterns.hh"
+#include "iostream/thread_safe_iostream.hh"
+#include "threading/threading.hh"
+#include "network/network.hh"
+#include "mathematics/mathematics.hh"

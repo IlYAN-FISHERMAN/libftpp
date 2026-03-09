@@ -6,15 +6,15 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/06 18:34:57 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:19:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 int testIVector3() {
-    IVector3<int> vec1(3, 4, 1);
-    IVector3<int> vec2(1, 2, 3);
+	lpp::ivector3<int> vec1(3, 4, 1);
+	lpp::ivector3<int> vec2(1, 2, 3);
     
     std::cout << "Vec1 : " << vec1.x << " / " << vec1.y << " / " << vec1.z << std::endl;
     std::cout << "Vec2 : " << vec2.x << " / " << vec2.y << " / " << vec2.z << std::endl;

@@ -6,26 +6,26 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:34:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/19 12:03:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 10:47:45 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "data_buffer.hh"
 
-DataBuffer::DataBuffer(){}
+lpp::data_buffer::data_buffer(){}
 
-DataBuffer::~DataBuffer(){}
+lpp::data_buffer::~data_buffer(){}
 
-DataBuffer& DataBuffer::operator=(const DataBuffer &other){
+lpp::data_buffer& lpp::data_buffer::operator=(const data_buffer &other){
 	if (this != &other){
 		_bytes = other._bytes;
 	}
 	return *this;
 }
 
-DataBuffer::DataBuffer(const DataBuffer &other) : _bytes(other._bytes){}
+lpp::data_buffer::data_buffer(const data_buffer &other) : _bytes(other._bytes){}
 
-DataBuffer& DataBuffer::operator<<(const std::string& s) {
+lpp::data_buffer& lpp::data_buffer::operator<<(const std::string& s) {
 	uint32_t len = s.size();
 	*this << len;
 
@@ -36,7 +36,7 @@ DataBuffer& DataBuffer::operator<<(const std::string& s) {
 	return *this;
 }
 
-DataBuffer& DataBuffer::operator>>(std::string& s) {
+lpp::data_buffer& lpp::data_buffer::operator>>(std::string& s) {
 	uint32_t len;
 	*this >> len;
 	if (_bytes.empty())

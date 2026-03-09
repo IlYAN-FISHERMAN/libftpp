@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.16...3.30 FATAL_ERROR)
 
 project(
-  libftpp
+  ftpp
+  VERSION 1.0
   DESCRIPTION "my cpp library "
   LANGUAGES CXX)
 
@@ -78,11 +79,12 @@ set(SOURCES ${SOURCES} network/message/message.cc network/client/client.cc
 set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc
 mathematics/perlin_noise_2D/perlin_noise_2D.cc)
 
-add_executable(libftpp ${SOURCES})
+add_executable(lib ${SOURCES})
+add_library(ftpp STATIC ${SOURCES})
 
-target_include_directories(libftpp PRIVATE data_structures)
-target_include_directories(libftpp PRIVATE iostream)
-target_include_directories(libftpp PRIVATE mathematics)
-target_include_directories(libftpp PRIVATE networks)
-target_include_directories(libftpp PRIVATE threading)
-target_include_directories(libftpp PRIVATE design_patterns)
+target_include_directories(ftpp PRIVATE data_structures)
+target_include_directories(ftpp PRIVATE iostream)
+target_include_directories(ftpp PRIVATE mathematics)
+target_include_directories(ftpp PRIVATE networks)
+target_include_directories(ftpp PRIVATE threading)
+target_include_directories(ftpp PRIVATE design_patterns)

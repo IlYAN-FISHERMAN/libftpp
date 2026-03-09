@@ -6,29 +6,28 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:25 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 15:52:50 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:15:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 void printNumbers(const std::string& p_prefix) {
-    threadSafeCout.setPrefix(p_prefix);
-	class threadSafeCout cout;
+    lpp::cout.setPrefix(p_prefix);
 
     for (int i = 0; i <= 5; ++i) {
-        cout << "Number: " << i << std::endl;
+        lpp::cout << "Number: " << i << std::endl;
 		// std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-	if (cout.prefix() == "[Thread 2]: "){
-		cout << "Hi everyone i'm the thread number two" << std::endl;
+	if (lpp::cout.prefix() == "[Thread 2]: "){
+		lpp::cout << "Hi everyone i'm the thread number two" << std::endl;
 		std::string rps;
-		cout.prompt("how are you ?: ", rps);
+		lpp::cout.prompt("how are you ?: ", rps);
 		if (rps == "hungry")
-			cout << "how really ? me too !" << std::endl;
+			lpp::cout << "how really ? me too !" << std::endl;
 		else
-			cout << "you are " << rps << std::endl;
+			lpp::cout << "you are " << rps << std::endl;
 	}
 
 }

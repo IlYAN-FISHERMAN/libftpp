@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/07 11:14:30 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:09:55 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,7 @@
 #include <random>
 #include <any>
 
-#include "../data_structures/data_structures.hh"
-#include "../design_patterns/design_patterns.hh"
-#include "../iostream/thread_safe_iostream.hh"
-#include "../threading/threading.hh"
-#include "../network/network.hh"
-#include "../mathematics/mathematics.hh"
-
+#include "../libftpp.hh"
 
 //--------------------------------------------
 
@@ -121,7 +115,7 @@ struct IoMark {
 	}
 };
 
-class IoStat : public WorkerPool::IJobs, public PersistentWorker::IJobs{
+class IoStat : public lpp::worker_pool::IJobs, public lpp::persistent_worker::IJobs{
 		public: enum class Marks : uint8_t{
 			READ,
 			WRITE

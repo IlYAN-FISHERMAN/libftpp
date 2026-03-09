@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:50:44 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/24 15:52:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 13:14:49 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,23 +24,23 @@ public:
     }
 };
 
-int testSingleton() {
+int testsingleton() {
     try
     {
         // This should throw an exception as instance is not yet created
-        Singleton<MyClass>::instance();
+        lpp::singleton<MyClass>::instance();
     } catch (const std::exception& e) {
         std::cout << "Exception: " << e.what() << std::endl; // Output: "Exception: Instance not yet created"
     }
 
-    Singleton<MyClass>::instantiate(42); // Setting up the instance
+    lpp::singleton<MyClass>::instantiate(42); // Setting up the instance
 
-    Singleton<MyClass>::instance()->printMessage(); // Output: "Hello from MyClass"
+    lpp::singleton<MyClass>::instance()->printMessage(); // Output: "Hello from MyClass"
 
     try
     {
         // This should throw an exception as instance is already created
-        Singleton<MyClass>::instantiate(100);
+        lpp::singleton<MyClass>::instantiate(100);
     } catch (const std::exception& e) {
         std::cout << "Exception: " << e.what() << std::endl; // Output: "Exception: Instance already created"
     }
