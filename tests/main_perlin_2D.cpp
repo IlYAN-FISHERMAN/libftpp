@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 10:26:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:13:44 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 16:32:27 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int testPerlin_noise_2D(){
 	lpp::perlin_noise_2D perlin;
 
-    const int gridSize = 10;
+    const int gridSize = 100;
     char visualChars[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'};
 
     std::cout << "Sampling 2D Perlin noise over a " << gridSize << "x" << gridSize << " grid:" << std::endl << std::endl;

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 11:13:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:52:20 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 16:30:09 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,21 @@ long long lpp::random_2D_coordinate_generator::operator()(const long long& x, co
 	return randomValue % mod;
 }
 
+lpp::ivector2<float> lpp::random_2D_coordinate_generator::operator()(const float ix, const float iy){
+	const unsigned w = 8 * sizeof(unsigned);
+    const unsigned s = w / 2; 
+    unsigned a = ix, b = iy;
+
+    a *= 3284157443;
+    b ^= a << s | a >> (w - s);
+    b *= 1911520717;
+ 
+    a ^= b << s | b >> (w - s);
+    a *= 2048419325;
+    float random = a * (3.14159265 / ~(~0u >> 1));
+
+	return ivector2(sin(random), cos(random));
+}
+
 long long lpp::random_2D_coordinate_generator::seed(){return __seed;}
+

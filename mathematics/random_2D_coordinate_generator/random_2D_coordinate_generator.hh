@@ -6,11 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:39:28 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:51:32 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/09 16:31:09 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+
+#include "../ivector2/ivector2.hh"
 
 namespace lpp{
 	class random_2D_coordinate_generator{
@@ -22,5 +24,6 @@ namespace lpp{
 
 			long long seed();
 			long long operator()(const long long& x, const long long& y, long mod = 0);
+			lpp::ivector2<float> operator()(const float x, const float y);
 	};
 }
