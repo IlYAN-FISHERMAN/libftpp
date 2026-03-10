@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:46:26 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/02/26 18:52:52 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:51:47 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ IoStat& IoStat::operator=(const IoStat &other){
 /// Constructor by copy constructor
 //--------------------------------------------
 IoStat::IoStat(const IoStat &other){
-	std::scoped_lock lock(_mutex, other._mutex);
+	std::lock_guard<std::mutex> lock(other._mutex);
 	_fileId = other._fileId;
 	_app = other._app;
 	_uid = other._uid;

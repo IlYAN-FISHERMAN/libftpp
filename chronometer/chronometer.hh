@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 16:36:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 17:11:52 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:13:32 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ namespace lpp{
 
 			void start();
 			std::chrono::duration<double> stop() const;
-
 			friend std::ostream& operator<<(std::ostream& os, const lpp::chronometer &chrono);
 	};
 
@@ -38,4 +37,5 @@ namespace lpp{
 			unique_chrono(std::string);
 			~unique_chrono();
 	};
+	std::ostream& operator<<(std::ostream& os, const lpp::chronometer &chrono);
 }
