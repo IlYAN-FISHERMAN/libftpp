@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:14:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:38:43 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ public:
     void saybye() const { std::cout << "bye from TestpoolObject" << std::endl; }
 };
 
-int myTestpool() {
+int myTestPool() {
 	{
 	std::cout << C_GREEN << "[Test 1]" << C_RESET << std::endl << std::endl;
 	lpp::pool<std::string> str;
@@ -207,7 +207,7 @@ int myTestpool() {
 	return 0;
 }
 
-int deleteTestpool(){
+int deleteTestPool(){
 	try{
 		lpp::pool<TestpoolObject>* pool = new lpp::pool<TestpoolObject>();
 		pool->resize(10);
@@ -224,7 +224,7 @@ int deleteTestpool(){
 	return 0;
 }
 
-int benchpoolTest(){
+int benchPoolTest(){
 	int len = 100000000;
 
 	for (auto it = 0; it < len; it++){
@@ -242,9 +242,10 @@ int benchpoolTest(){
 }
 
 
-int testpool() {
+int testPool() {
     // Create a pool for TestpoolObject
 	lpp::pool<TestpoolObject> mypool;
+	lpp::unique_chrono chrono("default pool");
 
     // obj1 and obj3 are released back to the pool when the program ends
 	mypool.resize(5);

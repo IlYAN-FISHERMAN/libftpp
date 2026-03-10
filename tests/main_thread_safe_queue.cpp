@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:33 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:18:27 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:31:41 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,9 @@ void testPop(lpp::thread_safe_queue<int>& p_queue) {
     }
 }
 
-int testthread_safe_queue() {
+int testThreadSafeQueue(){
 	lpp::thread_safe_queue<int> myQueue;
+	lpp::unique_chrono chrono("threadSafeQueue");
 
     std::thread thread1(testPush, std::ref(myQueue), 10);
     std::thread thread2(testPush, std::ref(myQueue), 20);

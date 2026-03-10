@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:39:33 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:55:24 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:44:53 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void lpp::persistent_worker::_workLoop(){
 	while(true){
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		std::unique_lock lock(_mutex);
 		_cv.wait(lock, [&]{
 			return ((!_stop.load() && !_erase.load() && !_jobsName.empty()) || (_stop.load()));

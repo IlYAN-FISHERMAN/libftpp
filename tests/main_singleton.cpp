@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:50:44 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:14:49 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:37:17 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ public:
     }
 };
 
-int testsingleton() {
+int testSingleton() {
+	lpp::unique_chrono chrono("singleton");
     try
     {
         // This should throw an exception as instance is not yet created

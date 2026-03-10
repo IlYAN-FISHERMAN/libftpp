@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:49:43 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:13:17 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:28:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ int myTestMemento() {
 }
 
 int testMemento() {
+	lpp::unique_chrono chrono("memento");
     TestMementoClass myObject;
     myObject.x = 42;
     myObject.y = "Hello";

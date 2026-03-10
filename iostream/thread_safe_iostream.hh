@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 20:46:01 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:49:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:58:58 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <thread>
 
 namespace lpp{
-	class cout {
+	class cout{
 		private :
 			static inline std::mutex _mutex;
 			static thread_local std::stringstream _msg;
@@ -40,11 +40,19 @@ namespace lpp{
 			cout& operator<<(std::ostream& (*func)(std::ostream&));
 
 			void setPrefix(const std::string &str);
+			void clear();
 
 			template<typename T>
-			void prompt(const std::string& question, T& dest){
-				*this << question << std::flush;
-				std::getline(std::cin, dest);
+			void prompt(const std::string& question, T& dest, bool lockCout = false){
+
+				if (lockCout){
+					std::unique_lock<std::mutex> lock(_mutex);
+					std::cout << question << std::flush;
+					std::getline(std::cin, dest);
+				} else{
+					*this << question << std::flush;
+					std::getline(std::cin, dest);
+				}
 			}
 	};
 

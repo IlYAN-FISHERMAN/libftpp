@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:50:55 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:15:06 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:29:43 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ enum class State {
 
 int myTestStateMachine(){
     lpp::state_machine<State> sm;
+	lpp::unique_chrono chrono("state_machine");
 
     sm.addState(State::Idle);
     sm.addState(State::Running);

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:25 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:15:36 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:53:01 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void printNumbers(const std::string& p_prefix) {
 	if (lpp::cout.prefix() == "[Thread 2]: "){
 		lpp::cout << "Hi everyone i'm the thread number two" << std::endl;
 		std::string rps;
-		lpp::cout.prompt("how are you ?: ", rps);
+		lpp::cout.prompt("how are you ?: ", rps, true);
 		if (rps == "hungry")
 			lpp::cout << "how really ? me too !" << std::endl;
 		else
@@ -44,6 +44,7 @@ int myTestThreadSafeIostream(){
 }
 
 int testThreadSafeIostream() {
+	lpp::unique_chrono chrono("threadSafeIostream");
     std::string prefix1 = "[Thread 1] ";
     std::string prefix2 = "[Thread 2] ";
 

@@ -79,6 +79,8 @@ set(SOURCES ${SOURCES} network/message/message.cc network/client/client.cc
 set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc
 mathematics/perlin_noise_2D/perlin_noise_2D.cc)
 
+set(SOURCES ${SOURCES} chronometer/chronometer.cc)
+
 add_executable(lib ${SOURCES})
 add_library(ftpp STATIC ${SOURCES})
 
@@ -88,3 +90,4 @@ target_include_directories(ftpp PRIVATE mathematics)
 target_include_directories(ftpp PRIVATE networks)
 target_include_directories(ftpp PRIVATE threading)
 target_include_directories(ftpp PRIVATE design_patterns)
+target_include_directories(ftpp PRIVATE chronometer)

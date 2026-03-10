@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:14 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:15:17 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:29:52 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void myFunction2() {
 }
 
 int testThread() {
+	lpp::unique_chrono chrono("thread");
     lpp::thread thread1("Thread1: ", myFunction1);
     lpp::thread thread2("Thread2: ", myFunction2);
 

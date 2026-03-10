@@ -6,13 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 17:12:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:19:17 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:30:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 int testIVector2() {
+	lpp::unique_chrono chrono("ivector2");
 	lpp::ivector2<int> vec1(3, 4);
 	lpp::ivector2<int> vec2(1, 2);
 

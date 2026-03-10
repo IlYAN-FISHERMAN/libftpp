@@ -6,14 +6,15 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 16:07:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:14:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:44:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
-int testpersistent_worker() {
-   lpp:: persistent_worker worker;
+int testPersistentWorker() {
+	lpp::unique_chrono chrono("persistent_worker");
+	lpp:: persistent_worker worker;
 	std::shared_ptr<IoStat> io = std::make_shared<IoStat>(1, "eos", 1, 1);
 
     auto task1 = []() {
@@ -38,11 +39,12 @@ int testpersistent_worker() {
     });
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
+	{
+		lpp::unique_chrono chrono("remove task 1");
+		worker.removeTask("Task1");
+		std::this_thread::sleep_for(std::chrono::seconds(2));
+	}
 
-    worker.removeTask("Task1");
-
-
-    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     worker.addTask("io", io);
 	lpp::cout << "containe io: " << std::boolalpha << worker.containe("io") << std::endl;

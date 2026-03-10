@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:38 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:13:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:37:39 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int myTestdata_buffer() {
 	return 0;
 }
 
-int testdata_buffer() {
+int testDataBuffer(){
+	lpp::unique_chrono chrono("data_buffer");
     lpp::data_buffer myBuffer;
 
     Testdata_bufferObject obj1;

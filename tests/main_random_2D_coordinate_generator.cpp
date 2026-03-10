@@ -6,13 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:39:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:14:23 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:29:17 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 int testRandom_2D_coordinate_generator(){
+	lpp::unique_chrono chrono("random_generator");
     lpp::random_2D_coordinate_generator randomGenerator;
 
     // Store a list of coordinates to test

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:14:39 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:15:06 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int testServer() {
     lpp::server server;
     lpp::client client;
+	lpp::unique_chrono chrono("server");
 
     // Define an action for messages of type 1 (int)
     server.defineAction(1, [&server](long long clientID, const lpp::message& msg){
@@ -140,6 +141,7 @@ int testServer() {
 		}
 	}
 
+	lpp::cout.clear();
     return 0;
 }
 

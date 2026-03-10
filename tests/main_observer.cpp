@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:49:56 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:13:31 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/10 15:38:01 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ enum class EventType {
     EVENT_THREE
 };
 
-int myTestobserver() {
+int myTestObserver() {
+	lpp::unique_chrono chrono("observer");
 	lpp::observer<EventType, std::any> observer;
 	lpp::observer<EventType, const char*, IoStat, double> big;
 	lpp::observer<EventType, const char*, IoStat, double> cpy;
@@ -62,7 +63,7 @@ int myTestobserver() {
 	return 0;
 }
 
-int testobserver() {
+int testObserver() {
     lpp::observer<EventType> observer;
 
     // Subscribe to EVENT_ONE
