@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 09:59:42 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 17:06:52 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ int testPerlin_noise_2D();
 //--------------------------------------------
 
 int testRCU();
+int testArenaAllocator();
 
 
 //--------------------------------------------
@@ -116,7 +117,8 @@ struct IoMark {
 	}
 };
 
-class IoStat : public lpp::worker_pool::IJobs, public lpp::persistent_worker::IJobs{
+class IoStat : public lpp::worker_pool::IJobs, public lpp::persistent_worker::IJobs, public lpp::memento{
+		friend class memento;
 		public: enum class Marks : uint8_t{
 			READ,
 			WRITE
@@ -152,6 +154,16 @@ class IoStat : public lpp::worker_pool::IJobs, public lpp::persistent_worker::IJ
 		/// Deleted default constructor
 		//--------------------------------------------
 		IoStat() = delete;
+
+		void _saveToSnapshot(Snapshot& snapshotToFill) const override {
+			std::lock_guard<std::mutex> lock(_mutex);
+			snapshotToFill << _fileId << _app << _uid << _gid << _readMarks << _writeMarks;
+		}
+
+		void _loadFromSnapshot(Snapshot& snapshot) override {
+			std::lock_guard<std::mutex> lock(_mutex);
+			snapshot >> _fileId >> _app >> _uid >> _gid >> _readMarks >> _writeMarks;
+		}
 
 	public:
 		//--------------------------------------------

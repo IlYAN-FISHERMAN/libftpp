@@ -62,7 +62,8 @@ set(SOURCES
 	tests/main_vector_3.cpp
 	tests/main_random_2D_coordinate_generator.cpp
 	tests/main_perlin_2D.cpp
-	tests/main_rcu.cc)
+	tests/main_rcu.cc
+	tests/main_arena_allocator.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
@@ -92,3 +93,4 @@ target_include_directories(ftpp PRIVATE networks)
 target_include_directories(ftpp PRIVATE threading)
 target_include_directories(ftpp PRIVATE design_patterns)
 target_include_directories(ftpp PRIVATE chronometer)
+target_include_directories(ftpp PRIVATE arena_allocator)

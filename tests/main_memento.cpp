@@ -6,14 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:49:43 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/10 15:28:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 17:02:19 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
 
 class TestMementoClass : public lpp::memento {
-    friend class Memento;
+    friend class memento;
 
 public:
     int x;

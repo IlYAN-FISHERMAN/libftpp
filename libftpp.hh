@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 10:06:51 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 09:59:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 15:35:28 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,3 +17,4 @@
 #include "network/network.hh"
 #include "mathematics/mathematics.hh"
 #include "chronometer/chronometer.hh"
+#include "arena_allocator/arena_allocator.hh"
