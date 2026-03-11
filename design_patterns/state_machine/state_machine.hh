@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 10:24:57 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:49:23 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 11:31:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ namespace lpp{
 			std::unordered_map<TState, const std::function<void()>>		_states;
 			std::vector<Transition>										_transition;
 			std::vector<TState>											_existingStates;
-			std::vector<TState>::iterator								_index;
+			typename std::vector<TState>::iterator								_index;
 		public :
 			state_machine() : _index(_existingStates.begin()){}
 			~state_machine(){}

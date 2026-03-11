@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/09 23:01:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:48:08 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 11:31:00 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ lpp::pool<TType>::Object::~Object(){
 }
 
 template<typename TType>
-lpp::pool<TType>::Object&	lpp::pool<TType>::Object::operator=(Object &&other) noexcept{
+typename lpp::pool<TType>::Object&	lpp::pool<TType>::Object::operator=(Object &&other) noexcept{
 	if (this != &other){
 	auto lock = __alive.lock();
 		if ((lock || lock->alive) && __obj){
@@ -108,7 +108,7 @@ void lpp::pool<TType>::resize(const size_t &numberOfObjectStored) noexcept(false
 /// with parameters as defined by TArgs definition.
 //--------------------------------------------
 template<typename TType> template<typename... TArgs>
-lpp::pool<TType>::Object lpp::pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
+typename lpp::pool<TType>::Object lpp::pool<TType>::acquire(TArgs &&...p_args) noexcept(false){
 	if (_size >= _maxSize || _freeList.size() <= 0)
 		throw std::out_of_range("out of range");
 

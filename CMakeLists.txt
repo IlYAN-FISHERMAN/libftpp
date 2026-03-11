@@ -61,7 +61,8 @@ set(SOURCES
 	tests/main_vector_2.cpp
 	tests/main_vector_3.cpp
 	tests/main_random_2D_coordinate_generator.cpp
-	tests/main_perlin_2D.cpp)
+	tests/main_perlin_2D.cpp
+	tests/main_rcu.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 

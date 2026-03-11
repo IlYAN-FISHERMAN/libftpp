@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 09:59:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 11:26:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 11:59:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int testRCU(){
 
 	lpp::rcu<int> rcu;
+	(void)rcu;
 
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/10 15:53:37 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 12:02:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,7 @@ int deleteTestPool(){
 }
 
 int benchPoolTest(){
-	int len = 100000000;
+	int len = 1000000;
 
 	for (auto it = 0; it < len; it++){
 		auto *tmp = new IoStat(1, "eos", 1, 1);

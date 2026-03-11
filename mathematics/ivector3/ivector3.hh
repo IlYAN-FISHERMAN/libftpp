@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 17:18:03 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:50:44 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 11:57:00 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ namespace lpp{
 				return ivector3(x / other.x, y / other.y, z / other.z);
 			}
 
-			bool operator==(const ivector3<TType> &other){return (x == other.x && y == other.y && z == other.z);}
-			bool operator!=(const ivector3<TType> &other){return (x != other.x && y != other.y && z != other.z);}
+			friend bool operator==(const ivector3<TType> &first, const ivector3 &second){return (first.x == second.x && first.y == second.y && first.z == second.z);}
+			friend bool operator!=(const ivector3<TType> &first, const ivector3 &second){return (first.x != second.x && first.y != second.y && first.z != second.z);}
 			bool operator<(const ivector3<TType> &other){return (x < other.x && y < other.y && z < other.z);}
 			bool operator>(const ivector3<TType> &other){return (x > other.x && y > other.y && z > other.z);}
 	};
