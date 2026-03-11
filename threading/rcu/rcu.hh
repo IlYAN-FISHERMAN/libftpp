@@ -1,19 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   threading.hh                                       :+:      :+:    :+:   */
+/*   rcu.hh                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/23 16:42:56 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 10:00:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/11 09:33:12 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/11 10:03:55 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <iostream>
+#include <atomic>
 
-#include "persistent_worker/persistent_worker.hh"
-#include "thread/thread.hh"
-#include "thread_safe_queue/thread_safe_queue.hh"
-#include "worker_pool/worker_pool.hh"
-#include "rcu/rcu.hh"
+namespace lpp{
+	template<typename TArgs>
+	class rcu {
+		private:
+			std::atomic<TArgs> __data;
+
+		public:
+			rcu();
+			~rcu();
+			TArgs load();
+			TArgs store();
+	};
+}

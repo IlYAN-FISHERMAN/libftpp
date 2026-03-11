@@ -1,19 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   threading.hh                                       :+:      :+:    :+:   */
+/*   main_rcu.cc                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/23 16:42:56 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 10:00:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/11 09:59:05 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/11 10:03:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "tester.hh"
 
-#include "persistent_worker/persistent_worker.hh"
-#include "thread/thread.hh"
-#include "thread_safe_queue/thread_safe_queue.hh"
-#include "worker_pool/worker_pool.hh"
-#include "rcu/rcu.hh"
+int testRCU(){
+
+	lpp::rcu<int, int> rcu;
+
+
+	rcu.l
+	return 0;
+}
