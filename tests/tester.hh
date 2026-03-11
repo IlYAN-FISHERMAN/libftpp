@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 17:06:52 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 18:53:37 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,8 @@ int testPerlin_noise_2D();
 
 //--------------------------------------------
 
-int testRCU();
 int testArenaAllocator();
-
+int testTimer();
 
 //--------------------------------------------
 /// The current name of the class when us

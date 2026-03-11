@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rcu.hh                                             :+:      :+:    :+:   */
+/*   timer.hh                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/11 09:33:12 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 11:58:32 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/11 18:09:14 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/11 19:24:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <atomic>
+#pragma once
+
+#include "../../threading/threading.hh"
 
 namespace lpp{
-	template<typename TArgs>
-	class rcu {
+	class timer{
 		private:
-			std::atomic<TArgs> __data;
-
+			std::vector<std::thread> _worker;
+			std::atomic<bool>		_running;
 		public:
-			// rcu();
-			// ~rcu();
-			// TArgs load();
-			// TArgs store();
+			timer();
+			~timer();
+
+			void setInterval(std::function<void()> func, size_t delay);
+
+			void stop();
 	};
 }

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:31:23 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:55:36 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 19:19:54 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 namespace lpp{
 	class thread{
 			private:
-				thread() = delete;
 				thread(const thread&) = delete;
 				thread& operator=(const thread&) = delete;
 
@@ -29,6 +28,7 @@ namespace lpp{
 
 				static inline void _runthread(const std::string &name, std::function<void()> functToExecute);
 			public:
+				thread();
 				~thread();
 				explicit thread(const std::string& name, std::function<void()> functToExecute);
 

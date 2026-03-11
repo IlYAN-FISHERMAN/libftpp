@@ -6,11 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:34:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 11:02:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 19:20:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "thread.hh"
+
+lpp::thread::thread(){}
 
 lpp::thread::~thread(){
 	if (_thread.joinable())

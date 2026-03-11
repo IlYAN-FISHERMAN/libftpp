@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 15:44:45 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/11 20:05:18 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ int main(void) {
 	// code = testRandom_2D_coordinate_generator();
 	// code = testPerlin_noise_2D();
 	
-	// code = testRCU();
 	code = testArenaAllocator();
+	// code = testTimer();
 
 	std::cout << "code: " << code << std::endl;
 	return code;
