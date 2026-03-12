@@ -64,7 +64,8 @@ set(SOURCES
 	tests/main_perlin_2D.cpp
 	tests/main_arena_allocator.cc
 	tests/main_timer.cc
-	tests/main_responsability_chain.cc)
+	tests/main_responsability_chain.cc
+	tests/main_non_copyable.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 

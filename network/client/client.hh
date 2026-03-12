@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:52 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 16:55:05 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 17:46:50 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,11 @@
 #include <mutex>
 #include <thread>
 #include "../../design_patterns/responsability_chain/responsability_chain.hh"
+#include "../../design_patterns/non_copyable/non_copyable.hh"
 #include <arpa/inet.h>
 
 namespace lpp{
-	class client : public IResponsability_chain{
+	class client : public IResponsability_chain, public lpp::NonCopyable{
 		using Callback =  std::function<void(const message &)>;
 		private:
 			int	_socket;

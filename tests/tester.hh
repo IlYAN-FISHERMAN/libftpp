@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 12:34:10 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 17:39:42 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int testPerlin_noise_2D();
 int testArenaAllocator();
 int testTimer();
 int testResponsabilityChain();
+int testNonCopyable();
 
 //--------------------------------------------
 /// The current name of the class when us

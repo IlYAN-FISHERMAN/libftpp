@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   design_patterns.hh                                 :+:      :+:    :+:   */
+/*   non_copyable.hh                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/19 11:55:42 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:38:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/12 17:36:27 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/12 17:37:16 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "memento/memento.hh"
-#include "observer/observer.hh"
-#include "singleton/singleton.hh"
-#include "state_machine/state_machine.hh"
-#include "responsability_chain/responsability_chain.hh"
-#include "non_copyable/non_copyable.hh"
+namespace lpp{
+	class NonCopyable{
+	protected:
+		NonCopyable() = default;
+		~NonCopyable() = default;
+
+	public:
+		NonCopyable(const NonCopyable&) = delete;
+		NonCopyable& operator=(const NonCopyable&) = delete;
+	};
+}

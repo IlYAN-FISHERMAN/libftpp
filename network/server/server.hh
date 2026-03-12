@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 16:55:35 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 17:45:59 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,19 @@
 
 #include "../client/client.hh"
 #include "../../design_patterns/responsability_chain/responsability_chain.hh"
+#include "../../design_patterns/non_copyable/non_copyable.hh"
 #include <thread>
 #include <exception>
 
 #define BUFFER_SIZE 1024
 
 namespace lpp{
-	class server : public lpp::IResponsability_chain{
+	class server : public lpp::IResponsability_chain, public lpp::NonCopyable{
 		public :
 		 using Callback = std::function<void(long long, const message &)>;
 		private:
 			int 				_socket;
 			struct sockaddr_in  _serv_addr;
-			long long _nextClientID = 1;
 			std::unordered_map<long long, int> _clients;
 			std::unordered_map<message::Type, Callback> _actions;
 			size_t _p_port;
@@ -43,10 +43,9 @@ namespace lpp{
 
 			bool config()	override;
 			bool execute()	override;
+
 		public:
 			server();
-			server(const server&);
-			server& operator=(const server&);
 			~server();
 
 			void start(const size_t& p_port);
