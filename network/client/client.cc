@@ -6,13 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:54:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 17:22:15 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hh"
 
-lpp::client::client() : _socket(-1){}
+lpp::client::client() : _socket(-1), _running(false){}
 
 lpp::client::~client(){
 	close(_socket);
@@ -31,6 +31,7 @@ void lpp::client::connect(const std::string& address, const size_t& port){
             throw std::runtime_error("invalid address");
 	if (::connect(_socket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
             throw std::runtime_error("connection failed");
+	_running = true;
 }
 
 void lpp::client::disconnect(){
@@ -90,3 +91,39 @@ void lpp::client::send(std::string &msg){
 	} else
 		lpp::cout << "send failed: " << n << std::endl;
 }
+
+bool lpp::client::config(){
+	defineAction(1, [](const lpp::message& msg){
+        int doubledValue;
+		msg >> doubledValue;
+        lpp::cout << "Received a doubled value: " << doubledValue << std::endl;
+    });
+
+    defineAction(2, [](const lpp::message& msg){
+		lpp::cout << "server say \"" << msg.str() << "\"" << std::endl;
+    });
+
+	defineAction(4, [](const lpp::message& msg){
+		std::string str;
+        msg >> str;
+        lpp::cout << "client received : " << str << std::endl;
+    });
+
+	defineAction(10, [](const lpp::message& msg){
+		std::string str;
+        msg >> str;
+		lpp::cout << str << std::endl;
+		if (str == "pong")
+			lpp::cout << "server work!" << std::endl;
+    });
+
+	return true;
+}
+
+bool lpp::client::execute(){
+	if (!_running)
+		connect("127.0.0.1", 8080);
+	return true;
+}
+
+bool lpp::client::isRunning(){return _running;}

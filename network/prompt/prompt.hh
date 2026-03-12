@@ -1,19 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   design_patterns.hh                                 :+:      :+:    :+:   */
+/*   prompt.hh                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/19 11:55:42 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 12:33:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/12 16:29:16 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/12 17:28:10 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "memento/memento.hh"
-#include "observer/observer.hh"
-#include "singleton/singleton.hh"
-#include "state_machine/state_machine.hh"
-#include "responsability_chain/responsability_chain.hh"
+#include "../server/server.hh"
+#include "../client/client.hh"
+
+namespace lpp{
+	class prompt : public lpp::IResponsability_chain{
+		private:
+			lpp::client &_client;
+			std::string _prefix;
+			bool execute();
+			bool config();
+		public:
+			prompt(lpp::client &);
+			~prompt();
+			void run();
+			void setPrefix(std::string);
+	};
+}

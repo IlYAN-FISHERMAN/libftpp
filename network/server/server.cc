@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:54:51 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 17:21:40 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void lpp::server::_workerLoop(){
 		_pollFd.push_back(pollfd{_socket, POLLIN, 0});
 		_msg.push_back("");
 		cout << "listening..." << std::endl;
+		_running.store(true);
 	}
 	while (_running.load()){
 		if (poll(_pollFd.data(), _pollFd.size(), 100) < 0){
@@ -95,7 +96,6 @@ void lpp::server::_workerLoop(){
 
 void lpp::server::start(const size_t& p_port){
 	if (!_running.load()){
-		_running.store(true);
 		_p_port = p_port;
 		_loop = std::thread(&server::_workerLoop, this);
 	}
@@ -131,4 +131,57 @@ void lpp::server::sendTo(const message& message, long long clientID){
 	lpp::cout << "message type: " << message.type() << std::endl;
 	lpp::cout << "send to client[" << clientID << "] "
 		<< ::send(clientID, data.c_str(), data.size(), 0) << " bytes" << std::endl;
+}
+
+bool lpp::server::config(){
+	// Default action configuration
+    defineAction(1, [&](long long clientID, const lpp::message& msg){
+        int value;
+        msg >> value;
+        lpp::cout << "Received an int " << value << " from client " << clientID << std::endl;
+
+        // Send back a message of type 1 with double the value
+        lpp::message replyMsg(1);
+        replyMsg << (value * 2);
+        sendTo(replyMsg, clientID);
+    });
+
+    defineAction(10, [&](long long clientID, const lpp::message& msg){
+		std::string value;
+        lpp::message replyMsg(10);
+
+        msg >> value;
+		if (value != "ping")
+			replyMsg << "ping?";
+		else{
+			replyMsg << "pong";
+		}
+
+        sendTo(replyMsg, clientID);
+    });
+
+    // Define an action for messages of type 2 (size_t followed by characters)
+    defineAction(2, [&](long long clientID, const lpp::message& msg){
+        size_t length;
+        std::string text;
+        msg >> length;
+        text.reserve(length);
+        for (size_t i = 0; i < length; ++i) {
+            char c;
+            msg >> c;
+            text.push_back(c);
+        }
+        lpp::cout << "Received a string '" << text << "' of length " << length << " from client " << clientID << std::endl;
+		lpp::message tmp(2);
+		tmp << "message received";
+		sendTo(tmp, clientID);
+    });
+
+	return true;
+}
+
+bool lpp::server::execute(){
+	if (!_running.load())
+		start(8080);
+	return true;
 }

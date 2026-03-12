@@ -63,11 +63,12 @@ set(SOURCES
 	tests/main_random_2D_coordinate_generator.cpp
 	tests/main_perlin_2D.cpp
 	tests/main_arena_allocator.cc
-	tests/main_timer.cc)
+	tests/main_timer.cc
+	tests/main_responsability_chain.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
-set(SOURCES ${SOURCES} design_patterns/memento/memento.cc)
+set(SOURCES ${SOURCES} design_patterns/memento/memento.cc design_patterns/responsability_chain/responsability_chain.cc)
 
 set(SOURCES ${SOURCES} iostream/thread_safe_iostream.cc)
 
@@ -76,7 +77,7 @@ set(SOURCES
     threading/persistent_worker/persistent_worker.cc)
 
 set(SOURCES ${SOURCES} network/message/message.cc network/client/client.cc
-            network/server/server.cc)
+            network/server/server.cc network/prompt/prompt.cc)
 
 set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc
 mathematics/perlin_noise_2D/perlin_noise_2D.cc)

@@ -6,20 +6,21 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:54:23 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 16:55:35 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../client/client.hh"
+#include "../../design_patterns/responsability_chain/responsability_chain.hh"
 #include <thread>
 #include <exception>
 
 #define BUFFER_SIZE 1024
 
 namespace lpp{
-	class server{
+	class server : public lpp::IResponsability_chain{
 		public :
 		 using Callback = std::function<void(long long, const message &)>;
 		private:
@@ -39,6 +40,9 @@ namespace lpp{
 			std::atomic<bool> _running;
 
 			void _workerLoop();
+
+			bool config()	override;
+			bool execute()	override;
 		public:
 			server();
 			server(const server&);

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/10 15:15:06 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 16:57:34 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,49 +99,9 @@ int testServer() {
 			lpp::cout << "server work!" << std::endl;
     });
 
-	lpp::cout << "Available operations :" << std::endl;
-	lpp::cout << " - [Q]uit|exit : close the program" << std::endl;
-	lpp::cout << " - Any other input to continue updating the client" << std::endl;
-	lpp::cout << "Usage - (code)|(input), (string)" << std::endl << std::endl;
-	lpp::cout.setPrefix("[Client]: ");
-	while (true)
-	{
-		std::string input;
-		lpp::cout.prompt("libftpp-> ", input);
+	lpp::prompt prompt(client);
+	prompt.run();
 
-		std::transform(input.begin(), input.end(), input.begin(), 
-		               [](unsigned char c){ return std::tolower(c); });
-
-		if (input == "quit" || input == "q" || input == "exit")
-			break;
-		else if(input == "clear" || input == "c"){
-			lpp::cout << "\033c" << std::flush;
-		} else if (!input.empty()){
-			if (input.find('|') == input.npos){
-				client.send(input);
-			} else {
-				int code = 0;
-				char sep = 0;
-				std::stringstream ss(input);
-				input.clear();
-				if (ss >> code >> sep >> input){
-					if (sep != '|' || !ss.eof()){
-						lpp::cout << "Argument error" << std::endl;
-						lpp::cout << "error with: " << input << std::endl;
-						continue;
-					}
-					lpp::message msg(code);
-					msg << input;
-					client.send(msg);
-				} else {
-					lpp::cout << "Argument error" << std::endl;
-					continue;
-				}
-			}
-		}
-	}
-
-	lpp::cout.clear();
     return 0;
 }
 
