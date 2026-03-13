@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 11:55:14 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:48:36 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 17:44:02 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ namespace lpp{
 	class memento{
 			public :
 				class Snapshot{
+					friend memento;
 					private :
 						std::queue<std::any> _state;
 					public :

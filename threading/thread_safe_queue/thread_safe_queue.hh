@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 16:44:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:56:16 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 17:54:14 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <queue>
 #include <mutex>
 #include <utility>
+#include "../../design_patterns/non_copyable/non_copyable.hh"
+#include "../../iostream/thread_safe_iostream.hh"
 
 namespace lpp{
 	template<typename TType>
@@ -24,21 +26,37 @@ namespace lpp{
 			std::deque<TType> _queue;
 			static inline std::mutex _mutex;
 		public :
-			class iterator{
-				
-			};
 			thread_safe_queue(){}
 			~thread_safe_queue(){}
+
 			thread_safe_queue(const thread_safe_queue &other){
-				std::scoped_lock<std::mutex> lock(_mutex, other._mutex);
+				std::scoped_lock lock(other._mutex);
 				_queue = other._queue;
 			}
+
 			thread_safe_queue& operator=(const thread_safe_queue &other){
 				if (this != &other){
-					std::scoped_lock<std::mutex> lock(_mutex, other._mutex);
+					std::scoped_lock lock(_mutex, other._mutex);
 					_queue = other._queue;
 				}
+
 				return *this;
+			}
+
+			thread_safe_queue& operator=(thread_safe_queue &&other){
+				if (this != &other){
+					std::scoped_lock lock(_mutex, other._mutex);
+					if (!_queue.empty())
+						_queue.clear();
+					_queue = std::move(other._queue);
+				}
+
+				return *this;
+			}
+
+			thread_safe_queue(thread_safe_queue &&other){
+				std::lock_guard lock(other._mutex);
+				_queue = std::move(other._queue);
 			}
 		
 			void push_back(TType&& newElement) noexcept{

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 11:55:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 20:10:56 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 17:44:32 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,10 @@ lpp::memento& lpp::memento::operator=(const memento &other){
 }
 
 void lpp::memento::load(const memento::Snapshot& state){
-	_state = state;
-	_loadFromSnapshot(_state);
+	if (!state._state.empty()){
+		_state = state;
+		_loadFromSnapshot(_state);
+	}
 }
 
 lpp::memento::Snapshot lpp::memento::save(){
