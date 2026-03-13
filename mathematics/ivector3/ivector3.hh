@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 17:18:03 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 11:57:00 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 10:01:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,17 @@ namespace lpp{
 
 			ivector3() : x(0), y(0), z(0){}
 			ivector3(TType x, TType y, TType z) : x(x), y(y), z(z){}
+			ivector3(const ivector3& other) : x(other.x), y(other.y), z(other.z){}
+			ivector3& operator=(const ivector3& other){
+				if (this != &other){
+					x = other.x;
+					y = other.y;
+					z = other.z;
+				}
+
+				return *this;
+			}
+
 			~ivector3(){}
 
 
@@ -59,5 +70,11 @@ namespace lpp{
 			friend bool operator!=(const ivector3<TType> &first, const ivector3 &second){return (first.x != second.x && first.y != second.y && first.z != second.z);}
 			bool operator<(const ivector3<TType> &other){return (x < other.x && y < other.y && z < other.z);}
 			bool operator>(const ivector3<TType> &other){return (x > other.x && y > other.y && z > other.z);}
+
+			friend std::ostream& operator<<(std::ostream &os, const ivector3 &v){
+				os << "x: " << v.x << ", y: " << v.y << ", z: " << v.z << std::endl;;
+
+				return os;
+			}
 	};
 }

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:39:42 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 09:48:44 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int testArenaAllocator();
 int testTimer();
 int testResponsabilityChain();
 int testNonCopyable();
+int testUniqueMemento();
 
 //--------------------------------------------
 /// The current name of the class when us

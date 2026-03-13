@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 17:18:03 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 11:55:04 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 10:01:51 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,17 @@ namespace lpp{
 			ivector2() : x(0), y(0){}
 			ivector2(TType x, TType y) : x(x), y(y){}
 			~ivector2(){}
+
+			ivector2(const ivector2& other) : x(other.x), y(other.y){}
+			ivector2& operator=(const ivector2& other){
+				if (this != &other){
+					x = other.x;
+					y = other.y;
+				}
+
+				return *this;
+			}
+
 
 
 			float length(){return std::sqrt(std::pow(x, 2) + std::pow(y, 2));}
@@ -55,5 +66,11 @@ namespace lpp{
 			friend bool operator!=(const ivector2 &first, const ivector2 &second){return (first.x != second.x && first.y != second.y);}
 			bool operator<(const ivector2 &other){return (x < other.x && y < other.y);}
 			bool operator>(const ivector2 &other){return (x > other.x && y > other.y);}
+
+			friend std::ostream& operator<<(std::ostream &os, const ivector2 &v){
+				os << "x: " << v.x << ", y: " << v.y << std::endl;
+
+				return os;
+			}
 	};
 }
