@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 10:06:09 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 11:11:06 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ int main(void) {
 	// code = benchPoolTest();
 	// code = testDataBuffer();
 	//
-	code = testMemento();
-	code = myTestMemento();
+	// code = testMemento();
+	// code = myTestMemento();
 	// code = testObserver();
 	// code = myTestObserver();
 	// code = testSingleton();
@@ -49,7 +49,7 @@ int main(void) {
 	// code = testTimer();
 	// code =  testResponsabilityChain();
 	// code = testNonCopyable();
-	// code = testUniqueMemento();
+	code = testUniqueMemento();
 
 	std::cout << "code: " << code << std::endl;
 	return code;
