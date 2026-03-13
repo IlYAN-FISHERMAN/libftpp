@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 10:26:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 09:29:52 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 18:07:55 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int testPerlin_noise_2D(){
 	lpp::unique_chrono chrono("perlin");
 
     const int gridSize = 100;
-    char visualChars[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'};
+    char visualChars[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@', '\0'};
 
 	lpp::cout << "Sampling 2D Perlin noise over a " << gridSize << "x" << gridSize << " grid:" << std::endl << std::endl;
 
