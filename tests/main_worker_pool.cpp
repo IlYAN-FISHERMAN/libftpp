@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:51:47 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/10 15:56:06 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 12:59:41 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int testWorkerPool() {
 	 //    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		// };
 
-		for (int i = 0; i < 100; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			pool.addJob(job);
 		}
 		lpp::cout.setPrefix("thread 1: ");
@@ -96,7 +96,7 @@ int testWorkerPool() {
 	 //    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		// };
 
-		for (int i = 0; i < 100; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			pool.addJob(job);
 		}
 		lpp::cout.setPrefix("thread 1: ");

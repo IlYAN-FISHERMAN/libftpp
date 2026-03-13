@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 11:11:06 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 13:14:00 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,18 @@ int main(void) {
 	// code = testWorkerPool();
 	// code = testPersistentWorker();
 	//
-	// code = testServer();
+	code = testServer();
 	//
 	// code = testIVector2();
 	// code = testIVector3();
 	// code = testRandom_2D_coordinate_generator();
 	// code = testPerlin_noise_2D();
-	
+	//
 	// code = testArenaAllocator();
 	// code = testTimer();
 	// code =  testResponsabilityChain();
 	// code = testNonCopyable();
-	code = testUniqueMemento();
+	// code = testUniqueMemento();
 
 	std::cout << "code: " << code << std::endl;
 	return code;

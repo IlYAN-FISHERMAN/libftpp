@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 16:57:34 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 13:45:56 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,13 @@ int testServer() {
 
     // Define an action for messages of type 2 (size_t followed by characters)
     server.defineAction(2, [&server](long long clientID, const lpp::message& msg){
-        size_t length;
+        size_t length = 0;
         std::string text;
         msg >> length;
-        text.reserve(length);
-        for (size_t i = 0; i < length; ++i) {
-            char c;
-            msg >> c;
-            text.push_back(c);
-        }
+        text.resize(length);
+		for (size_t i = 0; i < length; ++i)
+			msg >> text[i];
+
         lpp::cout << "Received a string '" << text << "' of length " << length << " from client " << clientID << std::endl;
 		lpp::message tmp(2);
 		tmp << "message received";
@@ -63,20 +61,20 @@ int testServer() {
     // Start the server on port 8080
 	try{
 		server.start(8080);
-	} catch(std::runtime_error &e){
-		lpp::cout << "server: " << e.what() << std::endl;
-		exit(-1);
+	} catch(std::exception &e){
+		lpp::cout << "server error: " << e.what() << std::endl;
+		return(-1);
 	}
 
 	try{
 		client.connect("127.0.0.1", 8080);
-	} catch(std::runtime_error &e){
-		lpp::cout << "client: " << e.what() << std::endl;
+	} catch(std::exception &e){
+		lpp::cout << "client error: " << e.what() << std::endl;
 		return(-1);
 	}
 
 	client.defineAction(1, [](const lpp::message& msg){
-        int doubledValue;
+        int doubledValue = 0;
 		msg >> doubledValue;
         lpp::cout << "Received a doubled value: " << doubledValue << std::endl;
     });

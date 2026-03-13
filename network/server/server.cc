@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:21:40 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 13:40:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,27 @@
 void lpp::server::_workerLoop(){
 	{
 		std::lock_guard<std::mutex> lock(_mutex);
-		cout.setPrefix("[server]: ");
-		_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (_socket < 0){
-			_exc = std::make_exception_ptr("socket failed");
+		try{
+			cout.setPrefix("[server]: ");
+			_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			if (_socket < 0)
+				throw std::runtime_error("socket failed");
+			cout << "started..." << std::endl;
+			_serv_addr.sin_family = AF_INET;
+			_serv_addr.sin_addr.s_addr = INADDR_ANY;
+			_serv_addr.sin_port = htons(_p_port);
+			if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0)
+				std::runtime_error("bind failed");
+			else if (::listen(_socket, 5) < 0)
+				throw std::runtime_error("listen failed");
+			_pollFd.push_back(pollfd{_socket, POLLIN, 0});
+			_msg.push_back("");
+			cout << "listening..." << std::endl;
+			_running.store(true);
+		} catch (...){
+			_exc = std::current_exception();
 			return;
 		}
-		cout << "started..." << std::endl;
-		_serv_addr.sin_family = AF_INET;
-		_serv_addr.sin_addr.s_addr = INADDR_ANY;
-		_serv_addr.sin_port = htons(_p_port);
-		if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0){
-			_exc = std::make_exception_ptr("bind failed");
-			return ;
-		} else if (::listen(_socket, 5) < 0){
-			_exc =  std::make_exception_ptr("listen failed");
-			return;
-		}
-		_pollFd.push_back(pollfd{_socket, POLLIN, 0});
-		_msg.push_back("");
-		cout << "listening..." << std::endl;
-		_running.store(true);
 	}
 	while (_running.load()){
 		if (poll(_pollFd.data(), _pollFd.size(), 100) < 0){
@@ -100,8 +100,10 @@ void lpp::server::start(const size_t& p_port){
 		_loop = std::thread(&server::_workerLoop, this);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	if (!_running.load() && _exc)
+	if (!_running.load() && _exc){
+		this->disconnect();
 		std::rethrow_exception(_exc);
+	}
 }
 
 void lpp::server::disconnect(){
