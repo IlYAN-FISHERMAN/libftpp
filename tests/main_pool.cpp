@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 12:02:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 18:13:57 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,6 +263,8 @@ int testPool() {
 	// Acquire another object; this should give us the object that obj2 pointed to
     lpp::pool<TestpoolObject>::Object obj3 = mypool.acquire();
     obj3->sayHello();  // Should output: "Hello from TestpoolObject"
+
+	// lpp::pool<TestpoolObject> p2 = mypool;
 
     // obj1 and obj3 are released back to the pool when the program ends
 	return 0;

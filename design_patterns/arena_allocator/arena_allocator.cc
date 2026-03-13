@@ -1,19 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libftpp.hh                                         :+:      :+:    :+:   */
+/*   arena_allocator.cc                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 10:06:51 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:57:14 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/12 17:51:15 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/12 17:53:09 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "data_structures/data_structures.hh"
-#include "design_patterns/design_patterns.hh"
-#include "iostream/thread_safe_iostream.hh"
-#include "threading/threading.hh"
-#include "network/network.hh"
-#include "mathematics/mathematics.hh"
-#include "time/time.hh"
+#include "arena_allocator.hh"
+
+lpp::arena_allocator::arena_allocator(){}
+
+lpp::arena_allocator::~arena_allocator(){
+	while(!_deletor.empty())
+		_deletor.pop_front()();
+
+	while(!_queue.empty())
+		::operator delete(_queue.pop_front());
+}
+

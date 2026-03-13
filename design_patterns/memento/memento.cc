@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 11:55:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:48:41 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 20:10:56 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@ lpp::memento::Snapshot::Snapshot(){}
 
 lpp::memento::Snapshot::~Snapshot(){}
 
-lpp::memento::Snapshot::Snapshot(const Snapshot &other) : _state(other._state){
-}
+lpp::memento::Snapshot::Snapshot(const Snapshot &other) : _state(other._state){}
 
 lpp::memento::Snapshot& lpp::memento::Snapshot::operator=(const Snapshot &other){
-	if (this != &other)
+	if (this != &other){
 		_state = other._state;
+	}
 
 	return *this;
 }

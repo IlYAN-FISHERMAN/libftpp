@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:48:02 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 18:12:13 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,20 @@
 #include <vector>
 #include <memory>
 #include <set>
+#include "../../design_patterns/non_copyable/non_copyable.hh"
 
 #pragma once
 
 namespace lpp{
 	template <typename TType>
-	class pool{
+	class pool : public lpp::NonCopyable, public lpp::NonMovable{
 		public:
 			struct poolAlive{
 				bool alive;
 				poolAlive() : alive(true){}
 			};
 
-			class Object{
+			class Object : public lpp::NonCopyable{
 				protected :
 					TType							*__obj;
 					pool							*__pool;
@@ -40,9 +41,6 @@ namespace lpp{
 					explicit Object(TType *, pool *);
 
 					Object() = delete;
-					Object(const Object &) = delete;
-					Object& operator=(const Object &) = delete;
-
 				public :
 					~Object();
 					Object& operator=(Object &&) noexcept;
@@ -62,11 +60,6 @@ namespace lpp{
 			std::size_t										_maxSize;
 			std::size_t										_size;
 			std::shared_ptr<poolAlive>						_alive;
-
-			pool(const pool&) = delete;
-			pool& operator=(const pool&) = delete;
-			pool(pool&&) = delete;
-			pool& operator=(pool&&) = delete;
 
 		public:
 			pool();

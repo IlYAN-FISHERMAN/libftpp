@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   non_copyable.hh                                    :+:      :+:    :+:   */
+/*   unique_memento.hh                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/12 17:36:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 18:09:19 by ilyanar          ###   LAUSANNE.ch       */
+/*   Created: 2026/03/13 09:54:04 by ilyanar           #+#    #+#             */
+/*   Updated: 2026/03/13 10:19:10 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "memento.hh"
+#include <functional>
+#include "../non_copyable/non_copyable.hh"
+
 namespace lpp{
-	class NonCopyable{
-	protected:
-		NonCopyable() = default;
-		~NonCopyable() = default;
-
-	public:
-		NonCopyable(const NonCopyable&) = delete;
-		NonCopyable& operator=(const NonCopyable&) = delete;
+	template <typename TType>
+	class unique_memento : public lpp::NonCopyable, public lpp::NonMovable{
+		private:
+			TType &_old;
+			TType _save;
+		public:
+			template<typename ...TArgs>
+			unique_memento(TType&, TArgs...);
+			~unique_memento();
 	};
-
-	class NonMovable{
-	protected:
-		NonMovable() = default;
-		~NonMovable() = default;
-
-	public:
-		NonMovable(const NonMovable&&) = delete;
-		NonMovable& operator=(const NonMovable&&) = delete;
-	};
+	#include "unique_memento.tpp"
 }

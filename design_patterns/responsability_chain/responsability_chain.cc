@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 12:29:51 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:19:58 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/13 10:23:30 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void lpp::responsability_chain::run(){
 			return ;
 		}
 	}
-
 	for (auto &node : _chain){
 		if (!node.get()->execute()){
 			lpp::cout << "execute error" << std::endl;

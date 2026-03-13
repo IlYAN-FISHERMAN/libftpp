@@ -67,32 +67,37 @@ set(SOURCES
 	tests/main_responsability_chain.cc
 	tests/main_non_copyable.cc)
 
+
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
-set(SOURCES ${SOURCES} design_patterns/memento/memento.cc design_patterns/responsability_chain/responsability_chain.cc)
+set(SOURCES ${SOURCES} design_patterns/memento/memento.cc
+	design_patterns/responsability_chain/responsability_chain.cc
+	design_patterns/arena_allocator/arena_allocator.cc)
 
 set(SOURCES ${SOURCES} iostream/thread_safe_iostream.cc)
 
 set(SOURCES
-    ${SOURCES} threading/thread/thread.cc threading/worker_pool/worker_pool.cc
+    ${SOURCES} threading/thread/thread.cc
+	threading/worker_pool/worker_pool.cc
     threading/persistent_worker/persistent_worker.cc)
 
-set(SOURCES ${SOURCES} network/message/message.cc network/client/client.cc
-            network/server/server.cc network/prompt/prompt.cc)
+set(SOURCES ${SOURCES} network/message/message.cc
+	network/client/client.cc
+	network/server/server.cc network/prompt/prompt.cc)
 
 set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc
-mathematics/perlin_noise_2D/perlin_noise_2D.cc)
+	mathematics/perlin_noise_2D/perlin_noise_2D.cc)
 
-set(SOURCES ${SOURCES} time/chronometer/chronometer.cc time/timer/timer.cc)
+set(SOURCES ${SOURCES} time/chronometer/chronometer.cc
+	time/timer/timer.cc)
 
 add_executable(lib ${SOURCES})
 add_library(ftpp STATIC ${SOURCES})
 
 target_include_directories(ftpp PRIVATE data_structures)
+target_include_directories(ftpp PRIVATE design_patterns)
 target_include_directories(ftpp PRIVATE iostream)
 target_include_directories(ftpp PRIVATE mathematics)
 target_include_directories(ftpp PRIVATE networks)
 target_include_directories(ftpp PRIVATE threading)
-target_include_directories(ftpp PRIVATE design_patterns)
 target_include_directories(ftpp PRIVATE time)
-target_include_directories(ftpp PRIVATE arena_allocator)

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:06:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:47:43 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/12 18:03:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,29 +33,14 @@ namespace lpp{
 			data_buffer& operator=(const data_buffer&);
 
 			template<typename T>
-			data_buffer& operator<<(T data) noexcept(false){
-				std::vector<std::byte> byte(sizeof(T));
-				memcpy(byte.data(), &data, sizeof(T));
-				_bytes.push(byte);
-				return *this;
-			}
+			data_buffer& operator<<(T data) noexcept(false);
 
 			template<typename T>
-			data_buffer& operator>>(T &data) noexcept(false){
-				static_assert(std::is_trivially_copyable_v<T>,
-					  "data_buffer can only deserialize trivially copyable types");
-				if (_bytes.empty())
-					throw std::logic_error("no more object to deserialize");
-				if (_bytes.front().size() != sizeof(T))
-					throw std::logic_error("can't deserialize");
-				std::vector<std::byte> byte(_bytes.front());
-				_bytes.pop();
-				memcpy(&data, byte.data(), sizeof(T));
-				return *this;
-			}
+			data_buffer& operator>>(T &data) noexcept(false);
 
 			data_buffer& operator<<(const std::string&);
 
 			data_buffer& operator>>(std::string&);
 	};
+	#include "data_buffer.tpp"
 }
