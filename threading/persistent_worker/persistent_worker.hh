@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:55:21 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 18:10:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/14 15:06:31 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #include <set>
 
 namespace lpp{
-	class persistent_worker{
+	class persistent_worker : public lpp::NonCopyable, public lpp::NonMovable{
 		public :
 			class IJobs{
 				public :

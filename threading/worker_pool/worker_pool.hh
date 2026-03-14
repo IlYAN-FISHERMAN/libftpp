@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:50:12 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 13:09:21 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/14 15:03:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <condition_variable>
 
 namespace lpp{
-	class worker_pool{
+	class worker_pool : public lpp::NonCopyable, public lpp::NonMovable{
 		public :
 			class IJobs{
 				public :
@@ -38,9 +38,6 @@ namespace lpp{
 			std::size_t								_nbrOfThread;
 			std::atomic<bool>						_stop;
 			std::atomic<size_t>						_workerThread;
-
-			worker_pool(const worker_pool &) = delete;
-			worker_pool& operator=(const worker_pool&) = delete;
 
 			void _workLoop();
 		public:
