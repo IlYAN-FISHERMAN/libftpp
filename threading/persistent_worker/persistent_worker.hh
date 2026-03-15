@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:55:21 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/14 15:06:31 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/15 11:47:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,6 @@ namespace lpp{
 			std::condition_variable	_cv;
 			std::atomic<bool>		_stop;
 			std::atomic<bool>		_erase;
-
-			persistent_worker(const persistent_worker &) = delete;
-			persistent_worker& operator=(const persistent_worker&) = delete;
 
 			void _workLoop();
 		public :

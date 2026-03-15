@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 10:24:57 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/11 11:31:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/15 11:54:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,7 @@ namespace lpp{
 			}
 
 			void transitionTo(const TState& state) noexcept(false){
-				if (std::find(_existingStates.begin(), _existingStates.end(), state) == _existingStates.end()
-				|| std::find(_existingStates.begin(), _existingStates.end(), state) == _existingStates.end())
+				if (std::find(_existingStates.begin(), _existingStates.end(), state) == _existingStates.end())
 					throw std::invalid_argument("Handle state not found");
 
 				if (std::find(_transition.begin(), _transition.end(), Transition(*_index, state)) == _transition.end()){
