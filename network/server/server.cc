@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 13:40:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/17 10:16:44 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void lpp::server::_workerLoop(){
 			_serv_addr.sin_addr.s_addr = INADDR_ANY;
 			_serv_addr.sin_port = htons(_p_port);
 			if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0)
-				std::runtime_error("bind failed");
+				throw std::runtime_error("bind failed");
 			else if (::listen(_socket, 5) < 0)
 				throw std::runtime_error("listen failed");
 			_pollFd.push_back(pollfd{_socket, POLLIN, 0});
