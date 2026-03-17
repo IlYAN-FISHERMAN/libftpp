@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 18:12:13 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/17 12:31:59 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <memory>
 #include <set>
 #include "../../design_patterns/non_copyable/non_copyable.hh"
+#include "../../utils/color.hh"
 
 #pragma once
 

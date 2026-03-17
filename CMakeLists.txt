@@ -84,7 +84,10 @@ set(SOURCES
 
 set(SOURCES ${SOURCES} network/message/message.cc
 	network/client/client.cc
-	network/server/server.cc network/prompt/prompt.cc)
+	network/logger/logger.cc
+	network/server/server.cc
+	network/prompt/prompt.cc
+	network/matt_daemon/matt_daemon.cc)
 
 set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cc
 	mathematics/perlin_noise_2D/perlin_noise_2D.cc)
@@ -92,7 +95,8 @@ set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coor
 set(SOURCES ${SOURCES} time/chronometer/chronometer.cc
 	time/timer/timer.cc)
 
-add_executable(lib ${SOURCES})
+# add_executable(lib ${SOURCES})
+add_executable(matt-daemon ${SOURCES})
 add_library(ftpp STATIC ${SOURCES})
 
 target_include_directories(ftpp PRIVATE data_structures)

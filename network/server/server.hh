@@ -6,17 +6,20 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:45:59 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/17 17:18:47 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../client/client.hh"
+#include "../logger/logger.hh"
 #include "../../design_patterns/responsability_chain/responsability_chain.hh"
 #include "../../design_patterns/non_copyable/non_copyable.hh"
 #include <thread>
 #include <exception>
+#include <cstdio>
+
 
 #define BUFFER_SIZE 1024
 
@@ -32,6 +35,12 @@ namespace lpp{
 			size_t _p_port;
 			std::exception_ptr _exc;
 
+			std::string _fileName;
+			lpp::logger _logger;
+
+			int _lockFd;
+			std::string _lockFile;
+
 			std::vector<pollfd> _pollFd;
 			std::vector<std::string> _msg;
 
@@ -40,10 +49,10 @@ namespace lpp{
 			std::atomic<bool> _running;
 
 			void _workerLoop();
+			void _daemonLoop();
 
 			bool config()	override;
 			bool execute()	override;
-
 		public:
 			server();
 			~server();
@@ -51,7 +60,12 @@ namespace lpp{
 			void start(const size_t& p_port);
 			void disconnect();
 
+			void daemon(const size_t& p_port);
+			void killDaemon();
+
 			void defineAction(const message::Type& messageType, const std::function<void(long long clientID, const message& msg)>& action);
 			void sendTo(const message& message, long long clientID);
+			void setDaemonLogFileName(std::string);
+			void setDaemonLockFileName(std::string);
 	};
 }

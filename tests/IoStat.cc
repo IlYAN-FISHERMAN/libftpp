@@ -6,11 +6,12 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:46:26 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/10 15:51:47 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/17 12:31:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tester.hh"
+#include "../utils/color.hh"
 
 //--------------------------------------------
 /// Get the current time
