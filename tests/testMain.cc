@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/15 11:55:34 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/17 11:07:42 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int main(void) {
 	// code = deleteTestPool();
 	// code = benchPoolTest();
 	// code = testDataBuffer();
-	//
+//
 	// code = testMemento();
 	// code = myTestMemento();
 	// code = testObserver();
@@ -29,16 +29,16 @@ int main(void) {
 	// code = testSingleton();
 	// code = testStateMachine();
 	// code = myTestStateMachine();
-	//
+//
 	// code = testThreadSafeIostream();
 	// code = myTestThreadSafeIostream();
-	//
+//
 	// code = testThreadSafeQueue();
 	// code = testThread();
 	// code = testWorkerPool();
 	// code = testPersistentWorker();
-	//
-	// code = testServer();
+
+	code = testServer();
 	//
 	// code = testIVector2();
 	// code = testIVector3();

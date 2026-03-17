@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 16:30:47 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:32:20 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/17 11:08:16 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,11 @@ void lpp::prompt::run(){
 	lpp::cout << " - [Q]uit|exit : close the program" << std::endl;
 	lpp::cout << " - Any other input to continue updating the _client" << std::endl;
 	lpp::cout << "Usage - (code)|(input), (string)" << std::endl << std::endl;
-	lpp::cout.setPrefix("[libftpp prompt]: ");
 
 	while (true)
 	{
 		std::string input;
-		lpp::cout.prompt(_prefix, input, true);
+		lpp::cout.prompt(_prefix, input, false);
 
 		std::transform(input.begin(), input.end(), input.begin(), 
 		               [](unsigned char c){ return std::tolower(c); });

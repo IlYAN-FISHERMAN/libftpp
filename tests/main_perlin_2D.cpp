@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 10:26:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 18:07:55 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/15 16:06:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int testPerlin_noise_2D(){
 
     for (int y = 0; y < gridSize; ++y) {
         for (int x = 0; x < gridSize; ++x) {
-            float sample = perlin.sample(x * 0.1f, y * 0.1f); // Adjust these factors as needed
+            float sample = perlin.sample(x * 0.21f, y * 0.10f); // Adjust these factors as needed
             sample = (sample + 1) / 2; // Map from [-1, 1] to [0, 1]
             int charIndex = std::round(sample * 9); // Map from [0, 1] to [0, 9]
 

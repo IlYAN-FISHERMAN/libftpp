@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 14:30:43 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 17:48:57 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/15 16:07:13 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ int testArenaAllocator(){
 	std::shared_ptr io(std::make_unique<IoStat>(1, "mgm", 1, 1));
 
 	{
-		// for(size_t i = 0; i < 100; i++)
-		// 	worker->addJob(io);
-		// while(worker->size() > 50)
-		// 	;
-		// save = io->save();
+		for(size_t i = 0; i < 100; i++)
+			worker->addJob(io);
+		while(worker->size() > 50)
+			;
+		save = io->save();
 		worker->wait();
 	}
 
