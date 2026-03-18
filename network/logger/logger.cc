@@ -6,12 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/17 17:08:43 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 15:07:42 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "logger.hh"
 #include "../../utils/color.hh"
+#include <unistd.h>
 
 std::string lpp::logger::levelToString(lpp::LogLevel lvl){
 	switch (lvl) {
@@ -30,24 +31,30 @@ std::string lpp::logger::levelToString(lpp::LogLevel lvl){
 	}
 }
 
-lpp::logger::logger(const std::string& filePath) : _filePath(filePath){}
+lpp::logger::logger(const std::string& filePath, bool deleteFile, bool printFormat) : _filePath(filePath), _deleteFile(deleteFile), _printFormat(printFormat){}
 
 lpp::logger::logger() : _filePath("/var/log/libftpp/server/daemon.log"){}
 
 lpp::logger::~logger(){
-	if (logFile.is_open())
+	if (logFile.is_open()){
 		logFile.close();
+		unlink(_filePath.c_str());
+	}
 }
 
 void lpp::logger::log(LogLevel level, const std::string& message){
 	time_t now = time(0);
 	tm* timeinfo = localtime(&now);
-	char timestamp[20];
-	strftime(timestamp, sizeof(timestamp),
-			 "%Y-%m-%d %H:%M:%S", timeinfo);
 
 	std::ostringstream logEntry;
-	logEntry << "[" << timestamp << "] " << levelToString(level) << ": " << message << std::endl;
+	if (_printFormat){
+		char timestamp[20];
+		strftime(timestamp, sizeof(timestamp),
+			 "%Y-%m-%d %H:%M:%S", timeinfo);
+		logEntry << "[" << timestamp << "] " << levelToString(level) << ": " << message << std::endl;
+	}
+	else
+		logEntry << message << std::endl;
 	if (logFile.is_open()) {
 		logFile << logEntry.str();
 		logFile.flush();
@@ -61,3 +68,7 @@ void lpp::logger::open(){
 }
 
 void lpp::logger::setFilePath(const std::string name){_filePath = name;}
+
+void lpp::logger::setDeleteFile(bool deleteFile){_deleteFile = deleteFile;}
+
+void lpp::logger::setPrintFormat(bool deleteFile){_printFormat = deleteFile;}

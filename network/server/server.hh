@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/17 17:18:47 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 14:49:50 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "../logger/logger.hh"
 #include "../../design_patterns/responsability_chain/responsability_chain.hh"
 #include "../../design_patterns/non_copyable/non_copyable.hh"
+#include "../../time/chronometer/chronometer.hh"
 #include <thread>
 #include <exception>
 #include <cstdio>
@@ -40,6 +41,8 @@ namespace lpp{
 
 			int _lockFd;
 			std::string _lockFile;
+			std::string _execFile;
+			lpp::chronometer _chrono;
 
 			std::vector<pollfd> _pollFd;
 			std::vector<std::string> _msg;
@@ -67,5 +70,9 @@ namespace lpp{
 			void sendTo(const message& message, long long clientID);
 			void setDaemonLogFileName(std::string);
 			void setDaemonLockFileName(std::string);
+			void setDaemonExecFileName(std::string);
+
+			std::string exec(std::string);
+			lpp::logger& getLogger();
 	};
 }
