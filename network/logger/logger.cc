@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 15:07:42 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 15:25:15 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ lpp::logger::logger() : _filePath("/var/log/libftpp/server/daemon.log"){}
 lpp::logger::~logger(){
 	if (logFile.is_open()){
 		logFile.close();
-		unlink(_filePath.c_str());
 	}
+	unlink(_filePath.c_str());
 }
 
 void lpp::logger::log(LogLevel level, const std::string& message){
@@ -71,4 +71,4 @@ void lpp::logger::setFilePath(const std::string name){_filePath = name;}
 
 void lpp::logger::setDeleteFile(bool deleteFile){_deleteFile = deleteFile;}
 
-void lpp::logger::setPrintFormat(bool deleteFile){_printFormat = deleteFile;}
+void lpp::logger::setPrintFormat(bool printFormat){_printFormat = printFormat;}

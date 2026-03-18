@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 15:07:04 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 15:28:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,8 +222,8 @@ void lpp::server::daemon(const size_t& p_port){
 			return ;
 		}
 		if (!pid){
+			_running.store(true);
 			_daemonLoop();
-			exit(0);
 		}
 	}
 	else
@@ -359,13 +359,15 @@ void lpp::server::killDaemon(){
 		unlink(_lockFile.c_str());
 		lpp::cout << "delete lock file" << std::endl;
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 lpp::logger& lpp::server::getLogger(){return _logger;}
 
 std::string lpp::server::exec(std::string cmd){
 	lpp::logger log(_execFile);
+	log.setDeleteFile(true);
+	log.setPrintFormat(false);
 	std::string execCmd(cmd + " > " + _execFile);
 
 	std::system(execCmd.c_str());
