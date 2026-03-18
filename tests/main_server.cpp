@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:19:24 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/17 10:13:48 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 17:17:31 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,11 @@ int testServer() {
 		server.sendTo(tmp, clientID);
     });
 
+	server.defineAction(31, [](long long clientId, const lpp::message& msg){
+		lpp::cout << "test with client[" << clientId << "]" << std::endl;
+		(void)msg;
+	});
+
     // Start the server on port 8080
 	try{
 		server.start(8080);
@@ -98,12 +103,6 @@ int testServer() {
     });
 
 	lpp::prompt prompt(client);
-
-	server.defineAction(31, [](long long clientId, const lpp::message& msg){
-		lpp::cout << "test with client[" << clientId << "]" << std::endl;
-		(void)msg;
-	});
-
 	prompt.run();
 
     return 0;

@@ -95,14 +95,36 @@ set(SOURCES ${SOURCES} mathematics/random_2D_coordinate_generator/random_2D_coor
 set(SOURCES ${SOURCES} time/chronometer/chronometer.cc
 	time/timer/timer.cc)
 
+find_package(SDL3 CONFIG)
+
+set(CLIENT_GUI network/client/clientGUI.cc
+	iostream/thread_safe_iostream.cc
+	network/client/client.cc
+	network/message/message.cc
+	imgui/imgui.cpp
+	imgui/imgui_draw.cpp
+	imgui/imgui_tables.cpp
+	imgui/imgui_demo.cpp
+	imgui/backends/imgui_impl_sdl3.cpp
+	imgui/backends/imgui_impl_sdlrenderer3.cpp
+	imgui/imgui_widgets.cpp)
+
 # add_executable(lib ${SOURCES})
 add_executable(matt-daemon ${SOURCES})
+add_executable(Ben_AFK ${CLIENT_GUI})
+
 add_library(ftpp STATIC ${SOURCES})
+
+target_link_libraries(Ben_AFK PUBLIC SDL3::SDL3)
+target_include_directories(Ben_AFK PRIVATE network)
+target_include_directories(Ben_AFK PRIVATE iostream)
+target_include_directories(Ben_AFK PRIVATE imgui)
+target_include_directories(Ben_AFK PRIVATE imgui/backends)
 
 target_include_directories(ftpp PRIVATE data_structures)
 target_include_directories(ftpp PRIVATE design_patterns)
 target_include_directories(ftpp PRIVATE iostream)
 target_include_directories(ftpp PRIVATE mathematics)
-target_include_directories(ftpp PRIVATE networks)
+target_include_directories(ftpp PRIVATE network)
 target_include_directories(ftpp PRIVATE threading)
 target_include_directories(ftpp PRIVATE time)

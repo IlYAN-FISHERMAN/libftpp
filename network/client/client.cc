@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:22:15 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 23:46:16 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,10 @@ void lpp::client::send(const message& msg){
 	std::string value;
 	msg >> value;
 	std::string data = (std::to_string(msg.type()) + '|' + value + '\n');
-	lpp::cout << "send " << ::send(_socket, data.c_str(), data.size(), 0) << " bytes" << std::endl;
+	// lpp::cout << "send " << ::send(_socket, data.c_str(), data.size(), 0) << " bytes" << std::endl;
 	char buffer[1024];
 	ssize_t n = read(_socket, buffer, sizeof(buffer));
+	std::cout << "test\n";
 	if (n > 0) {
 		int code = 0;
 		char sep = 0;
@@ -79,6 +80,8 @@ void lpp::client::send(const message& msg){
 			lpp::cout << "action bad format" << std::endl;
 	}else
 		lpp::cout << "send failed: " << n << std::endl;
+
+	std::cout << "test\n";
 }
 
 void lpp::client::send(std::string &msg){
@@ -90,6 +93,17 @@ void lpp::client::send(std::string &msg){
 		lpp::cout << "server reponse: " << reply << std::endl;
 	} else
 		lpp::cout << "send failed: " << n << std::endl;
+}
+
+std::string lpp::client::send(const char *msg, size_t size){
+	if (::send(_socket, msg, size, 0) < 0)
+		return ("send failed");
+	char buffer[1024];
+
+	ssize_t n = read(_socket, buffer, sizeof(buffer));
+	if (n > 0)
+		return (std::string(buffer, n));
+	return ("read failed");
 }
 
 bool lpp::client::config(){

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 15:25:15 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 00:16:58 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,19 +39,26 @@ lpp::logger::~logger(){
 	if (logFile.is_open()){
 		logFile.close();
 	}
-	unlink(_filePath.c_str());
+	if (_deleteFile)
+		std::filesystem::remove(_filePath);
 }
 
-void lpp::logger::log(LogLevel level, const std::string& message){
+std::string lpp::logger::getDate(){
 	time_t now = time(0);
 	tm* timeinfo = localtime(&now);
 
 	std::ostringstream logEntry;
+	char timestamp[20];
+	strftime(timestamp, sizeof(timestamp),
+		 "%Y-%m-%d %H:%M:%S", timeinfo);
+
+	return timestamp;
+}
+
+void lpp::logger::log(LogLevel level, const std::string& message){
+	std::ostringstream logEntry;
 	if (_printFormat){
-		char timestamp[20];
-		strftime(timestamp, sizeof(timestamp),
-			 "%Y-%m-%d %H:%M:%S", timeinfo);
-		logEntry << "[" << timestamp << "] " << levelToString(level) << ": " << message << std::endl;
+		logEntry << "[" << getDate() << "] " << levelToString(level) << ": " << message << std::endl;
 	}
 	else
 		logEntry << message << std::endl;
@@ -64,7 +71,7 @@ void lpp::logger::log(LogLevel level, const std::string& message){
 bool lpp::logger::is_open(){return logFile.is_open();}
 
 void lpp::logger::open(){
-	logFile.open(_filePath, std::ios::app);
+	logFile.open(_filePath, std::ios::trunc);
 }
 
 void lpp::logger::setFilePath(const std::string name){_filePath = name;}

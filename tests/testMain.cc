@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/17 16:38:15 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 17:19:13 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 int main(int ac, char **av) {
 	srand(static_cast<unsigned int>(time(NULL)));
 	int code = 0;
+	(void)ac;
+	(void)av;
 
 	// code = testPool();
 	// code = myTestPool();

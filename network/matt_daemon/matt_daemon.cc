@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 11:38:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 15:04:42 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 00:00:39 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ void printUsage(){
 
 int matt_daemon(int ac, char **av){
 	lpp::server server;
+
+	server.setDaemonLogFileName("matt_daemon.log");
+	server.setDaemonLockFileName("matt_daemon.lock");
+	server.setDaemonExecFileName("matt_daemon_exec.log");
+
     server.defineAction(1, [&server](long long clientID, const lpp::message& msg){
         int value;
         msg >> value;
@@ -51,33 +56,13 @@ int matt_daemon(int ac, char **av){
         server.sendTo(replyMsg, clientID);
     });
 
-    // Define an action for messages of type 2 (size_t followed by characters)
-    server.defineAction(2, [&server](long long clientID, const lpp::message& msg){
-        size_t length = 0;
-        std::string text;
-        msg >> length;
-        text.resize(length);
-		for (size_t i = 0; i < length; ++i)
-			msg >> text[i];
-
-        lpp::cout << "Received a string '" << text << "' of length " << length << " from client " << clientID << std::endl;
-		lpp::message tmp(2);
-		tmp << "message received";
-		server.sendTo(tmp, clientID);
-    });
-
     server.defineAction(3, [&server](long long clientID, const lpp::message& msg){
 		
-		server.getLogger().log(lpp::INFO, "received: " + msg.str());
+		server.getLogger().log(lpp::INFO, "received command: " + msg.str());
 		lpp::message rtn(3);
-		rtn << "\n" << server.exec(msg.str());
+		rtn << server.exec(msg.str());
 		server.sendTo(rtn, clientID);
     });
-
-
-	server.setDaemonLogFileName("matt_daemon.log");
-	server.setDaemonLockFileName("matt_daemon.lock");
-	server.setDaemonExecFileName("matt_daemon_exec.log");
 
 	try{
 		if (ac == 2){

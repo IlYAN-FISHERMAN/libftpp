@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:17:16 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 10:53:34 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/18 17:03:39 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ namespace lpp{
 
 			template<typename TType>
 			friend const message& operator>>(const message& msg, TType &other){
-				// if (!msg._value.eof())
 				msg._value >> other;
 				return msg;
 			}

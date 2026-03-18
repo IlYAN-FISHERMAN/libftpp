@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 15:28:08 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 00:33:18 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ void lpp::server::_workerLoop(){
 			if (_socket < 0)
 				throw std::runtime_error("socket failed");
 			cout << "started..." << std::endl;
+			int flags = fcntl(_socket, F_GETFL, 0);
+			fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
 			_serv_addr.sin_family = AF_INET;
 			_serv_addr.sin_addr.s_addr = INADDR_ANY;
 			_serv_addr.sin_port = htons(_p_port);
@@ -103,7 +105,6 @@ void lpp::server::_workerLoop(){
 
 void lpp::server::_daemonLoop(){
 	_logger.open();
-	_logger.setDeleteFile(false);
 	_logger.setPrintFormat(true);
 	if (!_logger.is_open()){
 		lpp::logger("/dev/stderr").log(ERROR, "Error opening log file.");
@@ -114,13 +115,15 @@ void lpp::server::_daemonLoop(){
 		if (_socket < 0)
 			throw std::runtime_error("socket failed");
 		_logger.log(INFO, "started...");
+		int flags = fcntl(_socket, F_GETFL, 0);
+		fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
 		_serv_addr.sin_family = AF_INET;
 		_serv_addr.sin_addr.s_addr = INADDR_ANY;
 		_serv_addr.sin_port = htons(_p_port);
 		if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0)
-			throw std::runtime_error("bind failed");
+			throw std::runtime_error("daemon bind failed");
 		else if (::listen(_socket, 5) < 0)
-			throw std::runtime_error("listen failed");
+			throw std::runtime_error("daemon listen failed");
 		_pollFd.push_back(pollfd{_socket, POLLIN, 0});
 		_msg.push_back("");
 		_logger.log(INFO, "listening...");
@@ -178,19 +181,28 @@ void lpp::server::_daemonLoop(){
 							_msg.erase(_msg.begin() + i);
 							i--;
 							_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd - 1) + "] request quit");
-						} else
+						} else{
 							_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd - 1) + "] input: " + _msg[i]);
+							::send(_pollFd[i].fd, "message received", 17, 0);
+
+						}
 					}
 					_msg[i].clear();
 				}
 			}
 		}
 	}
-	_logger.log(INFO, "stopping server... code[" + std::to_string(sigCode) + "]\r\n\r\n");
+	_logger.log(INFO, "stopping server... code[" + std::to_string(sigCode) + "]");
+
+	for (auto pol : _pollFd)
+		close(pol.fd);
+	_logger.log(INFO, "clear poll structure");
+
 	if (_lockFd != -1){
 		flock(_lockFd, LOCK_UN);
 		close(_lockFd);
 		unlink(_lockFile.c_str());
+		_logger.log(INFO, "unlink " + _lockFile);
 	}
 	return ;
 }
@@ -249,8 +261,8 @@ void lpp::server::disconnect(){
 		_running.store(false);
 		if(_loop.joinable())
 			_loop.join();
-		close(_socket);
 	}
+	close(_socket);
 }
 
 lpp::server::~server(){
@@ -330,7 +342,7 @@ bool lpp::server::execute(){
 }
 
 void lpp::server::setDaemonLogFileName(std::string name){
-	_fileName = "/var/log/libftpp/server/" + name;
+	_fileName = "/var/log/libftpp/server/" + logger::getDate() + '_' + name;
 	_logger.setFilePath(_fileName);
 }
 
@@ -342,10 +354,10 @@ void lpp::server::killDaemon(){
 	std::lock_guard<std::mutex> m(_mutex);
 	std::ifstream lock(_lockFile);
 	std::string tmp;
+
 	if (!lock.is_open()){
 		return ;
 	}
-
 	pid_t pid = 0;
 	if (!(lock >> pid))
 		throw std::runtime_error("Faile to read lock file");
@@ -353,35 +365,24 @@ void lpp::server::killDaemon(){
 		throw std::runtime_error("Failed to send SIGINT to daemon");
 	}
 	lpp::cout << "kill daemon process [" << pid << "] with SIGINT" << std::endl;
-	if (_lockFd != -1){
-		flock(_lockFd, LOCK_UN);
-		close(_lockFd);
-		unlink(_lockFile.c_str());
-		lpp::cout << "delete lock file" << std::endl;
-	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 lpp::logger& lpp::server::getLogger(){return _logger;}
 
 std::string lpp::server::exec(std::string cmd){
-	lpp::logger log(_execFile);
-	log.setDeleteFile(true);
-	log.setPrintFormat(false);
-	std::string execCmd(cmd + " > " + _execFile);
+	std::string result("\n");
+    char buffer[128];
 
-	std::system(execCmd.c_str());
+	_logger.log(INFO, "exec command: \""+ cmd + " > " + _execFile + "\"");
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe) return "error";
 
-	std::ifstream file(_execFile);
-	if (!file.is_open())
-		return "Error to open execution file at " + _execFile;
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        result += buffer;
+    }
 
-	execCmd.clear();
-	for(std::string tmp; std::getline(file, tmp, '\n');){
-		execCmd += tmp;
-		if (!file.eof())
-			execCmd += '\n';
-	}
-
-	return execCmd;
+    pclose(pipe);
+	_logger.log(INFO, "delete " + _execFile);
+    return result;
 }
