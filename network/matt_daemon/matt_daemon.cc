@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 11:38:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 00:00:39 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 12:03:13 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ void printUsage(){
 	std::cout << std::endl;
 
 	std::cout << "OPTIONS" << std::endl;
-	std::cout << "   -r,\t\trestart matt-daemon server" << std::endl;
-	std::cout << "   -k,\t\tkill current matt-daemon server" << std::endl;
+	std::cout << "            -r,\t\trestart matt-daemon server" << std::endl;
+	std::cout << "            -k,\t\tkill current matt-daemon server" << std::endl;
+	std::cout << "   --clear-log,\tclear all logs from all instance of the matt-daemon servers" << std::endl;
 	std::cout << std::endl;
 }
 
@@ -65,21 +66,33 @@ int matt_daemon(int ac, char **av){
     });
 
 	try{
-		if (ac == 2){
-			if (!strcmp(av[1], "-r")){
-				server.killDaemon();
-				lpp::cout << "restart daemon server" << std::endl;
-			}
-			else if (!strcmp(av[1], "-k")){
-				server.killDaemon();
-				return 0;
-			}
-			else if (!strcmp(av[1], "--help") || !strcmp(av[1], "-h")){
+		for (auto it = 1; it < ac; it++){
+			if (!strcmp(av[it], "--help") || !strcmp(av[it], "-h")){
 				printUsage();
 				return 0;
 			}
+			else if (!strcmp(av[it], "-r")){
+				server.killDaemon();
+				server.daemon(4242);
+				lpp::cout << "restart daemon server" << std::endl;
+			}
+			else if (!strcmp(av[it], "-k")){
+				if (ac > 2){
+					std::cerr << "too much options with -k" << std::endl;
+				}
+				server.killDaemon();
+				return 0;
+			}
+			else if (!strcmp(av[it], "--clear-log")){
+				std::filesystem::directory_entry dir("/var/log/libftpp/server");
+				// dir.
+			}
+			else{
+				std::cout << "Error: matt-daemon: option " << av[it] << " not found" << std::endl <<  std::endl;
+				printUsage();
+				return -1;
+			}
 		}
-		server.daemon(4242);
 	}catch(std::exception &e){
 		lpp::cout << e.what() << std::endl;
 		return -1;

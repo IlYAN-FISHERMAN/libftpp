@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 08:30:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 11:38:53 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,10 @@ namespace lpp{
 			void setFilePath(const std::string);
 			void setDeleteFile(bool);
 			void setPrintFormat(bool);
+
+			std::string getFilePath();
+			bool getDeleteFile();
+			bool getPrintFormat();
 
 			static std::string getDate();
 	};

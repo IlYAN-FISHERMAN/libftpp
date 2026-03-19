@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 08:29:38 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 11:57:39 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ namespace lpp{
 			std::string _execFile;
 			lpp::chronometer _chrono;
 
+			std::string _logPath;
+			std::string _lockPath;
+
 			std::vector<pollfd> _pollFd;
 			std::vector<std::string> _msg;
 
@@ -69,9 +72,14 @@ namespace lpp{
 
 			void defineAction(const message::Type& messageType, const std::function<void(long long clientID, const message& msg)>& action);
 			void sendTo(const message& message, long long clientID);
+
 			void setDaemonLogFileName(std::string);
 			void setDaemonLockFileName(std::string);
 			void setDaemonExecFileName(std::string);
+
+			std::string getDaemonLogFileName();
+			std::string getDaemonLockFileName();
+			std::string getDaemonExecFileName();
 
 			std::string exec(std::string);
 			lpp::logger& getLogger();

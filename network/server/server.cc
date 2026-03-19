@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 08:38:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 12:04:01 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void lpp::server::_workerLoop(){
 	{
 		std::lock_guard<std::mutex> lock(_mutex);
 		try{
-			cout.setPrefix("[server]: ");
+			cout.setPrefix("[server] =: ");
 			_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			if (_socket < 0)
 				throw std::runtime_error("socket failed");
@@ -88,7 +88,7 @@ void lpp::server::_workerLoop(){
 							_actions[code](_pollFd[i].fd, msg);
 						}
 						else{
-							lpp::cout << "send error: " << ::send(_pollFd[i].fd, "action not found", 15, 0) << std::endl;
+							lpp::cout << "send error: " << ::send(_pollFd[i].fd, "action not found", 16, 0) << std::endl;
 						}
 					}
 					else{
@@ -171,7 +171,7 @@ void lpp::server::_daemonLoop(){
 						}
 						else{
 							_logger.log(ERROR, "client[" + std::to_string(_pollFd[i].fd - 1) + "] tried to launch a non-existent action");
-							::send(_pollFd[i].fd, "action not found\n", 17, 0);
+							::send(_pollFd[i].fd, "action not found\n", 16, 0);
 						}
 					}
 					else{
@@ -225,7 +225,7 @@ void lpp::server::daemon(const size_t& p_port){
 			throw std::runtime_error("server: fork failed");
 		}
 		else if (pid > 0){
-			lpp::cout.setPrefix("[lpp server]: ");
+			lpp::cout.setPrefix("daemon: ");
 			lpp::cout << "kill current parent" << std::endl;
 			lpp::cout << "run daemon server" << std::endl;
 			ftruncate(_lockFd, 0);
@@ -272,7 +272,10 @@ lpp::server::~server(){
 	disconnect();
 }
 
-lpp::server::server() : _exc(nullptr), _fileName("daemon.log"), _lockFd(-1), _lockFile("/var/log/libftpp/server/daemon.lock"), _execFile("/var/log/libftpp/server/daemon_exec.log"){
+lpp::server::server() : _exc(nullptr), _fileName("daemon.log"), _lockFd(-1),
+	_lockFile("/var/lock/libftpp/server/matt_daemon/daemon.lock"),
+	_logPath("/var/log/libftpp/server/matt_daemon/"),
+	_lockPath("/var/lock/libftpp/server/matt_daemon/"){
 	_running.store(false);
 }
 
@@ -344,15 +347,6 @@ bool lpp::server::execute(){
 	return true;
 }
 
-void lpp::server::setDaemonLogFileName(std::string name){
-	_fileName = "/var/log/libftpp/server/" + logger::getDate() + '_' + name;
-	_logger.setFilePath(_fileName);
-}
-
-void lpp::server::setDaemonLockFileName(std::string name){_lockFile = "/var/lock/libftpp/server/" + name;}
-
-void lpp::server::setDaemonExecFileName(std::string name){_execFile = "/var/log/libftpp/server/" + name;}
-
 void lpp::server::killDaemon(){
 	std::lock_guard<std::mutex> m(_mutex);
 	std::ifstream lock(_lockFile);
@@ -377,7 +371,7 @@ std::string lpp::server::exec(std::string cmd){
 	std::string result("\n");
     char buffer[128];
 
-	_logger.log(INFO, "exec command: \""+ cmd + " > " + _execFile + "\"");
+	_logger.log(INFO, "exec command: \""+ cmd + "\"");
     FILE* pipe = popen(cmd.c_str(), "r");
     if (!pipe) return "error";
 
@@ -389,3 +383,15 @@ std::string lpp::server::exec(std::string cmd){
 	_logger.log(INFO, "delete " + _execFile);
     return result;
 }
+
+void lpp::server::setDaemonLogFileName(std::string name){
+	_fileName = _logPath + logger::getDate() + '_' + name;
+	_logger.setFilePath(_fileName);
+}
+
+void lpp::server::setDaemonLockFileName(std::string name){_lockFile = _lockPath + name;}
+void lpp::server::setDaemonExecFileName(std::string name){_execFile = _logPath + name;}
+
+std::string lpp::server::getDaemonLogFileName(){ return _logger.getFilePath();}
+std::string lpp::server::getDaemonLockFileName(){ return _lockFile;}
+std::string lpp::server::getDaemonExecFileName(){ return _execFile;}

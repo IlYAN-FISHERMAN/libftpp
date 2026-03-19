@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 00:16:58 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 11:39:47 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,9 @@ void lpp::logger::open(){
 }
 
 void lpp::logger::setFilePath(const std::string name){_filePath = name;}
-
 void lpp::logger::setDeleteFile(bool deleteFile){_deleteFile = deleteFile;}
-
 void lpp::logger::setPrintFormat(bool printFormat){_printFormat = printFormat;}
+
+std::string lpp::logger::getFilePath(){return _filePath;}
+bool lpp::logger::getDeleteFile(){return _deleteFile;}
+bool lpp::logger::getPrintFormat(){return _printFormat;}
