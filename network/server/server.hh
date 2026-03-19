@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 14:49:50 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 08:29:38 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 #include <thread>
 #include <exception>
 #include <cstdio>
-
+#include <sys/file.h>
+#include <filesystem>
 
 #define BUFFER_SIZE 1024
 

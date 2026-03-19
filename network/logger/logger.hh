@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 00:17:59 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 08:30:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
+#include <filesystem>
 
 namespace lpp{
 	enum LogLevel {

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 00:33:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/19 08:38:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ void lpp::server::_workerLoop(){
 			if (_socket < 0)
 				throw std::runtime_error("socket failed");
 			cout << "started..." << std::endl;
-			int flags = fcntl(_socket, F_GETFL, 0);
-			fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
+			int opt = 1;
+			setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 			_serv_addr.sin_family = AF_INET;
 			_serv_addr.sin_addr.s_addr = INADDR_ANY;
 			_serv_addr.sin_port = htons(_p_port);
@@ -115,8 +115,8 @@ void lpp::server::_daemonLoop(){
 		if (_socket < 0)
 			throw std::runtime_error("socket failed");
 		_logger.log(INFO, "started...");
-		int flags = fcntl(_socket, F_GETFL, 0);
-		fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
+		int opt = 1;
+		setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 		_serv_addr.sin_family = AF_INET;
 		_serv_addr.sin_addr.s_addr = INADDR_ANY;
 		_serv_addr.sin_port = htons(_p_port);
@@ -262,7 +262,10 @@ void lpp::server::disconnect(){
 		if(_loop.joinable())
 			_loop.join();
 	}
-	close(_socket);
+	if(_loop.joinable())
+		_loop.join();
+	if (_socket != -1)
+		close(_socket);
 }
 
 lpp::server::~server(){
