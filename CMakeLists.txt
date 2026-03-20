@@ -107,7 +107,8 @@ set(CLIENT_GUI network/client/clientGUI.cc
 	imgui/imgui_demo.cpp
 	imgui/backends/imgui_impl_sdl3.cpp
 	imgui/backends/imgui_impl_sdlrenderer3.cpp
-	imgui/imgui_widgets.cpp)
+	imgui/imgui_widgets.cpp
+	imgui/misc/cpp/imgui_stdlib.cpp)
 
 # add_executable(lib ${SOURCES})
 add_executable(matt-daemon ${SOURCES})
@@ -120,6 +121,7 @@ target_include_directories(Ben_AFK PRIVATE network)
 target_include_directories(Ben_AFK PRIVATE iostream)
 target_include_directories(Ben_AFK PRIVATE imgui)
 target_include_directories(Ben_AFK PRIVATE imgui/backends)
+target_include_directories(Ben_AFK PRIVATE imgui/misc/cpp/)
 
 target_include_directories(ftpp PRIVATE data_structures)
 target_include_directories(ftpp PRIVATE design_patterns)

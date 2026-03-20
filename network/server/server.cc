@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 12:04:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/20 12:38:18 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,13 @@ static void handleSigint(int){
 void lpp::server::_workerLoop(){
 	{
 		std::lock_guard<std::mutex> lock(_mutex);
+		_logger.setFilePath(_logPath + logger::getDate() + '_' + _logFile);
+		_logger.setPrintFormat(true);
+		_logger.open();
 		try{
+			if (!_logger.is_open()){
+				throw std::runtime_error("Error opening log file.");
+			}
 			cout.setPrefix("[server] =: ");
 			_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			if (_socket < 0)
@@ -104,32 +110,39 @@ void lpp::server::_workerLoop(){
 
 
 void lpp::server::_daemonLoop(){
-	_logger.open();
+	_logger.setFilePath(_daemonLogPath + logger::getDate() + '_' + _daemonLogFile);
 	_logger.setPrintFormat(true);
+	_logger.open();
 	if (!_logger.is_open()){
 		lpp::logger("/dev/stderr").log(ERROR, "Error opening log file.");
 		return ;
 	}
-	_logger.log(DEBUG, "created child");
-		_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (_socket < 0)
-			throw std::runtime_error("socket failed");
-		_logger.log(INFO, "started...");
-		int opt = 1;
-		setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-		_serv_addr.sin_family = AF_INET;
-		_serv_addr.sin_addr.s_addr = INADDR_ANY;
-		_serv_addr.sin_port = htons(_p_port);
-		if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0)
-			throw std::runtime_error("daemon bind failed");
-		else if (::listen(_socket, 5) < 0)
-			throw std::runtime_error("daemon listen failed");
-		_pollFd.push_back(pollfd{_socket, POLLIN, 0});
-		_msg.push_back("");
-		_logger.log(INFO, "listening...");
-		_running.store(true);
+	_logger.log(INFO, "begin daemon loop");
+	_chrono.start();
+	_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (_socket < 0)
+		throw std::runtime_error("socket failed");
+	_logger.log(INFO, "start server configuration");
+
+	int opt = 1;
+	setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	_serv_addr.sin_family = AF_INET;
+	_serv_addr.sin_addr.s_addr = INADDR_ANY;
+	_serv_addr.sin_port = htons(_p_port);
+
+	if (bind(_socket, (struct sockaddr*)&_serv_addr, sizeof(_serv_addr)) < 0)
+		throw std::runtime_error("daemon bind failed");
+	else if (::listen(_socket, 5) < 0)
+		throw std::runtime_error("daemon listen failed");
+
+	_pollFd.push_back(pollfd{_socket, POLLIN, 0});
+	_msg.push_back("");
+	_logger.log(INFO, "listening...");
+	_running.store(true);
+
 	std::signal(SIGPIPE, SIG_IGN);
 	std::signal(SIGINT, handleSigint);
+
 	while (!sigCode){
 		if (poll(_pollFd.data(), _pollFd.size(), 0) < 0){
 			break;
@@ -182,8 +195,11 @@ void lpp::server::_daemonLoop(){
 							i--;
 							_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd - 1) + "] request quit");
 						} else{
-							_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd - 1) + "] input: " + _msg[i]);
-							::send(_pollFd[i].fd, "message received", 17, 0);
+							_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd - 1) + "] input: \"" + _msg[i] + "\"");
+							if (_msg[i] == "\n" || _msg[i].empty())
+								::send(_pollFd[i].fd, "", 0, 0);
+							else
+								::send(_pollFd[i].fd, "message received\n", 18, 0);
 
 						}
 					}
@@ -193,6 +209,7 @@ void lpp::server::_daemonLoop(){
 		}
 	}
 	_logger.log(INFO, "stopping server... code[" + std::to_string(sigCode) + "]");
+	_logger.log(INFO, "server running " + std::to_string(_chrono.stop().count()) + " seconds");
 
 	for (auto pol : _pollFd)
 		close(pol.fd);
@@ -201,14 +218,14 @@ void lpp::server::_daemonLoop(){
 	if (_lockFd != -1){
 		flock(_lockFd, LOCK_UN);
 		close(_lockFd);
-		unlink(_lockFile.c_str());
-		_logger.log(INFO, "unlink " + _lockFile);
+		std::filesystem::remove((_daemonLockPath + _daemonLockFile).c_str());
+		_logger.log(INFO, "filesystem remove " + _daemonLockPath + _daemonLockFile);
 	}
 	return ;
 }
 
 void lpp::server::daemon(const size_t& p_port){
-	_lockFd = open(_lockFile.c_str(), O_CREAT | O_RDWR, 0644);
+	_lockFd = open((_daemonLockPath + _daemonLockFile).c_str(), O_CREAT | O_RDWR, 0644);
     if (_lockFd == -1) {
         throw std::runtime_error("failed to open lock file");
     }
@@ -225,12 +242,11 @@ void lpp::server::daemon(const size_t& p_port){
 			throw std::runtime_error("server: fork failed");
 		}
 		else if (pid > 0){
-			lpp::cout.setPrefix("daemon: ");
 			lpp::cout << "kill current parent" << std::endl;
 			lpp::cout << "run daemon server" << std::endl;
 			ftruncate(_lockFd, 0);
 			dprintf(_lockFd, "%d\n", pid);
-			lpp::cout << "write child PID in " + _lockFile << std::endl;
+			lpp::cout << "write child PID in " + _daemonLockPath + _daemonLockFile << std::endl;
 			return ;
 		}
 		if (!pid){
@@ -241,7 +257,6 @@ void lpp::server::daemon(const size_t& p_port){
 	else
 		lpp::cout << "server already running" << std::endl;
 
-	lpp::cout.setPrefix("");
 }
 
 void lpp::server::start(const size_t& p_port){
@@ -257,11 +272,7 @@ void lpp::server::start(const size_t& p_port){
 }
 
 void lpp::server::disconnect(){
-	if (_running.load()){
-		_running.store(false);
-		if(_loop.joinable())
-			_loop.join();
-	}
+	_running.store(false);
 	if(_loop.joinable())
 		_loop.join();
 	if (_socket != -1)
@@ -272,10 +283,16 @@ lpp::server::~server(){
 	disconnect();
 }
 
-lpp::server::server() : _exc(nullptr), _fileName("daemon.log"), _lockFd(-1),
-	_lockFile("/var/lock/libftpp/server/matt_daemon/daemon.lock"),
-	_logPath("/var/log/libftpp/server/matt_daemon/"),
-	_lockPath("/var/lock/libftpp/server/matt_daemon/"){
+lpp::server::server() : _p_port(8080), _exc(nullptr), _lockFd(-1),
+	_logFile("server.log"),
+	_lockFile("server.lock"),
+	_logPath("/var/log/libftpp/server/lpp_server/"),
+	_lockPath("/var/lock/libftpp/server/lpp_server/"),
+	_daemonLogFile("daemon.log"),
+	_daemonLockFile("daemon.lock"),
+	_daemonLogPath("/var/log/libftpp/server/lpp_daemon/"),
+	_daemonLockPath("/var/lock/libftpp/server/lpp_daemon/")
+{
 	_running.store(false);
 }
 
@@ -343,16 +360,17 @@ bool lpp::server::config(){
 
 bool lpp::server::execute(){
 	if (!_running.load())
-		start(8080);
+		start(_p_port);
 	return true;
 }
 
 void lpp::server::killDaemon(){
 	std::lock_guard<std::mutex> m(_mutex);
-	std::ifstream lock(_lockFile);
+	std::ifstream lock(_daemonLockPath + _daemonLockFile);
 	std::string tmp;
 
 	if (!lock.is_open()){
+		lpp::cout << "no instance running" << std::endl;
 		return ;
 	}
 	pid_t pid = 0;
@@ -364,8 +382,6 @@ void lpp::server::killDaemon(){
 	lpp::cout << "kill daemon process [" << pid << "] with SIGINT" << std::endl;
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
-
-lpp::logger& lpp::server::getLogger(){return _logger;}
 
 std::string lpp::server::exec(std::string cmd){
 	std::string result("\n");
@@ -380,18 +396,20 @@ std::string lpp::server::exec(std::string cmd){
     }
 
     pclose(pipe);
-	_logger.log(INFO, "delete " + _execFile);
     return result;
 }
 
-void lpp::server::setDaemonLogFileName(std::string name){
-	_fileName = _logPath + logger::getDate() + '_' + name;
-	_logger.setFilePath(_fileName);
-}
+void lpp::server::setLogFileName(std::string name){_logFile = name;}
+void lpp::server::setLockFileName(std::string name){_lockFile = name;}
+std::string lpp::server::getLogFile(){ return _logFile;}
+std::string lpp::server::getLockFile(){ return _lockFile;}
 
-void lpp::server::setDaemonLockFileName(std::string name){_lockFile = _lockPath + name;}
-void lpp::server::setDaemonExecFileName(std::string name){_execFile = _logPath + name;}
 
-std::string lpp::server::getDaemonLogFileName(){ return _logger.getFilePath();}
-std::string lpp::server::getDaemonLockFileName(){ return _lockFile;}
-std::string lpp::server::getDaemonExecFileName(){ return _execFile;}
+void lpp::server::setDaemonLogFile(std::string name){_daemonLogFile = name;}
+void lpp::server::setDaemonLockFile(std::string name){_daemonLockFile = name;}
+std::string lpp::server::getDaemonLogFile(){ return _daemonLogFile;}
+std::string lpp::server::getDaemonLockFile(){ return _daemonLockFile;}
+
+
+lpp::logger& lpp::server::getLogger(){return _logger;}
+

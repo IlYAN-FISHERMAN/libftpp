@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 11:08:26 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/20 12:50:16 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
 #include <stdio.h>
+#include "imgui_stdlib.h"
 #include <SDL3/SDL.h>
 
 int main(void){
@@ -211,32 +212,38 @@ int main(void){
 		static std::string str;
 		static int code;
 		static bool send = false;
-		str.resize(1024);
-
-		ImGui::InputInt("##", &code, 0, 0, ImGuiInputTextFlags_CharsDecimal);
-		ImGui::SameLine();
 		static std::string reply{};
 
-		if (ImGui::InputText("|", str.data(), str.size(), ImGuiInputTextFlags_EnterReturnsTrue))
+		ImGui::PushItemWidth(50);
+		ImGui::InputInt("##left", &code, 0, 0, ImGuiInputTextFlags_CharsDecimal);
+		ImGui::PushItemWidth(150);
+		ImGui::SameLine();
+		ImGui::Text("|");
+		ImGui::SameLine();
+		if (ImGui::InputText("##right", &str, ImGuiInputTextFlags_EnterReturnsTrue))
 			send = true;
-
+		ImGui::SameLine();
 		if (ImGui::Button("send")){
 			send = true;
 		}
 		if (send){
-			std::string tmp(std::to_string(code) + "|" + str);
-			if (!code)
-				tmp = str;
-			reply = client.send(tmp.c_str(), tmp.size());
+			reply.clear();
+			if (!code && !str.empty()){
+				reply = client.send(str);
+			}
+			else{
+				std::cout << "send: " << str << std::endl;
+				std::string tmp(std::to_string(code) + "|" + str);
+				reply = client.send(tmp.c_str(), tmp.size());
+			}
 			str.clear();
 			send = false;
 			ImGui::SetKeyboardFocusHere(-1);
+			code = 0;
 		}
 
-		if (reply.size() != 0){
-			ImGui::SeparatorText("answer");
-			ImGui::Text(reply.c_str(), reply.size());
-		}
+		ImGui::SeparatorText("answer");
+		ImGui::Text(reply.c_str(), reply.size());
 
 		ImGui::End();
         ImGui::Render();

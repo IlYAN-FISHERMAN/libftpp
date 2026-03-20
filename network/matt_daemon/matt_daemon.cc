@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 11:38:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 12:03:13 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/20 13:22:54 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ void printUsage(){
 int matt_daemon(int ac, char **av){
 	lpp::server server;
 
-	server.setDaemonLogFileName("matt_daemon.log");
-	server.setDaemonLockFileName("matt_daemon.lock");
-	server.setDaemonExecFileName("matt_daemon_exec.log");
+	server.setDaemonLogFile("matt_daemon.log");
+	server.setDaemonLockFile("matt_daemon.lock");
+
+	lpp::cout.setPrefix("[matt_daemon]: ");
 
     server.defineAction(1, [&server](long long clientID, const lpp::message& msg){
         int value;
         msg >> value;
-        // Send back a message of type 1 with double the value
         lpp::message replyMsg(1);
         replyMsg << (value * 2);
         server.sendTo(replyMsg, clientID);
@@ -58,7 +58,6 @@ int matt_daemon(int ac, char **av){
     });
 
     server.defineAction(3, [&server](long long clientID, const lpp::message& msg){
-		
 		server.getLogger().log(lpp::INFO, "received command: " + msg.str());
 		lpp::message rtn(3);
 		rtn << server.exec(msg.str());
@@ -66,33 +65,39 @@ int matt_daemon(int ac, char **av){
     });
 
 	try{
-		for (auto it = 1; it < ac; it++){
-			if (!strcmp(av[it], "--help") || !strcmp(av[it], "-h")){
-				printUsage();
-				return 0;
-			}
-			else if (!strcmp(av[it], "-r")){
-				server.killDaemon();
-				server.daemon(4242);
-				lpp::cout << "restart daemon server" << std::endl;
-			}
-			else if (!strcmp(av[it], "-k")){
-				if (ac > 2){
-					std::cerr << "too much options with -k" << std::endl;
+		if (ac > 1){
+			for (auto it = 1; it < ac; it++){
+				if (!strcmp(av[it], "--help") || !strcmp(av[it], "-h")){
+					printUsage();
+					return 0;
 				}
-				server.killDaemon();
-				return 0;
-			}
-			else if (!strcmp(av[it], "--clear-log")){
-				std::filesystem::directory_entry dir("/var/log/libftpp/server");
-				// dir.
-			}
-			else{
-				std::cout << "Error: matt-daemon: option " << av[it] << " not found" << std::endl <<  std::endl;
-				printUsage();
-				return -1;
+				else if (!strcmp(av[it], "-r")){
+					server.killDaemon();
+					lpp::cout << "restart daemon server" << std::endl;
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+					server.daemon(4242);
+				}
+				else if (!strcmp(av[it], "-k")){
+					server.killDaemon();
+				}
+				else if (!strcmp(av[it], "--clear-log")){
+					std::string path("/var/log/libftpp/server/lpp_daemon/");
+					if (std::filesystem::exists(path) && std::filesystem::is_directory(path)){
+						size_t fileNbr = 0;
+						for (auto &it : std::filesystem::directory_iterator(path))
+							std::filesystem::remove_all(it.path()) && fileNbr++;
+						lpp::cout << fileNbr << " log files removed from " << path << std::endl;
+					}
+				}
+				else{
+					lpp::cout << "Error: matt-daemon: option " << av[it] << " not found\n" << std::endl;
+					printUsage();
+					return -1;
+				}
 			}
 		}
+		else
+			server.daemon(4242);
 	}catch(std::exception &e){
 		lpp::cout << e.what() << std::endl;
 		return -1;

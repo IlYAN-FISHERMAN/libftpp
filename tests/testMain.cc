@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 09:53:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/20 10:48:41 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,6 @@ int main(int ac, char **av) {
 	// code = testTimer();
 
 	code = matt_daemon(ac, av);
-	std::cout << "code: " << code << std::endl;
+	lpp::cout << "return code: " << code << std::endl;
 	return code;
 }

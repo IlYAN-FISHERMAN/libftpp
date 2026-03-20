@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 09:49:58 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/20 11:38:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,18 +80,25 @@ void lpp::client::send(const message& msg){
 	}else
 		lpp::cout << "send failed: " << n << std::endl;
 
-	std::cout << "test\n";
 }
 
-void lpp::client::send(std::string &msg){
+std::string lpp::client::send(std::string &msg, bool print){
 	lpp::cout << "send " << ::send(_socket, msg.c_str(), msg.size(), 0) << " bytes" << std::endl;
 	char buffer[1024];
 	ssize_t n = read(_socket, buffer, sizeof(buffer));
 	if (n > 0) {
-		std::string reply(buffer, n);
-		lpp::cout << "server reponse: " << reply << std::endl;
-	} else
-		lpp::cout << "send failed: " << n << std::endl;
+		if (print){
+			std::string reply(buffer, n);
+			lpp::cout << "server reponse: " << reply << std::endl;
+		}
+	} else{
+		if (print)
+			lpp::cout << "send failed: " << n << std::endl;
+		else
+			return ("send failed");
+	}
+	
+	return std::string(buffer, n);
 }
 
 std::string lpp::client::send(const char *msg, size_t size){

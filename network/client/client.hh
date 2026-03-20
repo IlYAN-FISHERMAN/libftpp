@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:52 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 17:06:39 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/20 11:37:09 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ namespace lpp{
 
 			void defineAction(const message::Type& messageType, const std::function<void(const message& msg)>& action);
 			void send(const message& message);
-			void send(std::string&);
+			std::string send(std::string&, bool = true);
 			std::string send(const char*, size_t);
 	};
 }
