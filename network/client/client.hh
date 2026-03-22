@@ -6,17 +6,17 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:52 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 10:25:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 13:10:01 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <arpa/inet.h>
-#include "network/message/message.hh"
-#include "design_patterns/responsability_chain/responsability_chain.hh"
-#include "design_patterns/non_copyable/non_copyable.hh"
+#include "design_patterns/design_patterns.hh"
 #include "time/chronometer/chronometer.hh"
+#include "network/logger/logger.hh"
+#include "network/message/message.hh"
 
 namespace lpp{
 	class client : public IResponsability_chain, public lpp::NonCopyable{
@@ -27,6 +27,7 @@ namespace lpp{
 			std::unordered_map<message::Type, Callback> _actions;
 			bool _running;
 			lpp::unique_chrono _chrono;
+			lpp::logger _logger;
 
 			bool config()	override;
 			bool execute()	override;

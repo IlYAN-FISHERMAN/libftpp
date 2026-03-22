@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 10:12:43 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 13:02:35 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void interacte(std::string name, lpp::client &client){
 	ImGui::End();
 }
 
-void drawLogin(LoginState& state, lpp::client &client)
+void login(LoginState& state, lpp::client &client)
 {
     ImGui::SetNextWindowSize(ImVec2(300, 150), ImGuiCond_Always);
     ImGui::SetNextWindowPos(
@@ -100,8 +100,8 @@ void drawLogin(LoginState& state, lpp::client &client)
 	if (send && !state.username.empty() && !state.password.empty()){
 		lpp::message connect(1);
 		connect << "1|username=" << state.username << " password=" << state.password;
-		(void)client;
-		// client.send(connect);
+		std::string reply = client.send(connect);
+		lpp::cout << reply << std::endl;
         state.password.clear();
     }
 
@@ -286,7 +286,7 @@ int main(void){
 		static LoginState	log;
 
 		if (!log.request)
-			drawLogin(log, client);
+			login(log, client);
 		else
 			interacte(log.username, client);
 

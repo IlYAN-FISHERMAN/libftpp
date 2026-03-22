@@ -11,6 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_CLIENT "Build clientGUI" OFF)
+option(BUILD_BINARY "Build main binary" OFF)
+option(BUILD_LIB "Build lib" OFF)
 
 if(UNIX
    AND NOT APPLE
@@ -100,43 +102,45 @@ set(SOURCES ${SOURCES} time/chronometer/chronometer.cc time/timer/timer.cc)
 add_library(libftpp STATIC ${SOURCES})
 target_compile_features(libftpp PUBLIC cxx_std_23)
 
-if(BUILD_CLIENT)
-
+if(BUILD_CLIENT OR BUILD_BINARY)
   target_include_directories(libftpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-  find_package(SDL3 CONFIG)
+  if(BUILD_CLIENT)
+    find_package(SDL3 CONFIG)
 
-  set(CLIENT_GUI
-      network/client/clientGUI.cc
-      imgui/imgui.cpp
-      imgui/imgui_draw.cpp
-      imgui/imgui_tables.cpp
-      imgui/imgui_demo.cpp
-      imgui/backends/imgui_impl_sdl3.cpp
-      imgui/backends/imgui_impl_sdlrenderer3.cpp
-      imgui/imgui_widgets.cpp
-      imgui/misc/cpp/imgui_stdlib.cpp)
+    set(CLIENT_GUI
+        network/client/clientGUI.cc
+        imgui/imgui.cpp
+        imgui/imgui_draw.cpp
+        imgui/imgui_tables.cpp
+        imgui/imgui_demo.cpp
+        imgui/backends/imgui_impl_sdl3.cpp
+        imgui/backends/imgui_impl_sdlrenderer3.cpp
+        imgui/imgui_widgets.cpp
+        imgui/misc/cpp/imgui_stdlib.cpp)
 
-  add_executable(Ben_AFK ${CLIENT_GUI})
+    add_executable(Ben_AFK ${CLIENT_GUI})
 
-  target_link_libraries(Ben_AFK PUBLIC SDL3::SDL3)
-  target_link_libraries(Ben_AFK PRIVATE libftpp)
-  target_include_directories(Ben_AFK PRIVATE imgui)
-  target_include_directories(Ben_AFK PRIVATE imgui/backends)
-  target_include_directories(Ben_AFK PRIVATE imgui/misc/cpp/)
-else()
-  # target_include_directories( libftpp PUBLIC
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/data_structures>
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/design_patterns>
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/iostream>
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mathematics>
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/network>
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/threading>
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/time>
-  # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils>)
-
-  add_executable(matt-daemon tests/testMain.cc)
-  target_link_libraries(matt-daemon PRIVATE libftpp)
-
+    target_link_libraries(Ben_AFK PUBLIC SDL3::SDL3)
+    target_link_libraries(Ben_AFK PRIVATE libftpp)
+    target_include_directories(Ben_AFK PRIVATE imgui)
+    target_include_directories(Ben_AFK PRIVATE imgui/backends)
+    target_include_directories(Ben_AFK PRIVATE imgui/misc/cpp/)
+  endif()
+  if(BUILD_BINARY)
+    add_executable(matt-daemon tests/testMain.cc)
+    target_link_libraries(matt-daemon PRIVATE libftpp)
+  endif()
+elseif(BUILD_LIB)
+  target_include_directories(
+    libftpp
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/data_structures>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/design_patterns>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/iostream>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mathematics>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/network>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/threading>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/time>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils>)
   install(
     TARGETS libftpp
     EXPORT libftppTargets
@@ -161,7 +165,5 @@ else()
     DESTINATION lib/cmake/libftpp)
 
   install(FILES ftppConfig.cmake DESTINATION lib/cmake/libftpp)
-
-  # Alias pratique
   add_library(libftpp::libftpp ALIAS libftpp)
 endif()

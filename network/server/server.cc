@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/20 12:38:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 12:59:11 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ void lpp::server::_daemonLoop(){
 		}
 	}
 	_logger.log(INFO, "stopping server... code[" + std::to_string(sigCode) + "]");
-	_logger.log(INFO, "server running " + std::to_string(_chrono.stop().count()) + " seconds");
+	_logger.log(INFO, "lpp::server running " + std::to_string(_chrono.stop().count()) + " seconds");
 
 	for (auto pol : _pollFd)
 		close(pol.fd);
@@ -221,6 +221,8 @@ void lpp::server::_daemonLoop(){
 		std::filesystem::remove((_daemonLockPath + _daemonLockFile).c_str());
 		_logger.log(INFO, "filesystem remove " + _daemonLockPath + _daemonLockFile);
 	}
+
+	_logger.log(WARNING, "shutdown daemon ");
 	return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:17:16 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/18 17:03:39 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 13:08:38 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <netdb.h>
-#include "../../iostream/thread_safe_iostream.hh"
+#include "iostream/thread_safe_iostream.hh"
 
 namespace lpp{
 	class message{

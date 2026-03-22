@@ -6,13 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 10:24:57 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 10:22:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 12:53:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <functional>
+#include <algorithm>
 
 namespace lpp{
 	template<typename TState>

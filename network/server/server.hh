@@ -6,17 +6,17 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 15:09:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 13:19:43 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../client/client.hh"
-#include "../logger/logger.hh"
-#include "../../design_patterns/responsability_chain/responsability_chain.hh"
-#include "../../design_patterns/non_copyable/non_copyable.hh"
-#include "../../time/chronometer/chronometer.hh"
+#include "network/client/client.hh"
+#include "network/logger/logger.hh"
+#include "design_patterns/responsability_chain/responsability_chain.hh"
+#include "design_patterns/non_copyable/non_copyable.hh"
+#include "time/chronometer/chronometer.hh"
 #include <thread>
 #include <exception>
 #include <cstdio>

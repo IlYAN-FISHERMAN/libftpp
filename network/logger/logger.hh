@@ -6,17 +6,15 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 11:38:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 13:17:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../../design_patterns/non_copyable/non_copyable.hh"
-
+#include "design_patterns/non_copyable/non_copyable.hh"
 #include <ctime>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include <unistd.h>
 #include <filesystem>
