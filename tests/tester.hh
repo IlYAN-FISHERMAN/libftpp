@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/17 16:38:21 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 11:15:32 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,8 @@
 #include <unistd.h>
 #include <assert.h>
 #include <utility>
-#include <vector>
-#include <iomanip>
-#include <algorithm>
 #include <random>
-#include <random>
-#include <any>
-
-#include "../libftpp.hh"
+#include "libftpp.hh"
 
 //--------------------------------------------
 

@@ -6,19 +6,16 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 18:24:05 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/17 12:31:59 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:16:42 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <unordered_set>
-#include <utility>
-#include <numeric>
+#pragma once
+
 #include <vector>
 #include <memory>
-#include <set>
-#include "../../design_patterns/non_copyable/non_copyable.hh"
-#include "../../utils/color.hh"
+#include <numeric>
+#include "design_patterns/non_copyable/non_copyable.hh"
 
 #pragma once
 

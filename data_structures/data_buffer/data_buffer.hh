@@ -6,19 +6,15 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:06:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 18:03:36 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:43:56 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>
 #include <string>
-#include <exception>
 #include <vector>
 #include <queue>
-#include <bit>
-#include <cstdint>
 #include <cstddef>
 #include <cstring>
 

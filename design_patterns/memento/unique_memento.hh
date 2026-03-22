@@ -6,15 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/13 09:54:04 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 10:19:10 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:21:53 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "memento.hh"
-#include <functional>
-#include "../non_copyable/non_copyable.hh"
+#include "design_patterns/non_copyable/non_copyable.hh"
 
 namespace lpp{
 	template <typename TType>

@@ -6,17 +6,107 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/20 14:52:56 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:12:43 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.hh"
+#include "libftpp.hh"
 #include "imgui.h"
-#include "imgui_impl_sdl3.h"
+#include "imgui/backends/imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
 #include <stdio.h>
 #include "imgui_stdlib.h"
 #include <SDL3/SDL.h>
+
+struct LoginState {
+    std::string username;
+    std::string password;
+    bool request = false;
+};
+
+void interacte(std::string name, lpp::client &client){
+	static int code;
+	static std::string str;
+	static bool send = false;
+	static std::string reply{};
+	ImGuiWindowFlags window_flags =
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_MenuBar |
+			ImGuiWindowFlags_NoCollapse;
+
+    ImGui::Begin(name.c_str(), nullptr, window_flags);
+	ImGui::PushItemWidth(50);
+	ImGui::InputInt("##left", &code, 0, 0, ImGuiInputTextFlags_CharsDecimal);
+	ImGui::PushItemWidth(150);
+	ImGui::SameLine();
+	ImGui::Text("|");
+	ImGui::SameLine();
+	if (ImGui::InputText("##right", &str, ImGuiInputTextFlags_EnterReturnsTrue))
+		send = true;
+	ImGui::SameLine();
+	if (ImGui::Button("send")){
+		send = true;
+	}
+	if (send){
+		reply.clear();
+		if (!code && !str.empty()){
+			reply = client.send(str);
+		}
+		else{
+			std::cout << "send: " << str << std::endl;
+			std::string tmp(std::to_string(code) + "|" + str);
+			reply = client.send(tmp.c_str(), tmp.size());
+		}
+		str.clear();
+		send = false;
+		ImGui::SetKeyboardFocusHere(-1);
+		code = 0;
+	}
+
+	ImGui::SeparatorText("answer");
+	ImGui::Text(reply.c_str(), reply.size());
+	ImGui::End();
+}
+
+void drawLogin(LoginState& state, lpp::client &client)
+{
+    ImGui::SetNextWindowSize(ImVec2(300, 150), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(
+        ImGui::GetMainViewport()->GetCenter(),
+        ImGuiCond_Always,
+        ImVec2(0.5f, 0.5f)
+    );
+
+    ImGui::Begin("Login", nullptr,
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse);
+
+    bool send = false;
+
+    if (ImGui::InputText("Username", &state.username,
+                         ImGuiInputTextFlags_EnterReturnsTrue))
+		ImGui::SetKeyboardFocusHere();
+
+    if (ImGui::InputText("Password", &state.password,
+                         ImGuiInputTextFlags_Password |
+                         ImGuiInputTextFlags_EnterReturnsTrue))
+		send = true;
+
+    if (ImGui::Button("Login", ImVec2(-1, 0)))
+		send = true;
+
+	if (send && !state.username.empty() && !state.password.empty()){
+		lpp::message connect(1);
+		connect << "1|username=" << state.username << " password=" << state.password;
+		(void)client;
+		// client.send(connect);
+        state.password.clear();
+    }
+
+    ImGui::End();
+}
 
 int main(void){
 
@@ -30,20 +120,14 @@ int main(void){
 	}
 
 	client.defineAction(1, [](const lpp::message& msg){
+        lpp::cout << "server: " << msg.str() << std::endl;
+    });
+
+	client.defineAction(2, [](const lpp::message& msg){
         int doubledValue = 0;
 		msg >> doubledValue;
         lpp::cout << "Received a doubled value: " << doubledValue << std::endl;
     });
-
-	client.defineAction(4, [](const lpp::message& msg){
-		std::string str;
-        msg >> str;
-        lpp::cout << "client received : " << str << std::endl;
-    });
-
-	// client.defineAction(3, [](const lpp::message& msg){
- //        lpp::cout << "server:: " << msg.str() << std::endl;
- //    });
 
 	client.defineAction(10, [](const lpp::message& msg){
 		std::string str;
@@ -198,54 +282,14 @@ int main(void){
         SDL_GetWindowSize(window, &winWidth, &winHeight);
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(static_cast<float>(winWidth), static_cast<float>(winHeight)));
-        ImGuiWindowFlags window_flags =
-                ImGuiWindowFlags_NoTitleBar |
-                ImGuiWindowFlags_NoResize |
-                ImGuiWindowFlags_NoMove |
-                ImGuiWindowFlags_MenuBar |
-                ImGuiWindowFlags_NoCollapse;
 
+		static LoginState	log;
 
+		if (!log.request)
+			drawLogin(log, client);
+		else
+			interacte(log.username, client);
 
-        ImGui::Begin("RT - GUI", nullptr, window_flags);
-
-		static std::string str;
-		static int code;
-		static bool send = false;
-		static std::string reply{};
-
-		ImGui::PushItemWidth(50);
-		ImGui::InputInt("##left", &code, 0, 0, ImGuiInputTextFlags_CharsDecimal);
-		ImGui::PushItemWidth(150);
-		ImGui::SameLine();
-		ImGui::Text("|");
-		ImGui::SameLine();
-		if (ImGui::InputText("##right", &str, ImGuiInputTextFlags_EnterReturnsTrue))
-			send = true;
-		ImGui::SameLine();
-		if (ImGui::Button("send")){
-			send = true;
-		}
-		if (send){
-			reply.clear();
-			if (!code && !str.empty()){
-				reply = client.send(str);
-			}
-			else{
-				std::cout << "send: " << str << std::endl;
-				std::string tmp(std::to_string(code) + "|" + str);
-				reply = client.send(tmp.c_str(), tmp.size());
-			}
-			str.clear();
-			send = false;
-			ImGui::SetKeyboardFocusHere(-1);
-			code = 0;
-		}
-
-		ImGui::SeparatorText("answer");
-		ImGui::Text(reply.c_str(), reply.size());
-
-		ImGui::End();
         ImGui::Render();
         SDL_SetRenderScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
         SDL_SetRenderDrawColorFloat(renderer, clear_color.x, clear_color.y, clear_color.z, clear_color.w);

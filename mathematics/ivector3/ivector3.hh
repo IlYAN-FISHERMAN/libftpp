@@ -6,14 +6,12 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 17:18:03 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 10:01:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:23:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <iostream>
-#include <algorithm>
-#include <exception>
 #include <math.h>
 
 namespace lpp{

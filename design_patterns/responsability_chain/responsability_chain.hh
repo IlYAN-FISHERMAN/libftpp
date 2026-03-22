@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 12:02:38 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:19:28 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:22:30 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include <list>
 #include <memory>
-#include "../../iostream/thread_safe_iostream.hh"
+#include "iostream/thread_safe_iostream.hh"
 
 namespace lpp{
 	class IResponsability_chain{

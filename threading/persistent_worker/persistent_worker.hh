@@ -6,18 +6,16 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:55:21 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/15 11:47:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:45:41 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../../iostream/thread_safe_iostream.hh"
-#include "../thread_safe_queue/thread_safe_queue.hh"
-#include <iostream>
+#include "iostream/thread_safe_iostream.hh"
+#include "threading/thread_safe_queue/thread_safe_queue.hh"
 #include <functional>
 #include <thread>
-#include <vector>
 #include <mutex>
 #include <condition_variable>
 #include <set>

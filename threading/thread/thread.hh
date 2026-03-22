@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:31:23 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/12 17:38:57 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:46:05 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 #include <thread>
 #include <functional>
-#include "../../iostream/thread_safe_iostream.hh"
-#include "../../design_patterns/non_copyable/non_copyable.hh"
+#include "iostream/thread_safe_iostream.hh"
+#include "design_patterns/non_copyable/non_copyable.hh"
 
 namespace lpp{
 	class thread : public lpp::NonCopyable{

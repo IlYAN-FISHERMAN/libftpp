@@ -6,13 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/20 11:38:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 12:35:05 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hh"
 
-lpp::client::client() : _socket(-1), _running(false){}
+lpp::client::client() : _socket(-1), _running(false), _chrono("lpp::client"){}
 
 lpp::client::~client(){
 	close(_socket);
@@ -44,42 +44,36 @@ void lpp::client::defineAction(const message::Type& messageType, const std::func
 	_actions[messageType] = action;
 }
 
-void lpp::client::send(const message& msg){
-	if (_socket < 0)
-		return ;
-
-	std::string value;
-	msg >> value;
-	std::string data = (std::to_string(msg.type()) + '|' + value + '\n');
-	lpp::cout << "send " << ::send(_socket, data.c_str(), data.size(), 0) << " bytes" << std::endl;
-	char buffer[1024];
-	ssize_t n = read(_socket, buffer, sizeof(buffer));
-	if (n > 0) {
-		int code = 0;
-		char sep = 0;
-		buffer[n] = '\0';
-		std::stringstream ss(buffer);
-		if (ss.str().find('|') == std::string::npos)
-			lpp::cout << "received: " << ss.str() << std::endl;
-		else if (ss >> code >> sep){
-			if (sep != '|'){
-				lpp::cout << "action bad format" << std::endl;
-				return;
-			}
-			if (_actions.find(code) != _actions.end()){
-				message msg(code);
-				std::string reply;
-				std::getline(ss >> std::ws, reply);
-				msg << reply;
-				_actions[code](msg);
-				return;
-			} else
-				lpp::cout << "action not found" << std::endl;
-		}else
-			lpp::cout << "action bad format" << std::endl;
+std::string lpp::client::received(std::string response){
+	int code = 0;
+	char sep = 0;
+	std::stringstream ss(response);
+	if (ss.str().find('|') == std::string::npos)
+		return "received: " + ss.str();
+	else if (ss >> code >> sep && sep != '|'){
+		if (_actions.find(code) != _actions.end()){
+			message msg(code);
+			std::string reply;
+			std::getline(ss >> std::ws, reply);
+			msg << reply;
+			_actions[code](msg);
+			return "action executed";
+		} else
+			lpp::cout << "action not found" << std::endl;
 	}else
-		lpp::cout << "send failed: " << n << std::endl;
+		lpp::cout << "action bad format" << std::endl;
 
+	return "received failed";
+}
+
+std::string lpp::client::send(const message& msg){
+	std::string data = (std::to_string(msg.type()) + '|' + msg.str() + '\n');
+	lpp::cout << "send " << ::send(_socket, data.c_str(), data.size(), 0) << " bytes" << std::endl;
+	char buffer[1024]{0};
+	ssize_t n = read(_socket, buffer, sizeof(buffer));
+	if (n > 0)
+		return received(std::string(buffer));
+	return "send failed: " + std::to_string(n);
 }
 
 std::string lpp::client::send(std::string &msg, bool print){

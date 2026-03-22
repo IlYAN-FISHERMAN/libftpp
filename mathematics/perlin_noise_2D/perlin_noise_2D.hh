@@ -6,15 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 10:26:56 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/09 16:31:41 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:24:29 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../ivector2/ivector2.hh"
-#include "../../iostream/thread_safe_iostream.hh"
-#include "../random_2D_coordinate_generator/random_2D_coordinate_generator.hh"
+#include "mathematics/mathematics.hh"
 #include <math.h>
 
 namespace lpp{

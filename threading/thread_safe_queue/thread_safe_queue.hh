@@ -6,18 +6,17 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 16:44:45 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/13 17:54:14 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 10:46:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>
 #include <queue>
 #include <mutex>
 #include <utility>
-#include "../../design_patterns/non_copyable/non_copyable.hh"
-#include "../../iostream/thread_safe_iostream.hh"
+#include "design_patterns/non_copyable/non_copyable.hh"
+#include "iostream/thread_safe_iostream.hh"
 
 namespace lpp{
 	template<typename TType>
