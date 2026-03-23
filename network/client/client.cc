@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 11:06:34 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 15:45:01 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ std::string lpp::client::received(std::string response){
 	char sep = 0;
 	std::stringstream ss(response);
 	if (ss.str().find('|') == std::string::npos)
-		return "received: " + ss.str();
+		return ss.str();
 	else if (ss >> code >> sep && sep != '|'){
 		if (_actions.find(code) != _actions.end()){
 			message msg(code);
@@ -61,15 +61,15 @@ std::string lpp::client::received(std::string response){
 			_actions[code](msg);
 			return "action executed";
 		} else
-			lpp::cout << "action not found" << std::endl;
+			return "action not found";
 	}else
-		lpp::cout << "action bad format" << std::endl;
+		return "action bad format";
 
 	return "received failed";
 }
 
 std::string lpp::client::send(const message& msg){
-	std::string data = (std::to_string(msg.type()) + '|' + msg.str() + '\n');
+	std::string data = (std::to_string(msg.type()) + '|' + msg.str());
 	size_t send = ::send(_socket, data.c_str(), data.size(), 0);
 	_logger.log(INFO, "send " + std::to_string(send) + " bytes");
 	char buffer[1024]{0};

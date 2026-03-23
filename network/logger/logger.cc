@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 13:33:21 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 21:58:28 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void lpp::logger::log(LogLevel level, const std::string& message){
 			logFile.flush();
 		}
 	} else
-		lpp::cout << logEntry.str();
+		lpp::cout << logEntry.str() << std::flush;
 }
 
 bool lpp::logger::is_open(){return logFile.is_open();}

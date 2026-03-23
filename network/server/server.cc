@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 14:41:27 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 21:56:14 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,25 @@ static sig_atomic_t sigCode = 0;
 
 static void handleSigint(int){
 	sigCode = 1;
+}
+
+lpp::server::server() : _p_port(8080), _exc(nullptr), _lockFd(-1),
+	_logFile("server.log"),
+	_lockFile("server.lock"),
+	_logPath("/var/log/libftpp/server/lpp_server/"),
+	_lockPath("/var/lock/libftpp/server/lpp_server/"),
+	_daemonLogFile("daemon.log"),
+	_daemonLockFile("daemon.lock"),
+	_daemonLogPath("/var/log/libftpp/server/lpp_daemon/"),
+	_daemonLockPath("/var/lock/libftpp/server/lpp_daemon/")
+{
+	_running.store(false);
+	_whiteList.insert("127.0.0.1");
+	// _whiteList.insert("192.168.1.152");
+}
+
+lpp::server::~server(){
+	disconnect();
 }
 
 void lpp::server::_workerLoop(){
@@ -109,28 +128,32 @@ void lpp::server::_workerLoop(){
 }
 
 bool lpp::server::_tryConnection(int clientId){
-
 	return _authorized[clientId]._isConnected;
 }
 
 void lpp::server::_executeMessage(std::stringstream &ss, size_t &id){
 	int code = 0;
 	char sep = 0;
-	if (ss >> code >> sep){
+
+
+	if (ss.str() == "clear"){
+		::send(_pollFd[id].fd, "\33c", 3, 0);
+	}
+	else if (ss >> code >> sep){
 		message msg(code);
 		if (_actions.find(code) != _actions.end() && sep == '|'){
 			std::string tmp;
 			std::getline(ss >> std::ws, tmp);
-			_logger.log(INFO, "received string: " + tmp);
+			_logger.log(INFO, _authorized[_pollFd[id].fd]._username + " run action type " + std::to_string(code));
 			msg << tmp;
 			_actions[code](_pollFd[id].fd, msg);
 		}
 		else{
-			_logger.log(ERROR, "client[" + std::to_string(_pollFd[id].fd) + "] tried to launch a non-existent action");
+			_logger.log(ERROR, _authorized[_pollFd[id].fd]._username + " tried to launch a non-existent action");
 			::send(_pollFd[id].fd, "action not found\n", 16, 0);
 		}
 	} else{
-			_logger.log(INFO, "client[" + std::to_string(_pollFd[id].fd) + "] input: \"" + _msg[id] + "\"");
+			_logger.log(INFO, _authorized[_pollFd[id].fd]._username + " input: \"" + _msg[id] + "\"");
 			if (_msg[id] == "\n" || _msg[id].empty())
 				::send(_pollFd[id].fd, "", 0, 0);
 			else
@@ -138,19 +161,41 @@ void lpp::server::_executeMessage(std::stringstream &ss, size_t &id){
 	}
 }
 
+bool lpp::server::_serverAuthentification(std::stringstream &ss, int &id){
+	int code = 0;
+	char sep = 0;
+
+	if ((ss >> code >> sep) && code == 1){
+		message msg(code);
+		if (_actions.find(code) != _actions.end() && sep == '|'){
+			_logger.log(INFO, "received authentification request from " + _authorized[id]._username);
+			std::string tmp;
+			std::getline(ss >> std::ws, tmp);
+			msg << tmp;
+			_actions[code](id, msg);
+			return _authorized[id]._isConnected;
+		}
+	}
+
+	::send(id, "Connection refused\n", 20, 0);
+	return false;
+}
+
 void lpp::server::_connectUser(int clientId){
-	_authorized[clientId] = authentification();
-	_authorized[clientId]._isConnected = false;
+	_authorized[clientId] = authentification("guest[" + std::to_string(clientId) + ']');
+
 	sockaddr_in addr{};
 	socklen_t len = sizeof(addr);
-
 	getpeername(clientId, (sockaddr*)&addr, &len);
 	char ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &addr.sin_addr, ip, INET_ADDRSTRLEN);
 
-	_logger.log(DEBUG, "ip: \"" + std::string(ip) + "\"");
-	if (std::string(ip) == "127.0.0.1")
+	std::string ipv4(ip);
+	if (_whiteList.find(ipv4) != _whiteList.end()){
 		_authorized[clientId]._isConnected = true;
+		_logger.log(WARNING, _authorized[clientId]._username + "[" + ipv4 + "] white list authorisation");
+	}
+	_logger.log(INFO, "new client, " + _authorized[clientId]._username + " connected");
 }
 
 void lpp::server::_daemonLoop(){
@@ -202,7 +247,6 @@ void lpp::server::_daemonLoop(){
 					if (acpt >= 0){
 						_pollFd.push_back(pollfd{acpt, POLLIN, 0});
 						_msg.push_back("");
-						_logger.log(INFO, "new client[" + std::to_string(acpt) + "] connected");
 						_connectUser(acpt);
 					}
 					continue;
@@ -211,27 +255,26 @@ void lpp::server::_daemonLoop(){
 				ssize_t n = read(_pollFd[i].fd, buffer, sizeof(buffer));
 				_logger.log(INFO, "server read " + std::to_string(n) + " bytes");
 				if (n <= 0){
-					_logger.log(INFO, "close client[" + std::to_string(_pollFd[i].fd) + "]");
-					close(_pollFd[i].fd);
+					_logger.log(INFO, "close " + _authorized[_pollFd[i].fd]._username + " connection");
 					_authorized.erase(_pollFd[i].fd);
+					close(_pollFd[i].fd);
 					_pollFd.erase(_pollFd.begin() + i);
 					_msg.erase(_msg.begin() + i);
 					i--;
 				} else{
 					_msg[i].append(buffer, n);
+					std::erase(_msg[i], '\n');
 					std::stringstream ss(_msg[i]);
-					_logger.log(INFO, "try connect client[" + std::to_string(_pollFd[i].fd) + "]: " + std::to_string(_tryConnection(_pollFd[i].fd)));
-					if (_msg[i] == "quit" || _msg[i] == "quit\n"){
-						_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd) + "] request quit");
+					if (_msg[i] == "quit"){
+						_logger.log(INFO, _authorized[_pollFd[i].fd]._username + " request quit");
 						close(_pollFd[i].fd);
 						_pollFd.erase(_pollFd.begin() + i);
 						_msg.erase(_msg.begin() + i);
 						i--;
 					} else if (_tryConnection(_pollFd[i].fd)){
 						_executeMessage(ss, i);
-					} else{
-						::send(_pollFd[i].fd, "Connection refused\n", 20, 0);
-					}
+					} else
+						_serverAuthentification(ss, _pollFd[i].fd);
 					_msg[i].clear();
 				}
 			}
@@ -251,7 +294,7 @@ void lpp::server::_daemonLoop(){
 		_logger.log(INFO, "filesystem remove " + _daemonLockPath + _daemonLockFile);
 	}
 
-	_logger.log(WARNING, "shutdown daemon ");
+	_logger.log(WARNING, "shutdown daemon");
 	return ;
 }
 
@@ -281,6 +324,49 @@ void lpp::server::daemon(const size_t& p_port){
 			return ;
 		}
 		if (!pid){
+			defineAction(1, [this](long long clientID, const lpp::message& msg){
+				std::string user;
+				std::string password;
+				std::stringstream reply;
+				std::string tmp;
+				_logger.log(lpp::LogLevel::INFO, _authorized[clientID]._username + " try to log in");
+
+				msg >> tmp;
+				if (tmp.find('=') == std::string::npos){
+					reply << "bad format";
+				} else{
+					if (tmp.substr(0, tmp.find('=')) == "username"){
+						user = tmp.substr(tmp.find('=') + 1);
+						msg >> tmp;
+						if (tmp.find('=') == std::string::npos)
+							reply << "bad format";
+						else if (tmp.substr(0, tmp.find('=')) == "password"){
+							password = tmp.substr(tmp.find('=') + 1);
+							if (user.empty() || password.empty())
+								reply << "empty field";
+							else if (isPasswd(password)){
+								_logger.log(lpp::LogLevel::INFO,  user + " logged successfully");
+								enableUser(clientID, user);
+								reply << "connected";
+							} else
+								reply << "authentification failed";
+						}
+						else
+							reply << "bad format";
+					} else{
+						reply << "bad format";
+					}
+				}
+
+				reply << std::endl;
+				std::string str(reply.str());
+				::send(clientID, str.data(), str.size(), 0);
+			});
+
+			defineAction(3, [this](long long clientID, const lpp::message& msg){
+				std::string rtn(exec(msg.str()));
+				::send(clientID, rtn.c_str(), rtn.size(), 0);
+			});
 			_running.store(true);
 			_daemonLoop();
 		}
@@ -308,23 +394,6 @@ void lpp::server::disconnect(){
 		_loop.join();
 	if (_socket != -1)
 		close(_socket);
-}
-
-lpp::server::~server(){
-	disconnect();
-}
-
-lpp::server::server() : _p_port(8080), _exc(nullptr), _lockFd(-1),
-	_logFile("server.log"),
-	_lockFile("server.lock"),
-	_logPath("/var/log/libftpp/server/lpp_server/"),
-	_lockPath("/var/lock/libftpp/server/lpp_server/"),
-	_daemonLogFile("daemon.log"),
-	_daemonLockFile("daemon.lock"),
-	_daemonLogPath("/var/log/libftpp/server/lpp_daemon/"),
-	_daemonLockPath("/var/lock/libftpp/server/lpp_daemon/")
-{
-	_running.store(false);
 }
 
 void lpp::server::defineAction(const message::Type& messageType, const std::function<void(long long clientID, const message& msg)>& action){
@@ -446,4 +515,20 @@ lpp::logger& lpp::server::getLogger(){return _logger;}
 
 lpp::server::authentification::authentification() : _isConnected(false), _username("guest"){}
 
+lpp::server::authentification::authentification(std::string name) : _isConnected(false), _username(name){}
+
 lpp::server::authentification::~authentification(){}
+
+void lpp::server::setPasswd(std::string passwd){_passwd = passwd;}
+
+bool lpp::server::isPasswd(std::string passwd){
+	if (_passwd.empty())
+		return false;
+	return _passwd == passwd;
+}
+
+void lpp::server::enableUser(int clientId, std::string username){
+	_authorized[clientId] = authentification();
+	_authorized[clientId]._username = username;
+	_authorized[clientId]._isConnected = true;
+}

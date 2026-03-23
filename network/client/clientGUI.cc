@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 09:53:35 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 21:58:01 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,12 @@ void login(LoginState& state, lpp::client &client)
 
 	if (send && !state.username.empty() && !state.password.empty()){
 		lpp::message connect(1);
-		connect << state.username << " " << state.password;
+		connect << "username=" << state.username << " " << "password=" << state.password;
 		std::string reply = client.send(connect);
-		lpp::cout << reply << std::endl;
         state.password.clear();
+		std::erase(reply, '\n');
+		if (reply == "connected")
+			state.request = true;
     }
 
     ImGui::End();
@@ -111,17 +113,7 @@ void login(LoginState& state, lpp::client &client)
 int main(void){
 
 	lpp::client client;
-
-	try{
-		client.connect("127.0.0.1", 4242);
-	} catch(std::exception &e){
-		lpp::cout << "client error: " << e.what() << std::endl;
-		return(-1);
-	}
-
-	client.defineAction(1, [](const lpp::message& msg){
-        lpp::cout << "server: " << msg.str() << std::endl;
-    });
+	client.getLogger().setIsStdout(true);
 
 	client.defineAction(2, [](const lpp::message& msg){
         int doubledValue = 0;
@@ -136,6 +128,14 @@ int main(void){
 		if (str == "pong")
 			lpp::cout << "server work!" << std::endl;
     });
+
+	try{
+		client.connect("127.0.0.1", 4242);
+	} catch(std::exception &e){
+		lpp::cout << "client error: " << e.what() << std::endl;
+		return(-1);
+	}
+
 
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
     {

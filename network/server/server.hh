@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 10:35:04 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 20:39:05 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <exception>
 #include <cstdio>
 #include <sys/file.h>
+#include <set>
 #include <filesystem>
 
 #define BUFFER_SIZE 1024
@@ -35,9 +36,9 @@ namespace lpp{
 					friend lpp::server;
 					bool _isConnected;
 					std::string _username;
-					std::string _hashedPasswd;
 				public:
 					authentification();
+					authentification(std::string);
 					~authentification();
 			};
 			int 				_socket;
@@ -50,6 +51,9 @@ namespace lpp{
 
 			lpp::logger _logger;
 			lpp::chronometer _chrono;
+
+			std::string _passwd;
+			std::set<std::string> _whiteList;
 
 			int _lockFd;
 
@@ -77,6 +81,7 @@ namespace lpp{
 			void _daemonLoop();
 			bool _tryConnection(int);
 			void _executeMessage(std::stringstream&, size_t&);
+			bool _serverAuthentification(std::stringstream&, int&);
 			void _connectUser(int);
 
 			bool config()	override;
@@ -106,5 +111,10 @@ namespace lpp{
 
 			std::string exec(std::string);
 			lpp::logger& getLogger();
+
+			void setPasswd(std::string);
+			bool isPasswd(std::string);
+
+			void enableUser(int, std::string);
 	};
 }
