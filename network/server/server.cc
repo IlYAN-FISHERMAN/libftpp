@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 21:56:14 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 22:08:14 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ lpp::server::server() : _p_port(8080), _exc(nullptr), _lockFd(-1),
 {
 	_running.store(false);
 	_whiteList.insert("127.0.0.1");
-	// _whiteList.insert("192.168.1.152");
 }
 
 lpp::server::~server(){
