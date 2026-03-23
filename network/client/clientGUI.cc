@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 13:02:35 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 09:53:35 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void login(LoginState& state, lpp::client &client)
 
 	if (send && !state.username.empty() && !state.password.empty()){
 		lpp::message connect(1);
-		connect << "1|username=" << state.username << " password=" << state.password;
+		connect << state.username << " " << state.password;
 		std::string reply = client.send(connect);
 		lpp::cout << reply << std::endl;
         state.password.clear();

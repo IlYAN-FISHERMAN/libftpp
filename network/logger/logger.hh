@@ -6,13 +6,14 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 13:17:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 13:27:34 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "design_patterns/non_copyable/non_copyable.hh"
+#include "iostream/thread_safe_iostream.hh"
 #include <ctime>
 #include <fstream>
 #include <sstream>
@@ -35,10 +36,11 @@ namespace lpp{
 			std::string levelToString(LogLevel level);
 			bool _deleteFile;
 			bool _printFormat;
+			bool _isStdout;
 
 		public:
 			logger();
-			logger(const std::string& filePath, bool deleteFile = false, bool printformat = true);
+			logger(const std::string& filePath, bool deleteFile = false, bool printformat = true, bool isStdout = false);
 			~logger();
 
 			void log(LogLevel level, const std::string& message);
@@ -48,6 +50,7 @@ namespace lpp{
 			void setFilePath(const std::string);
 			void setDeleteFile(bool);
 			void setPrintFormat(bool);
+			void setIsStdout(bool);
 
 			std::string getFilePath();
 			bool getDeleteFile();

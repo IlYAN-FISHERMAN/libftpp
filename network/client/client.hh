@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:52 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 13:10:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 10:58:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 
 #include <arpa/inet.h>
 #include "design_patterns/design_patterns.hh"
+#include "network/logger/logger.hh"
 #include "time/chronometer/chronometer.hh"
 #include "network/logger/logger.hh"
 #include "network/message/message.hh"
+#include <ifaddrs.h>
 
 namespace lpp{
 	class client : public IResponsability_chain, public lpp::NonCopyable{
@@ -45,5 +47,7 @@ namespace lpp{
 			std::string send(const message& message);
 			std::string send(std::string&, bool = true);
 			std::string send(const char*, size_t);
+
+			lpp::logger& getLogger();
 	};
 }

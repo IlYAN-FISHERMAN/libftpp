@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/19 11:39:47 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/22 13:33:21 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,16 @@ std::string lpp::logger::levelToString(lpp::LogLevel lvl){
 	}
 }
 
-lpp::logger::logger(const std::string& filePath, bool deleteFile, bool printFormat) : _filePath(filePath), _deleteFile(deleteFile), _printFormat(printFormat){}
+lpp::logger::logger(const std::string& filePath, bool deleteFile, bool printFormat, bool isStdout) : _filePath(filePath), _deleteFile(deleteFile), _printFormat(printFormat), _isStdout(isStdout){}
 
-lpp::logger::logger() : _filePath("/var/log/libftpp/server/daemon.log"){}
+lpp::logger::logger() : _filePath(), _isStdout(false){}
 
 lpp::logger::~logger(){
 	if (logFile.is_open()){
 		logFile.close();
+		if (_deleteFile)
+			std::filesystem::remove(_filePath);
 	}
-	if (_deleteFile)
-		std::filesystem::remove(_filePath);
 }
 
 std::string lpp::logger::getDate(){
@@ -61,11 +61,14 @@ void lpp::logger::log(LogLevel level, const std::string& message){
 		logEntry << "[" << getDate() << "] " << levelToString(level) << ": " << message << std::endl;
 	}
 	else
-		logEntry << message << std::endl;
-	if (logFile.is_open()) {
-		logFile << logEntry.str();
-		logFile.flush();
-	}
+		logEntry << message;
+	if (!_isStdout){
+		if (logFile.is_open()) {
+			logFile << logEntry.str();
+			logFile.flush();
+		}
+	} else
+		lpp::cout << logEntry.str();
 }
 
 bool lpp::logger::is_open(){return logFile.is_open();}
@@ -77,6 +80,7 @@ void lpp::logger::open(){
 void lpp::logger::setFilePath(const std::string name){_filePath = name;}
 void lpp::logger::setDeleteFile(bool deleteFile){_deleteFile = deleteFile;}
 void lpp::logger::setPrintFormat(bool printFormat){_printFormat = printFormat;}
+void lpp::logger::setIsStdout(bool isStdout){_isStdout = isStdout;}
 
 std::string lpp::logger::getFilePath(){return _filePath;}
 bool lpp::logger::getDeleteFile(){return _deleteFile;}

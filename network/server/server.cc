@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 12:59:11 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 14:41:27 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,13 +108,59 @@ void lpp::server::_workerLoop(){
 	return ;
 }
 
+bool lpp::server::_tryConnection(int clientId){
+
+	return _authorized[clientId]._isConnected;
+}
+
+void lpp::server::_executeMessage(std::stringstream &ss, size_t &id){
+	int code = 0;
+	char sep = 0;
+	if (ss >> code >> sep){
+		message msg(code);
+		if (_actions.find(code) != _actions.end() && sep == '|'){
+			std::string tmp;
+			std::getline(ss >> std::ws, tmp);
+			_logger.log(INFO, "received string: " + tmp);
+			msg << tmp;
+			_actions[code](_pollFd[id].fd, msg);
+		}
+		else{
+			_logger.log(ERROR, "client[" + std::to_string(_pollFd[id].fd) + "] tried to launch a non-existent action");
+			::send(_pollFd[id].fd, "action not found\n", 16, 0);
+		}
+	} else{
+			_logger.log(INFO, "client[" + std::to_string(_pollFd[id].fd) + "] input: \"" + _msg[id] + "\"");
+			if (_msg[id] == "\n" || _msg[id].empty())
+				::send(_pollFd[id].fd, "", 0, 0);
+			else
+				::send(_pollFd[id].fd, "message received\n", 18, 0);
+	}
+}
+
+void lpp::server::_connectUser(int clientId){
+	_authorized[clientId] = authentification();
+	_authorized[clientId]._isConnected = false;
+	sockaddr_in addr{};
+	socklen_t len = sizeof(addr);
+
+	getpeername(clientId, (sockaddr*)&addr, &len);
+	char ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &addr.sin_addr, ip, INET_ADDRSTRLEN);
+
+	_logger.log(DEBUG, "ip: \"" + std::string(ip) + "\"");
+	if (std::string(ip) == "127.0.0.1")
+		_authorized[clientId]._isConnected = true;
+}
 
 void lpp::server::_daemonLoop(){
 	_logger.setFilePath(_daemonLogPath + logger::getDate() + '_' + _daemonLogFile);
 	_logger.setPrintFormat(true);
 	_logger.open();
 	if (!_logger.is_open()){
-		lpp::logger("/dev/stderr").log(ERROR, "Error opening log file.");
+		lpp::logger info;
+		info.setIsStdout(true);
+		info.log(ERROR, "Error opening log file.");
 		return ;
 	}
 	_logger.log(INFO, "begin daemon loop");
@@ -156,7 +202,8 @@ void lpp::server::_daemonLoop(){
 					if (acpt >= 0){
 						_pollFd.push_back(pollfd{acpt, POLLIN, 0});
 						_msg.push_back("");
-						_logger.log(INFO, "new client[" + std::to_string(_pollFd[i].fd) + "] connected");
+						_logger.log(INFO, "new client[" + std::to_string(acpt) + "] connected");
+						_connectUser(acpt);
 					}
 					continue;
 				}
@@ -166,42 +213,24 @@ void lpp::server::_daemonLoop(){
 				if (n <= 0){
 					_logger.log(INFO, "close client[" + std::to_string(_pollFd[i].fd) + "]");
 					close(_pollFd[i].fd);
+					_authorized.erase(_pollFd[i].fd);
 					_pollFd.erase(_pollFd.begin() + i);
 					_msg.erase(_msg.begin() + i);
 					i--;
 				} else{
 					_msg[i].append(buffer, n);
 					std::stringstream ss(_msg[i]);
-					int code = 0;
-					char sep = 0;
-					if (ss >> code >> sep){
-						message msg(code);
-						if (_actions.find(code) != _actions.end() && sep == '|'){
-							std::string tmp;
-							std::getline(ss >> std::ws, tmp);
-							msg << tmp;
-							_actions[code](_pollFd[i].fd, msg);
-						}
-						else{
-							_logger.log(ERROR, "client[" + std::to_string(_pollFd[i].fd - 1) + "] tried to launch a non-existent action");
-							::send(_pollFd[i].fd, "action not found\n", 16, 0);
-						}
-					}
-					else{
-						if (_msg[i] == "quit" || _msg[i] == "quit\n"){
-							close(_pollFd[i].fd);
-							_pollFd.erase(_pollFd.begin() + i);
-							_msg.erase(_msg.begin() + i);
-							i--;
-							_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd - 1) + "] request quit");
-						} else{
-							_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd - 1) + "] input: \"" + _msg[i] + "\"");
-							if (_msg[i] == "\n" || _msg[i].empty())
-								::send(_pollFd[i].fd, "", 0, 0);
-							else
-								::send(_pollFd[i].fd, "message received\n", 18, 0);
-
-						}
+					_logger.log(INFO, "try connect client[" + std::to_string(_pollFd[i].fd) + "]: " + std::to_string(_tryConnection(_pollFd[i].fd)));
+					if (_msg[i] == "quit" || _msg[i] == "quit\n"){
+						_logger.log(INFO, "client[" + std::to_string(_pollFd[i].fd) + "] request quit");
+						close(_pollFd[i].fd);
+						_pollFd.erase(_pollFd.begin() + i);
+						_msg.erase(_msg.begin() + i);
+						i--;
+					} else if (_tryConnection(_pollFd[i].fd)){
+						_executeMessage(ss, i);
+					} else{
+						::send(_pollFd[i].fd, "Connection refused\n", 20, 0);
 					}
 					_msg[i].clear();
 				}
@@ -415,3 +444,6 @@ std::string lpp::server::getDaemonLockFile(){ return _daemonLockFile;}
 
 lpp::logger& lpp::server::getLogger(){return _logger;}
 
+lpp::server::authentification::authentification() : _isConnected(false), _username("guest"){}
+
+lpp::server::authentification::~authentification(){}

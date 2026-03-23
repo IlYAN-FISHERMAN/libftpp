@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 11:38:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/20 13:22:54 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 09:44:09 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,19 @@ int matt_daemon(int ac, char **av){
 	lpp::cout.setPrefix("[matt_daemon]: ");
 
     server.defineAction(1, [&server](long long clientID, const lpp::message& msg){
-        int value;
-        msg >> value;
-        lpp::message replyMsg(1);
-        replyMsg << (value * 2);
-        server.sendTo(replyMsg, clientID);
+		std::string user;
+		std::string password;
+		lpp::message reply(1);
+
+		msg >> user;
+		msg >> password;
+		if (!msg.eof() || user.empty() || password.empty()){
+			reply << "authentification failed";
+		} else{
+			server.getLogger().log(lpp::LogLevel::INFO, "client[" + std::to_string(clientID) + "] try to loggin, username: " + user);
+			reply << "not logged for now";
+		}
+        server.sendTo(reply, clientID);
     });
 
     server.defineAction(10, [&server](long long clientID, const lpp::message& msg){

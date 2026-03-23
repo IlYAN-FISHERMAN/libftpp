@@ -6,13 +6,15 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 12:35:05 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 11:06:34 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hh"
 
-lpp::client::client() : _socket(-1), _running(false), _chrono("lpp::client"){}
+lpp::client::client() : _socket(-1), _running(false), _chrono("lpp::client"){
+	_logger.setIsStdout(true);
+}
 
 lpp::client::~client(){
 	close(_socket);
@@ -68,7 +70,8 @@ std::string lpp::client::received(std::string response){
 
 std::string lpp::client::send(const message& msg){
 	std::string data = (std::to_string(msg.type()) + '|' + msg.str() + '\n');
-	lpp::cout << "send " << ::send(_socket, data.c_str(), data.size(), 0) << " bytes" << std::endl;
+	size_t send = ::send(_socket, data.c_str(), data.size(), 0);
+	_logger.log(INFO, "send " + std::to_string(send) + " bytes");
 	char buffer[1024]{0};
 	ssize_t n = read(_socket, buffer, sizeof(buffer));
 	if (n > 0)
@@ -141,3 +144,4 @@ bool lpp::client::execute(){
 }
 
 bool lpp::client::isRunning(){return _running;}
+lpp::logger& lpp::client::getLogger(){return _logger;}

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 13:19:43 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/23 10:35:04 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,21 @@ namespace lpp{
 		public :
 		 using Callback = std::function<void(long long, const message &)>;
 		private:
+			class authentification{
+				private:
+					friend lpp::server;
+					bool _isConnected;
+					std::string _username;
+					std::string _hashedPasswd;
+				public:
+					authentification();
+					~authentification();
+			};
 			int 				_socket;
 			struct sockaddr_in  _serv_addr;
 			std::unordered_map<long long, int> _clients;
 			std::unordered_map<message::Type, Callback> _actions;
+			std::unordered_map<int, authentification> _authorized;
 			size_t _p_port;
 			std::exception_ptr _exc;
 
@@ -64,6 +75,9 @@ namespace lpp{
 
 			void _workerLoop();
 			void _daemonLoop();
+			bool _tryConnection(int);
+			void _executeMessage(std::stringstream&, size_t&);
+			void _connectUser(int);
 
 			bool config()	override;
 			bool execute()	override;
