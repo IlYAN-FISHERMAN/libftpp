@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:52 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 10:58:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/24 09:29:56 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ namespace lpp{
 			bool config()	override;
 			bool execute()	override;
 
-			std::string received(std::string);
 		public:
 			client();
 			~client();
@@ -47,6 +46,7 @@ namespace lpp{
 			std::string send(const message& message);
 			std::string send(std::string&, bool = true);
 			std::string send(const char*, size_t);
+			std::string received(std::string);
 
 			lpp::logger& getLogger();
 	};

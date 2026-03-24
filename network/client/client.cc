@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 15:45:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/24 09:35:03 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,14 @@ std::string lpp::client::received(std::string response){
 	std::stringstream ss(response);
 	if (ss.str().find('|') == std::string::npos)
 		return ss.str();
-	else if (ss >> code >> sep && sep != '|'){
+	else if (ss >> code >> sep && sep == '|'){
 		if (_actions.find(code) != _actions.end()){
 			message msg(code);
 			std::string reply;
 			std::getline(ss >> std::ws, reply);
 			msg << reply;
 			_actions[code](msg);
-			return "action executed";
+			return reply;
 		} else
 			return "action not found";
 	}else
@@ -75,7 +75,7 @@ std::string lpp::client::send(const message& msg){
 	char buffer[1024]{0};
 	ssize_t n = read(_socket, buffer, sizeof(buffer));
 	if (n > 0)
-		return received(std::string(buffer));
+		return received(std::string(buffer, n));
 	return "send failed: " + std::to_string(n);
 }
 

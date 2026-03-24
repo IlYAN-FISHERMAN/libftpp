@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 22:08:14 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/24 09:04:21 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,37 +164,43 @@ bool lpp::server::_serverAuthentification(std::stringstream &ss, int &id){
 	int code = 0;
 	char sep = 0;
 
-	if ((ss >> code >> sep) && code == 1){
-		message msg(code);
-		if (_actions.find(code) != _actions.end() && sep == '|'){
-			_logger.log(INFO, "received authentification request from " + _authorized[id]._username);
-			std::string tmp;
-			std::getline(ss >> std::ws, tmp);
-			msg << tmp;
-			_actions[code](id, msg);
-			return _authorized[id]._isConnected;
+	_logger.log(lpp::LogLevel::INFO, _authorized[id]._username + " try to log in");
+	if (_whiteList.find(getIPv4(id)) != _whiteList.end()){
+		if ((ss >> code >> sep) && code == 1){
+			message msg(code);
+			if (_actions.find(code) != _actions.end() && sep == '|'){
+				_logger.log(INFO, "received authentification request from " + _authorized[id]._username);
+				std::string tmp;
+				std::getline(ss >> std::ws, tmp);
+				msg << tmp;
+				_actions[code](id, msg);
+				return _authorized[id]._isConnected;
+			}
 		}
-	}
+	} else
+		_logger.log(WARNING, _authorized[id]._username + "[" + getIPv4(id) + "] not in the white list");
 
 	::send(id, "Connection refused\n", 20, 0);
 	return false;
 }
 
-void lpp::server::_connectUser(int clientId){
-	_authorized[clientId] = authentification("guest[" + std::to_string(clientId) + ']');
-
+std::string lpp::server::getIPv4(int clientId){
 	sockaddr_in addr{};
 	socklen_t len = sizeof(addr);
 	getpeername(clientId, (sockaddr*)&addr, &len);
 	char ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &addr.sin_addr, ip, INET_ADDRSTRLEN);
 
-	std::string ipv4(ip);
-	if (_whiteList.find(ipv4) != _whiteList.end()){
-		_authorized[clientId]._isConnected = true;
-		_logger.log(WARNING, _authorized[clientId]._username + "[" + ipv4 + "] white list authorisation");
-	}
+	return std::string(ip);
+}
+
+void lpp::server::_connectUser(int clientId){
+	_authorized[clientId] = authentification("guest[" + std::to_string(clientId) + ']');
 	_logger.log(INFO, "new client, " + _authorized[clientId]._username + " connected");
+
+	std::string ipv4(getIPv4(clientId));
+	if (_whiteList.find(ipv4) != _whiteList.end())
+		_logger.log(WARNING, _authorized[clientId]._username + "[" + ipv4 + "] white list authorisation");
 }
 
 void lpp::server::_daemonLoop(){
@@ -264,7 +270,7 @@ void lpp::server::_daemonLoop(){
 					_msg[i].append(buffer, n);
 					std::erase(_msg[i], '\n');
 					std::stringstream ss(_msg[i]);
-					if (_msg[i] == "quit"){
+					if (_msg[i] == "quit" || _msg[i] == "exit"){
 						_logger.log(INFO, _authorized[_pollFd[i].fd]._username + " request quit");
 						close(_pollFd[i].fd);
 						_pollFd.erase(_pollFd.begin() + i);
@@ -272,8 +278,8 @@ void lpp::server::_daemonLoop(){
 						i--;
 					} else if (_tryConnection(_pollFd[i].fd)){
 						_executeMessage(ss, i);
-					} else
-						_serverAuthentification(ss, _pollFd[i].fd);
+					} else if (!_serverAuthentification(ss, _pollFd[i].fd))
+						_logger.log(INFO, _authorized[_pollFd[i].fd]._username + " connection refused");
 					_msg[i].clear();
 				}
 			}
@@ -328,7 +334,6 @@ void lpp::server::daemon(const size_t& p_port){
 				std::string password;
 				std::stringstream reply;
 				std::string tmp;
-				_logger.log(lpp::LogLevel::INFO, _authorized[clientID]._username + " try to log in");
 
 				msg >> tmp;
 				if (tmp.find('=') == std::string::npos){
@@ -514,7 +519,7 @@ lpp::logger& lpp::server::getLogger(){return _logger;}
 
 lpp::server::authentification::authentification() : _isConnected(false), _username("guest"){}
 
-lpp::server::authentification::authentification(std::string name) : _isConnected(false), _username(name){}
+lpp::server::authentification::authentification(std::string name, bool autorized) : _isConnected(autorized), _username(name){}
 
 lpp::server::authentification::~authentification(){}
 
@@ -526,8 +531,4 @@ bool lpp::server::isPasswd(std::string passwd){
 	return _passwd == passwd;
 }
 
-void lpp::server::enableUser(int clientId, std::string username){
-	_authorized[clientId] = authentification();
-	_authorized[clientId]._username = username;
-	_authorized[clientId]._isConnected = true;
-}
+void lpp::server::enableUser(int clientId, std::string username){ _authorized[clientId] = authentification(username, true);}

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 20:39:05 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/24 08:40:18 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ namespace lpp{
 					std::string _username;
 				public:
 					authentification();
-					authentification(std::string);
+					authentification(std::string, bool = false);
 					~authentification();
 			};
 			int 				_socket;
@@ -116,5 +116,6 @@ namespace lpp{
 			bool isPasswd(std::string);
 
 			void enableUser(int, std::string);
+			std::string getIPv4(int);
 	};
 }

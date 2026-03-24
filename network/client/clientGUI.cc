@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 21:58:01 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/24 09:40:18 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,21 @@ struct LoginState {
     bool request = false;
 };
 
-void interacte(std::string name, lpp::client &client){
+void ButtonCenteredOnLine(std::string label, float alignment = 0.5f)
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    float size = ImGui::CalcTextSize(label.data()).x + style.FramePadding.x * 2.0f;
+    float avail = ImGui::GetContentRegionAvail().x;
+
+    float off = (avail - size) * alignment;
+    if (off > 0.0f)
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+
+    ImGui::Text(label.c_str(), label.size());
+}
+
+void interacte(std::string name, lpp::client &client, bool &done){
 	static int code;
 	static std::string str;
 	static bool send = false;
@@ -37,6 +51,7 @@ void interacte(std::string name, lpp::client &client){
 			ImGuiWindowFlags_NoCollapse;
 
     ImGui::Begin(name.c_str(), nullptr, window_flags);
+	ImGui::Text("code      action");
 	ImGui::PushItemWidth(50);
 	ImGui::InputInt("##left", &code, 0, 0, ImGuiInputTextFlags_CharsDecimal);
 	ImGui::PushItemWidth(150);
@@ -50,15 +65,17 @@ void interacte(std::string name, lpp::client &client){
 		send = true;
 	}
 	if (send){
-		reply.clear();
-		if (!code && !str.empty()){
+		if (!code && !str.empty())
 			reply = client.send(str);
-		}
 		else{
-			std::cout << "send: " << str << std::endl;
 			std::string tmp(std::to_string(code) + "|" + str);
 			reply = client.send(tmp.c_str(), tmp.size());
 		}
+		client.getLogger().log(lpp::INFO, "send: " + str);
+		if (reply.find('|') != std::string::npos)
+			reply = client.received(reply);
+		if (str == "quit")
+			done = true;
 		str.clear();
 		send = false;
 		ImGui::SetKeyboardFocusHere(-1);
@@ -79,41 +96,60 @@ void login(LoginState& state, lpp::client &client)
         ImVec2(0.5f, 0.5f)
     );
 
-    ImGui::Begin("Login", nullptr,
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse);
+	static std::string reply;
+	if (reply != "connected"){
+		ImGui::Begin("Login", nullptr,
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse);
 
-    bool send = false;
+		bool send = false;
 
-    if (ImGui::InputText("Username", &state.username,
-                         ImGuiInputTextFlags_EnterReturnsTrue))
-		ImGui::SetKeyboardFocusHere();
+		if (ImGui::InputText("Username", &state.username,
+							 ImGuiInputTextFlags_EnterReturnsTrue))
+			ImGui::SetKeyboardFocusHere();
 
-    if (ImGui::InputText("Password", &state.password,
-                         ImGuiInputTextFlags_Password |
-                         ImGuiInputTextFlags_EnterReturnsTrue))
-		send = true;
+		if (ImGui::InputText("Password", &state.password,
+							 ImGuiInputTextFlags_Password |
+							 ImGuiInputTextFlags_EnterReturnsTrue))
+			send = true;
 
-    if (ImGui::Button("Login", ImVec2(-1, 0)))
-		send = true;
+		if (ImGui::Button("Login", ImVec2(-1, 0)))
+			send = true;
 
-	if (send && !state.username.empty() && !state.password.empty()){
-		lpp::message connect(1);
-		connect << "username=" << state.username << " " << "password=" << state.password;
-		std::string reply = client.send(connect);
-        state.password.clear();
-		std::erase(reply, '\n');
-		if (reply == "connected")
+		if (send && !state.username.empty() && !state.password.empty()){
+			lpp::message connect(1);
+			connect << "username=" << state.username << " " << "password=" << state.password;
+			reply = client.send(connect);
+			state.password.clear();
+			std::erase(reply, '\n');
+		} else if (!reply.empty() && state.request == false){
+			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+			ImGui::Text("   Wrong password, connection refused");
+			ImGui::PopStyleColor();
+		}
+		ImGui::End();
+	} else if (reply == "connected"){
+		volatile static int i = 0;
+		i += 1;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		ImGui::Begin("logged", nullptr,
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse);
+		
+		ImGui::Text("");
+		ImGui::Text("");
+		ButtonCenteredOnLine("Connected !");
+		if (i == 15)
 			state.request = true;
-    }
-
-    ImGui::End();
+		ImGui::End();
+	}
 }
 
 int main(void){
 
 	lpp::client client;
 	client.getLogger().setIsStdout(true);
+	client.getLogger().setPrintFormat(true);
 
 	client.defineAction(2, [](const lpp::message& msg){
         int doubledValue = 0;
@@ -121,13 +157,13 @@ int main(void){
         lpp::cout << "Received a doubled value: " << doubledValue << std::endl;
     });
 
-	client.defineAction(10, [](const lpp::message& msg){
+	client.defineAction(10, [&client](const lpp::message& msg){
 		std::string str;
         msg >> str;
 		lpp::cout << str << std::endl;
 		if (str == "pong")
-			lpp::cout << "server work!" << std::endl;
-    });
+			client.getLogger().log(lpp::INFO, "server work!");
+	});
 
 	try{
 		client.connect("127.0.0.1", 4242);
@@ -288,7 +324,7 @@ int main(void){
 		if (!log.request)
 			login(log, client);
 		else
-			interacte(log.username, client);
+			interacte(log.username, client, done);
 
         ImGui::Render();
         SDL_SetRenderScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
