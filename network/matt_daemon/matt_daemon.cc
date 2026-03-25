@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 11:38:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 21:04:54 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/25 10:38:38 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void printUsage(){
 	std::cout << "Usage:" << std::endl;
-	std::cout << "  " << "matt-daemon" << " [options]" << std::endl << std::endl;
+	std::cout << "  " << "matt-daemon" << " [options]" << std::endl;
+	std::cout << std::endl;
 
 	std::cout << "META OPTIONS" << std::endl;
 	std::cout << "   -h, --help\tshow list of command-line options" << std::endl;
@@ -25,19 +26,21 @@ void printUsage(){
 	std::cout << "            -k,\t\tkill current matt-daemon server" << std::endl;
 	std::cout << "   --clear-log,\tclear all logs from all instance of the matt-daemon servers" << std::endl;
 	std::cout << std::endl;
+
+	std::cout << "ACTIONS" << std::endl;
+	std::cout << std::endl;
+	std::cout << "The matt-daemon server has predefined possible actions. By default, three of them exist, with the following format:" << std::endl;
+	std::cout << std::endl;
+	std::cout << "   code [1] server authentification system: \t\"1|username=<user> password=<server_password>\"" << std::endl;
+	std::cout << "   code [2] email sender: \t\t\t\"2|To=<example@mail.com> Body=<text_to_send>\"" << std::endl;
+	std::cout << "   code [3] remote shell of the server: \t\"3|<command>\"" << std::endl;
+	std::cout << std::endl;
+	std::cout << "When running the server, you must define at least the SERVER_PASSWORD variable in a .env file located in the build folder.\nSee the env.example file for more details." << std::endl;
+	std::cout << std::endl;
 }
 
 int matt_daemon(int ac, char **av){
 	lpp::server server;
-	std::ifstream passwd(".env", std::ios::out);
-
-	if (!passwd.is_open()){
-		lpp::cout << "Need .env file with passwd" << std::endl;
-		return -1;
-	}
-	std::string tmp;
-	passwd >> tmp;
-	server.setPasswd(tmp);
 	server.setDaemonLogFile("matt_daemon.log");
 	server.setDaemonLockFile("matt_daemon.lock");
 

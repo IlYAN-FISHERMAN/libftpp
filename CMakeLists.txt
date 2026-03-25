@@ -104,6 +104,7 @@ target_compile_features(libftpp PUBLIC cxx_std_23)
 
 if(BUILD_CLIENT OR BUILD_BINARY)
   target_include_directories(libftpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
   if(BUILD_CLIENT)
     find_package(SDL3 CONFIG)
 
@@ -122,13 +123,16 @@ if(BUILD_CLIENT OR BUILD_BINARY)
 
     target_link_libraries(Ben_AFK PUBLIC SDL3::SDL3)
     target_link_libraries(Ben_AFK PRIVATE libftpp)
+
     target_include_directories(Ben_AFK PRIVATE imgui)
     target_include_directories(Ben_AFK PRIVATE imgui/backends)
     target_include_directories(Ben_AFK PRIVATE imgui/misc/cpp/)
   endif()
   if(BUILD_BINARY)
+    find_package(CURL REQUIRED)
     add_executable(matt-daemon tests/testMain.cc)
     target_link_libraries(matt-daemon PRIVATE libftpp)
+    target_link_libraries(matt-daemon PRIVATE CURL::libcurl)
   endif()
 elseif(BUILD_LIB)
   target_include_directories(

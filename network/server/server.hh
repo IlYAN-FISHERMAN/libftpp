@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/24 08:40:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/25 10:39:55 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 #include <cstdio>
 #include <sys/file.h>
 #include <set>
+#include <stdio.h>
+#include <curl/curl.h>
 #include <filesystem>
 
 #define BUFFER_SIZE 1024
@@ -46,13 +48,13 @@ namespace lpp{
 			std::unordered_map<long long, int> _clients;
 			std::unordered_map<message::Type, Callback> _actions;
 			std::unordered_map<int, authentification> _authorized;
+			std::unordered_map<std::string, std::string> _env;
 			size_t _p_port;
 			std::exception_ptr _exc;
 
 			lpp::logger _logger;
 			lpp::chronometer _chrono;
 
-			std::string _passwd;
 			std::set<std::string> _whiteList;
 
 			int _lockFd;
@@ -76,6 +78,7 @@ namespace lpp{
 			std::mutex _mutex;
 			std::thread	_loop;
 			std::atomic<bool> _running;
+			bool _isDaemon;
 
 			void _workerLoop();
 			void _daemonLoop();
@@ -83,6 +86,8 @@ namespace lpp{
 			void _executeMessage(std::stringstream&, size_t&);
 			bool _serverAuthentification(std::stringstream&, int&);
 			void _connectUser(int);
+			void _getEnv();
+			void _parseData();
 
 			bool config()	override;
 			bool execute()	override;
@@ -112,10 +117,10 @@ namespace lpp{
 			std::string exec(std::string);
 			lpp::logger& getLogger();
 
-			void setPasswd(std::string);
 			bool isPasswd(std::string);
 
 			void enableUser(int, std::string);
 			std::string getIPv4(int);
+			void setInWhiteList(std::string);
 	};
 }
