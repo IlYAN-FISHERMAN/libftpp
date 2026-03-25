@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/25 10:47:23 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/25 14:13:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,23 @@ struct upload_status {
     int lines_read;
 };
 
+std::string lpp::server::help(){
+	std::stringstream help;
+
+	help << "ACTIONS" << std::endl;
+	help << std::endl;
+	help << "The matt-daemon server has predefined possible actions. By default, three of them exist, with the following format:" << std::endl;
+	help << std::endl;
+	help << "   code [1] server authentification system: \t\"1|username=<user> password=<server_password>\"" << std::endl;
+	help << "   code [2] email sender: \t\t\t\"2|To=<example@mail.com> Body=<text_to_send>\"" << std::endl;
+	help << "   code [3] remote shell of the server: \t\"3|<command>\"" << std::endl;
+	help << std::endl;
+	help << "When running the server, you must define at least the SERVER_PASSWORD variable in a .env file located in the build folder.\nSee the env.example file for more details." << std::endl;
+	help << std::endl;
+
+	return help.str();
+}
+
 size_t payload_source(void* ptr, size_t size, size_t nmemb, void* userp) {
     upload_status* upload = (upload_status*)userp;
     const char* data;
@@ -46,7 +63,6 @@ size_t payload_source(void* ptr, size_t size, size_t nmemb, void* userp) {
         upload->lines_read++;
         return len;
     }
-
     return 0;
 }
 
@@ -61,8 +77,6 @@ lpp::server::server() : _p_port(8080), _exc(nullptr), _lockFd(-1),
 	_daemonLockPath("/var/lock/libftpp/server/lpp_daemon/")
 {
 	_running.store(false);
-	_whiteList.insert("127.0.0.1");
-	_whiteList.insert("10.166.113.48");
 }
 
 lpp::server::~server(){
@@ -170,6 +184,10 @@ void lpp::server::_executeMessage(std::stringstream &ss, size_t &id){
 
 	if (ss.str() == "clear"){
 		::send(_pollFd[id].fd, "\33c", 3, 0);
+	}
+	else if (ss.str() == "help"){
+		std::string help = this->help();
+		::send(_pollFd[id].fd, help.c_str(), help.size(), 0);
 	}
 	else if (ss >> code >> sep){
 		message msg(code);
@@ -301,7 +319,8 @@ void lpp::server::_daemonLoop(){
 					i--;
 				} else{
 					_msg[i].append(buffer, n);
-					std::erase(_msg[i], '\n');
+					if (_msg[i].find('|') == std::string::npos)
+						std::erase(_msg[i], '\n');
 					std::stringstream ss(_msg[i]);
 					if (_msg[i] == "quit" || _msg[i] == "exit"){
 						_logger.log(INFO, _authorized[_pollFd[i].fd]._username + " request quit");
@@ -313,6 +332,8 @@ void lpp::server::_daemonLoop(){
 						_executeMessage(ss, i);
 					} else if (!_serverAuthentification(ss, _pollFd[i].fd))
 						_logger.log(INFO, _authorized[_pollFd[i].fd]._username + " connection refused");
+					else
+						_logger.log(INFO, _authorized[_pollFd[i].fd]._username + " input: \"" + _msg[i] + "\"");
 					_msg[i].clear();
 				}
 			}
@@ -357,7 +378,10 @@ void lpp::server::_getEnv(){
 		value = str.substr(str.find('=') + 1);
 		if (key.empty() || value.empty())
 			throw std::logic_error(".env file: empty field");
-		_env[key] = value;
+		if (key == "WHITE_LIST")
+			_whiteList.insert(value);
+		else
+			_env[key] = value;
 		key.clear();
 		value.clear();
 	}
@@ -429,36 +453,69 @@ void lpp::server::daemon(const size_t& p_port){
 				std::string str(reply.str());
 				::send(clientID, str.data(), str.size(), 0);
 			});
+
 			defineAction(2, [this](long long clientID, const lpp::message& msg){
-					(void)msg;
 					CURLcode res = CURLE_OK;
+					CURL *curl = curl_easy_init();
 
 					std::string reply;
-					CURL *curl = curl_easy_init();
-					if(curl){
-						curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
-						curl_easy_setopt(curl, CURLOPT_URL, _env["CURL_SMTP_SERVER"].c_str());
-						curl_easy_setopt(curl, CURLOPT_MAIL_FROM, "industries.sarif@gmail.com");
-						struct curl_slist *recipients = nullptr;
-						recipients = curl_slist_append(recipients, "ilkay.yanar71@gmail.com");
-						curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-						curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-						curl_easy_setopt(curl, CURLOPT_USERNAME, _env["CURL_EMAIL_PROVIDER"].c_str());
-						curl_easy_setopt(curl, CURLOPT_PASSWORD, _env["CURL_EMAIL_PASSWORD"].c_str());
-						curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
-						// Additional setup code here
-						res = curl_easy_perform(curl);
-						curl_easy_cleanup(curl);
-						curl_slist_free_all(recipients);
-					  	curl_global_cleanup();
-				  }else
-					::send(clientID, "curl setup failed\n", 19, 0);
-				if (res != CURLE_OK)
-					::send(clientID, "fail to send email\n", 20, 0);
-				else{
-					reply = "email send succefully\n";
+					std::string To;
+					std::string Body;
+					std::string tmp;
+					std::stringstream ss(msg.str());
+
+					ss >> tmp;
+					if (tmp.find('=') == std::string::npos){
+						reply = "bad format";
+					} else{
+						if (tmp.substr(0, tmp.find('=')) == "To"){
+							To = tmp.substr(tmp.find('=') + 1);
+							ss >> tmp;
+							if (tmp.find('=') == std::string::npos || tmp.substr(0, tmp.find('=')) != "Body")
+								reply = "need body field";
+							else{
+								Body = tmp.substr(tmp.find('=') + 1);
+								tmp.clear();
+								while(!ss.eof()){
+									std::getline(ss, tmp);
+									if (ss.eof())
+										Body += tmp;
+									else
+										Body += tmp + "\n";
+								}
+								if (To.empty())
+									reply = "empty mail destination";
+								else if(curl){
+									curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
+									curl_easy_setopt(curl, CURLOPT_URL, _env["CURL_SMTP_SERVER"].c_str());
+									curl_easy_setopt(curl, CURLOPT_MAIL_FROM, _env["CURL_EMAIL_PROVIDER"].c_str());
+									curl_easy_setopt(curl, CURLOPT_USERNAME, _env["CURL_EMAIL_PROVIDER"].c_str());
+									curl_easy_setopt(curl, CURLOPT_PASSWORD, _env["CURL_EMAIL_PASSWORD"].c_str());
+
+									struct curl_slist *recipients = nullptr;
+									recipients = curl_slist_append(recipients, To.c_str());
+									curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+									curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+									curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
+
+									res = curl_easy_perform(curl);
+
+									curl_easy_cleanup(curl);
+									curl_slist_free_all(recipients);
+									curl_global_cleanup();
+								  }else
+									::send(clientID, "curl setup failed", 19, 0);
+								if (res != CURLE_OK)
+									reply = "fail to send email";
+								else
+									reply = "email send succefully";
+							}
+						} else
+							reply = "bad format";
+					}
+
+					reply += '\n';
 					::send(clientID, reply.c_str(), reply.size(), 0);
-				}
 			});
 			defineAction(3, [this](long long clientID, const lpp::message& msg){
 				std::string rtn(exec(msg.str()));

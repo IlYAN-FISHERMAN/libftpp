@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:20:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/25 10:39:55 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/25 14:10:45 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ namespace lpp{
 
 			bool config()	override;
 			bool execute()	override;
+			std::string help();
 		public:
 			server();
 			~server();
