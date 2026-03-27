@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/27 13:36:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/27 16:32:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,7 @@ void lpp::server::_daemonLoop(){
 	_running.store(true);
 
 	std::signal(SIGPIPE, SIG_IGN);
+	std::signal(SIGTERM, handleSigint);
 	std::signal(SIGINT, handleSigint);
 
 	while (!sigCode){
@@ -273,6 +274,13 @@ void lpp::server::_daemonLoop(){
 						_pollFd.push_back(pollfd{acpt, POLLIN, 0});
 						_msg.push_back("");
 						_connectUser(acpt);
+						// handle this
+						if (_pollFd.size() > static_cast<size_t>(std::atoi(_env["MAX_USER"].data()))){
+							close(_pollFd[i].fd);
+							_pollFd.erase(_pollFd.begin() + i);
+							_msg.erase(_msg.begin() + i);
+							i--;
+						}
 					}
 					continue;
 				}
@@ -309,7 +317,7 @@ void lpp::server::_daemonLoop(){
 			}
 		}
 	}
-	_logger.log(INFO, "stopping server... code[" + std::to_string(sigCode) + "]");
+	_logger.log(INFO, "signal handler server... code[" + std::to_string(sigCode) + "]");
 	_logger.log(INFO, "lpp::server running " + std::to_string(_chrono.stop().count()) + " seconds");
 
 	for (auto pol : _pollFd)
