@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/25 14:13:20 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/27 13:36:07 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,6 @@ static sig_atomic_t sigCode = 0;
 static void handleSigint(int){
 	sigCode = 1;
 }
-
-static const char* payload[] = {
-    "To: recipient@gmail.com\r\n",
-    "From: you@gmail.com\r\n",
-    "Subject: Test mail\r\n",
-    "\r\n",
-    "Hello from C++!\r\n",
-    NULL
-};
-
-struct upload_status {
-    int lines_read;
-};
 
 std::string lpp::server::help(){
 	std::stringstream help;
@@ -46,24 +33,6 @@ std::string lpp::server::help(){
 	help << std::endl;
 
 	return help.str();
-}
-
-size_t payload_source(void* ptr, size_t size, size_t nmemb, void* userp) {
-    upload_status* upload = (upload_status*)userp;
-    const char* data;
-
-    if ((size == 0) || (nmemb == 0) || ((size * nmemb) < 1))
-        return 0;
-
-    data = payload[upload->lines_read];
-
-    if (data) {
-        size_t len = strlen(data);
-        memcpy(ptr, data, len);
-        upload->lines_read++;
-        return len;
-    }
-    return 0;
 }
 
 lpp::server::server() : _p_port(8080), _exc(nullptr), _lockFd(-1),
@@ -192,8 +161,8 @@ void lpp::server::_executeMessage(std::stringstream &ss, size_t &id){
 	else if (ss >> code >> sep){
 		message msg(code);
 		if (_actions.find(code) != _actions.end() && sep == '|'){
-			std::string tmp;
-			std::getline(ss >> std::ws, tmp);
+			std::string tmp(ss.str());
+			tmp = tmp.substr(tmp.find('|') + 1);
 			_logger.log(INFO, _authorized[_pollFd[id].fd]._username + " run action type " + std::to_string(code));
 			msg << tmp;
 			_actions[code](_pollFd[id].fd, msg);
@@ -309,7 +278,8 @@ void lpp::server::_daemonLoop(){
 				}
 				char buffer[BUFFER_SIZE]{0};
 				ssize_t n = read(_pollFd[i].fd, buffer, sizeof(buffer));
-				_logger.log(INFO, "server read " + std::to_string(n) + " bytes");
+				if (n > 0)
+					_logger.log(INFO, "server read " + std::to_string(n) + " bytes");
 				if (n <= 0){
 					_logger.log(INFO, "close " + _authorized[_pollFd[i].fd]._username + " connection");
 					_authorized.erase(_pollFd[i].fd);
@@ -464,7 +434,9 @@ void lpp::server::daemon(const size_t& p_port){
 					std::string tmp;
 					std::stringstream ss(msg.str());
 
+					_logger.log(INFO, "received email request from " + _authorized[clientID]._username);
 					ss >> tmp;
+					_logger.log(INFO, "email input: " + msg.str());
 					if (tmp.find('=') == std::string::npos){
 						reply = "bad format";
 					} else{
@@ -481,16 +453,24 @@ void lpp::server::daemon(const size_t& p_port){
 									if (ss.eof())
 										Body += tmp;
 									else
-										Body += tmp + "\n";
+										Body += tmp + "\r\n";
 								}
-								if (To.empty())
+								if (To.empty()){
 									reply = "empty mail destination";
+									_logger.log(INFO, "empty mail destination");
+								}
 								else if(curl){
+									_logger.log(DEBUG, "Send email\nTo:" + To + "\nBody:\n" + Body + "\n\nEOF");
 									curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
 									curl_easy_setopt(curl, CURLOPT_URL, _env["CURL_SMTP_SERVER"].c_str());
 									curl_easy_setopt(curl, CURLOPT_MAIL_FROM, _env["CURL_EMAIL_PROVIDER"].c_str());
 									curl_easy_setopt(curl, CURLOPT_USERNAME, _env["CURL_EMAIL_PROVIDER"].c_str());
 									curl_easy_setopt(curl, CURLOPT_PASSWORD, _env["CURL_EMAIL_PASSWORD"].c_str());
+
+									curl_mime *mime = curl_mime_init(curl);
+									curl_mimepart *part = curl_mime_addpart(mime);
+									curl_mime_data(part, Body.data(), CURL_ZERO_TERMINATED);
+									curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
 
 									struct curl_slist *recipients = nullptr;
 									recipients = curl_slist_append(recipients, To.c_str());
@@ -503,15 +483,23 @@ void lpp::server::daemon(const size_t& p_port){
 									curl_easy_cleanup(curl);
 									curl_slist_free_all(recipients);
 									curl_global_cleanup();
-								  }else
+								 }else{
+									_logger.log(INFO, "curl setup failed");
 									::send(clientID, "curl setup failed", 19, 0);
-								if (res != CURLE_OK)
+								 }
+								if (res != CURLE_OK){
 									reply = "fail to send email";
-								else
+									_logger.log(INFO, "fail to send email");
+								}
+								else{
 									reply = "email send succefully";
+									_logger.log(INFO, "email send succefully");
+								}
 							}
-						} else
-							reply = "bad format";
+						} else{
+							_logger.log(INFO, "email action bad format");
+							reply = "email action bad format";
+						}
 					}
 
 					reply += '\n';
@@ -643,12 +631,13 @@ std::string lpp::server::exec(std::string cmd){
     char buffer[128];
 
 	_logger.log(INFO, "exec command: \""+ cmd + "\"");
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe) return "error";
 
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe)
+		return "error";
+
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
         result += buffer;
-    }
 
     pclose(pipe);
     return result;

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:02 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/24 09:35:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/27 13:37:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ std::string lpp::client::send(const message& msg){
 	return "send failed: " + std::to_string(n);
 }
 
-std::string lpp::client::send(std::string &msg, bool print){
-	lpp::cout << "send " << ::send(_socket, msg.c_str(), msg.size(), 0) << " bytes" << std::endl;
+std::string lpp::client::send(std::string msg, bool print){
+	_logger.log(INFO, "send " + std::to_string(::send(_socket, msg.c_str(), msg.size(), 0)) + " bytes");
 	char buffer[1024];
 	ssize_t n = read(_socket, buffer, sizeof(buffer));
 	if (n > 0) {

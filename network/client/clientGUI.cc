@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/25 11:46:02 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/03/27 13:38:03 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,20 @@ struct LoginState {
     std::string username;
     std::string password;
 
-    bool request = false;
-	bool homePage = false;
-	bool emailPage = false;
-	bool commandPage = false;
-	bool msgPage = false;
+    bool request;
+	bool homePage;
+	bool emailPage;
+	bool commandPage;
+	bool msgPage;
+	bool running;
+
+	LoginState() : request(false),
+	homePage(false),
+	emailPage(false),
+	commandPage(false),
+	msgPage(false),
+	running(false)
+	{}
 };
 
 void ButtonCenteredOnLine(std::string label, float alignment = 0.5f)
@@ -44,74 +53,195 @@ void ButtonCenteredOnLine(std::string label, float alignment = 0.5f)
 }
 
 void home(LoginState& state, lpp::client &client){
+
     ImGui::SetNextWindowPos(
         ImGui::GetMainViewport()->GetCenter(),
         ImGuiCond_Always,
         ImVec2(0.5f, 0.5f)
     );
-
-	static std::string reply;
-	if (reply != "connected"){
-		ImGui::Begin("Login", nullptr,
+	if (state.request == true && state.homePage){
+		ImGui::Begin("Home", nullptr,
 			ImGuiWindowFlags_NoResize |
 			ImGuiWindowFlags_NoCollapse);
 
-		bool send = false;
-
-		if (ImGui::InputText("Username", &state.username,
-							 ImGuiInputTextFlags_EnterReturnsTrue))
-			ImGui::SetKeyboardFocusHere();
-
-		if (ImGui::InputText("Password", &state.password,
-							 ImGuiInputTextFlags_Password |
-							 ImGuiInputTextFlags_EnterReturnsTrue))
-			send = true;
-
-		if (ImGui::Button("Login", ImVec2(-1, 0)))
-			send = true;
-
-		if (send && !state.username.empty() && !state.password.empty()){
-			lpp::message connect(1);
-			connect << "username=" << state.username << " " << "password=" << state.password;
-			reply = client.send(connect);
-			state.password.clear();
-			std::erase(reply, '\n');
-		} else if (!reply.empty() && state.request == false){
-			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-			ImGui::Text("   Wrong password, connection refused");
-			ImGui::PopStyleColor();
+		if (ImGui::Button("disconnect", ImVec2(80, 30))){
+			state = LoginState();
+			state.running = true;
+			client.disconnect();
+			try{
+				client.connect("127.0.0.1", 4242);
+			} catch(std::exception &e){
+				lpp::cout << "client error: " << e.what() << std::endl;
+				state.running = false;
+			}
 		}
-		ImGui::End();
-	} else if (reply == "connected"){
-		volatile static int i = 0;
-		i += 1;
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		ImGui::Begin("logged", nullptr,
-			ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoCollapse);
-		
-		ImGui::Text("");
-		ImGui::Text("");
-		ButtonCenteredOnLine("Connected !");
-		if (i == 15)
-			state.request = true;
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::NewLine();
+		if (ImGui::Button("command", ImVec2(150, 70))){
+			state.homePage = false;
+			state.commandPage = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("message", ImVec2(150, 70))){
+			state.homePage = false;
+			state.msgPage = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("email", ImVec2(150, 70))){
+			state.homePage = false;
+			state.emailPage = true;
+		}
+
 		ImGui::End();
 	}
 }
 
 void email(LoginState& state, lpp::client &client){
-	(void)state;
-	(void)client;
+	if (state.request == true && state.emailPage){
+		static std::string To;
+		static std::string Body;
+		static std::string reply;
+		static bool send = false;
+
+		ImGui::Begin("Email sender", nullptr,
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse);
+
+		if (ImGui::Button("Home", ImVec2(50, 25))){
+			state.homePage = true;
+			state.emailPage = false;
+			reply.clear();
+			To.clear();
+			Body.clear();
+			send = false;
+		}
+
+		ImGui::NewLine();
+		ImGui::NewLine();
+		float l = -FLT_MIN; 
+		float h = ImGui::GetTextLineHeight() * 2;
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 5));
+		ImGui::Text("To");
+		ImGui::InputTextMultiline("##To", &To, ImVec2(l, h));
+		ImGui::PopStyleVar();
+
+		ImGui::NewLine();
+		ImGui::Text("Body");
+		ImGui::NewLine();
+
+
+		float largeur = -FLT_MIN; 
+		float hauteur = ImGui::GetTextLineHeight() * 10; // Environ 10 lignes de haut
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
+		ImGui::InputTextMultiline("##BodyCore", &Body, ImVec2(largeur, hauteur));
+		ImGui::PopStyleVar();
+		ImGui::NewLine();
+
+		if (ImGui::Button("send", ImVec2(50, 25)))
+			send = true;
+
+		if (send && !To.empty() && !Body.empty()){
+			reply = client.send("2|To=" + To + " Body=" + Body, false);
+			ImGui::Text(reply.c_str(), reply.size());
+			send = false;
+		}
+
+		if (!reply.empty())
+			ImGui::Text(reply.c_str(), reply.size());
+
+		ImGui::End();
+	}
 }
 
 void command(LoginState& state, lpp::client &client){
-	(void)state;
-	(void)client;
+	if (state.request == true && state.commandPage){
+		static std::string str;
+		static std::string reply;
+		static bool send = false;
+
+		ImGui::Begin("Remote shell", nullptr,
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse);
+
+		if (ImGui::Button("Home", ImVec2(50, 25))){
+			state.homePage = true;
+			state.commandPage = false;
+			reply.clear();
+			str.clear();
+			send = false;
+		}
+
+		ImGui::NewLine();
+		ImGui::Text("Server IP:    127.0.0.1");
+		ImGui::Text("Server port:  4242");
+		ImGui::NewLine();
+		ImGui::Text("Command");
+		if (ImGui::InputText("##", &str,
+							 ImGuiInputTextFlags_EnterReturnsTrue))
+			send = true;
+
+		if (ImGui::Button("send", ImVec2(50, 25)))
+			send = true;
+
+		if (send && !str.empty()){
+			reply = client.send(std::string("3|" + str), false);
+			ImGui::Text(reply.c_str(), reply.size());
+			str.clear();
+			send = false;
+		}
+
+		if (!reply.empty())
+			ImGui::Text(reply.c_str(), reply.size());
+		ImGui::End();
+	}
 }
 
 void message(LoginState& state, lpp::client &client){
-	(void)state;
-	(void)client;
+	if (state.request == true && state.msgPage){
+		static std::string str;
+		static std::string reply;
+		static bool send = false;
+
+		ImGui::Begin("Message", nullptr,
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse);
+
+		if (ImGui::Button("Home", ImVec2(50, 25))){
+			state.homePage = true;
+			state.msgPage = false;
+			reply.clear();
+			str.clear();
+			send = false;
+		}
+
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::Text("Send direct message to the server");
+		if (ImGui::InputText("##", &str,
+							 ImGuiInputTextFlags_EnterReturnsTrue))
+			send = true;
+
+		if (ImGui::Button("send", ImVec2(50, 25)))
+			send = true;
+
+		if (send && !str.empty()){
+			reply = client.send(str, false);
+			if (str == "quit"){
+				state.running = false;
+				state.msgPage = false;
+				reply.clear();
+			}
+			str.clear();
+			send = false;
+			ImGui::Text(reply.c_str(), reply.size());
+		}
+
+		if (!reply.empty())
+			ImGui::Text(reply.c_str(), reply.size());
+
+		ImGui::End();
+	}
 }
 
 void login(LoginState& state, lpp::client &client)
@@ -124,12 +254,13 @@ void login(LoginState& state, lpp::client &client)
     );
 
 	static std::string reply;
+
 	if (reply != "connected"){
 		ImGui::Begin("Login", nullptr,
 			ImGuiWindowFlags_NoResize |
 			ImGuiWindowFlags_NoCollapse);
 
-		bool send = false;
+		static bool send = false;
 
 		if (ImGui::InputText("Username", &state.username,
 							 ImGuiInputTextFlags_EnterReturnsTrue))
@@ -149,7 +280,8 @@ void login(LoginState& state, lpp::client &client)
 			reply = client.send(connect);
 			state.password.clear();
 			std::erase(reply, '\n');
-		} else if (!reply.empty() && state.request == false){
+			send = false;
+		} else if (reply == "authentification failed"){
 			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
 			ImGui::Text("   Wrong password, connection refused");
 			ImGui::PopStyleColor();
@@ -163,12 +295,14 @@ void login(LoginState& state, lpp::client &client)
 			ImGuiWindowFlags_NoResize |
 			ImGuiWindowFlags_NoCollapse);
 		
-		ImGui::Text("");
-		ImGui::Text("");
-		ButtonCenteredOnLine("Connected !");
-		if (i == 15){
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ButtonCenteredOnLine(" Connected !");
+		if (i == 10){
 			state.request = true;
 			state.homePage = true;
+			reply.clear();
+			i = 0;
 		}
 		ImGui::End();
 	}
@@ -177,6 +311,8 @@ void login(LoginState& state, lpp::client &client)
 int main(void){
 
 	lpp::client client;
+	static LoginState log;
+
 	client.getLogger().setIsStdout(true);
 	client.getLogger().setPrintFormat(true);
 
@@ -210,7 +346,7 @@ int main(void){
 
     float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
     SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
-    SDL_Window* window = SDL_CreateWindow("clientGUI", (int)(500 * main_scale), (int)(300 * main_scale), window_flags);
+    SDL_Window* window = SDL_CreateWindow("clientGUI", (int)(480 * main_scale), (int)(550 * main_scale), window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -319,18 +455,17 @@ int main(void){
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    bool done = false;
-
-    while (!done)
+    log.running = true;
+    while (log.running)
     {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
             ImGui_ImplSDL3_ProcessEvent(&event);
             if (event.type == SDL_EVENT_QUIT)
-                done = true;
+                log.running = false;
             if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(window))
-                done = true;
+                log.running = false;
         }
 
         if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED)
@@ -348,7 +483,6 @@ int main(void){
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(static_cast<float>(winWidth), static_cast<float>(winHeight)));
 
-		static LoginState log;
 
 		if (!log.request)
 			login(log, client);
@@ -370,6 +504,7 @@ int main(void){
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
     }
+
     ImGui_ImplSDLRenderer3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
