@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:06:53 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 10:43:56 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/04/28 13:07:41 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <queue>
 #include <cstddef>
 #include <cstring>
+#include <stdexcept>
+#include <cstdint>
 
 namespace lpp{
 	class data_buffer{
