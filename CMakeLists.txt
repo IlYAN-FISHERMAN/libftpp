@@ -135,39 +135,40 @@ if(BUILD_CLIENT OR BUILD_BINARY)
     target_link_libraries(matt-daemon PRIVATE CURL::libcurl)
   endif()
 elseif(BUILD_LIB)
+
+  include(GNUInstallDirs)
+
   target_include_directories(
-    libftpp
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/data_structures>
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/design_patterns>
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/iostream>
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mathematics>
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/network>
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/threading>
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/time>
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils>)
+    libftpp PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
   install(
     TARGETS libftpp
     EXPORT libftppTargets
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin)
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-  install(FILES libftpp.hh DESTINATION include)
-  install(DIRECTORY data_structures DESTINATION include)
-  install(DIRECTORY design_patterns DESTINATION include)
-  install(DIRECTORY iostream DESTINATION include)
-  install(DIRECTORY mathematics DESTINATION include)
-  install(DIRECTORY network DESTINATION include)
-  install(DIRECTORY threading DESTINATION include)
-  install(DIRECTORY time DESTINATION include)
-  install(DIRECTORY utils DESTINATION include)
+  install(FILES libftpp.hh DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+  install(DIRECTORY data_structures DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY design_patterns DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY iostream DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY mathematics DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY network DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY threading DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY time DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(DIRECTORY utils DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
   install(
     EXPORT libftppTargets
     FILE libftppTargets.cmake
     NAMESPACE libftpp::
-    DESTINATION lib/cmake/libftpp)
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libftpp)
 
-  install(FILES ftppConfig.cmake DESTINATION lib/cmake/libftpp)
+  install(FILES ftppConfig.cmake
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libftpp)
+
   add_library(libftpp::libftpp ALIAS libftpp)
+
 endif()
