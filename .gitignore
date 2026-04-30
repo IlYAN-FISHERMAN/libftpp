@@ -42,5 +42,3 @@ build/
 *.dwo
 .cache
 compile_commands.json
-
-imgui
