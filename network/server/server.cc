@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/27 16:32:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/16 00:22:32 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,7 +275,7 @@ void lpp::server::_daemonLoop(){
 						_msg.push_back("");
 						_connectUser(acpt);
 						// handle this
-						if (_pollFd.size() > static_cast<size_t>(std::atoi(_env["MAX_USER"].data()))){
+						if (_env.contains("MAX_USER") && _pollFd.size() > static_cast<size_t>(std::atoi(_env["MAX_USER"].data()))){
 							close(_pollFd[i].fd);
 							_pollFd.erase(_pollFd.begin() + i);
 							_msg.erase(_msg.begin() + i);

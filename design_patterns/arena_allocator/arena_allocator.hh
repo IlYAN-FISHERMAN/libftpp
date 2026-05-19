@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 13:30:13 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 10:21:07 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/19 13:46:57 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ namespace lpp{
 			arena_allocator& operator=(arena_allocator&&);
 
 			template<typename TType, typename ...TArgs>
-			TType* create(TArgs... args);
+			TType* create(TArgs&&... args);
 	};
-	#include "arena_allocator.tpp"
 }
+
+#include "arena_allocator.tpp"
