@@ -103,10 +103,7 @@ set(SOURCES ${SOURCES} time/chronometer/chronometer.cc time/timer/timer.cc)
 
 add_library(libftpp STATIC ${SOURCES})
 target_compile_features(libftpp PUBLIC cxx_std_23)
-if (LINUX)
-	target_include_directories(libftpp PRIVATE "/home/ilyanar/homebrew/opt/curl/include")
-	target_link_libraries(libftpp PRIVATE "/home/ilyanar/homebrew/opt/curl/lib/libcurl.a")
-endif()
+target_link_libraries(libftpp PRIVATE CURL::libcurl)
 
 if(BUILD_CLIENT OR BUILD_BINARY)
   target_include_directories(libftpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
