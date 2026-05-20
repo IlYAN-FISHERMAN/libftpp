@@ -42,3 +42,4 @@ build/
 *.dwo
 .cache
 compile_commands.json
+.env
