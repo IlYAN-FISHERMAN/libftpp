@@ -1,3 +1,4 @@
 CompileFlags:
   Add: 
     - -I/opt/homebrew/opt/openssl/include
+	- -I/home/ilyanar/homebrew/opt/curl/include

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 08:14:49 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/19 13:37:18 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/20 17:05:32 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ int testUniqueMemento();
 
 //--------------------------------------------
 int matt_daemon(int , char**);
+
+int testSystem(int ac, char **av);
 
 //--------------------------------------------
 /// The current name of the class when us

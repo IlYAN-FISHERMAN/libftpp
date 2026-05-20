@@ -70,6 +70,7 @@ set(SOURCES
     tests/main_timer.cc
     tests/main_responsability_chain.cc
     tests/main_non_copyable.cc
+    tests/main_system.cc
     tests/main_unique_memento.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
@@ -100,6 +101,8 @@ set(SOURCES
     mathematics/perlin_noise_2D/perlin_noise_2D.cc)
 
 set(SOURCES ${SOURCES} time/chronometer/chronometer.cc time/timer/timer.cc)
+
+set(SOURCES ${SOURCES} system/shell/shell.cc)
 
 add_library(libftpp STATIC ${SOURCES})
 target_compile_features(libftpp PUBLIC cxx_std_23)
