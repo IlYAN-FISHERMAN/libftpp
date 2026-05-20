@@ -15,6 +15,7 @@ option(BUILD_BINARY "Build main binary" OFF)
 option(BUILD_MATT_DAEMON "Build matt_daemon binary" OFF)
 option(BUILD_LIB "Build lib" OFF)
 
+find_package(CURL REQUIRED)
 if(UNIX
    AND NOT APPLE
    AND CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -102,6 +103,8 @@ set(SOURCES ${SOURCES} time/chronometer/chronometer.cc time/timer/timer.cc)
 
 add_library(libftpp STATIC ${SOURCES})
 target_compile_features(libftpp PUBLIC cxx_std_23)
+target_include_directories(libftpp PRIVATE "/home/ilyanar/homebrew/opt/curl/include")
+target_link_libraries(libftpp PRIVATE "/home/ilyanar/homebrew/opt/curl/lib/libcurl.a")
 
 if(BUILD_CLIENT OR BUILD_BINARY)
   target_include_directories(libftpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -120,39 +123,41 @@ if(BUILD_CLIENT OR BUILD_BINARY)
         imgui/imgui_widgets.cpp
         imgui/misc/cpp/imgui_stdlib.cpp)
 
-    add_executable(Ben_AFK ${CLIENT_GUI})
+    add_executable(server_client_gui ${CLIENT_GUI})
 
-    target_link_libraries(Ben_AFK PUBLIC SDL3::SDL3)
-    target_link_libraries(Ben_AFK PRIVATE libftpp)
+    target_link_libraries(server_client_gui PUBLIC SDL3::SDL3)
+    target_link_libraries(server_client_gui PRIVATE libftpp)
 
-    target_include_directories(Ben_AFK PRIVATE imgui)
-    target_include_directories(Ben_AFK PRIVATE imgui/backends)
-    target_include_directories(Ben_AFK PRIVATE imgui/misc/cpp/)
+    target_include_directories(server_client_gui PRIVATE imgui)
+    target_include_directories(server_client_gui PRIVATE imgui/backends)
+    target_include_directories(server_client_gui PRIVATE imgui/misc/cpp/)
+	# target_include_directories(server_client_gui PRIVATE "/home/ilyanar/homebrew/opt/curl/include")
+	# target_link_libraries(server_client_gui PRIVATE "/home/ilyanar/homebrew/opt/curl/lib/libcurl.a")
   endif()
   if(BUILD_MATT_DAEMON)
-    find_package(CURL REQUIRED)
-    add_executable(matt-daemon tests/testMain.cc)
-    target_link_libraries(matt-daemon PRIVATE libftpp)
-    target_link_libraries(matt-daemon PRIVATE CURL::libcurl)
+	  add_executable(matt-daemon tests/testMain.cc)
+	  target_link_libraries(matt-daemon PRIVATE libftpp)
   endif()
   if(BUILD_BINARY)
-    add_executable(lib tests/testMain.cc)
-    target_link_libraries(lib PRIVATE libftpp)
+	  add_executable(lib tests/testMain.cc)
+	  target_link_libraries(lib PRIVATE libftpp)
+	  target_link_libraries(lib PRIVATE CURL::libcurl)
+	  # target_include_directories(lib PRIVATE "/home/ilyanar/homebrew/opt/curl/include")
+	  # target_link_libraries(lib PRIVATE "/home/ilyanar/homebrew/opt/curl/lib/libcurl.a")
   endif()
 elseif(BUILD_LIB)
 
-  include(GNUInstallDirs)
-
-  target_include_directories(
-    libftpp PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+	include(GNUInstallDirs)
+	target_include_directories(
+		libftpp PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-  install(
-    TARGETS libftpp
-    EXPORT libftppTargets
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+	install(
+		TARGETS libftpp
+		EXPORT libftppTargets
+		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   install(FILES libftpp.hh DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 

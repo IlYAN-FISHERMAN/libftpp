@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/19 13:26:54 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/20 13:28:43 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int main(int ac, char **av) {
 	// code = testRandom_2D_coordinate_generator();
 	// code = testPerlin_noise_2D();
 	//
-	// code = testArenaAllocator();
+	code = testArenaAllocator();
 	// code = testResponsabilityChain();
 	// code = testNonCopyable();
 	// code = testUniqueMemento();
