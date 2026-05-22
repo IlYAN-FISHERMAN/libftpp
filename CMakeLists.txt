@@ -71,6 +71,7 @@ set(SOURCES
     tests/main_responsability_chain.cc
     tests/main_non_copyable.cc
     tests/main_system.cc
+    tests/main_vuln.cc
     tests/main_unique_memento.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
@@ -93,7 +94,8 @@ set(SOURCES
     network/logger/logger.cc
     network/server/server.cc
     network/prompt/prompt.cc
-    network/matt_daemon/matt_daemon.cc)
+    network/matt_daemon/matt_daemon.cc
+	network/vuln/nmap.cc)
 
 set(SOURCES
     ${SOURCES}

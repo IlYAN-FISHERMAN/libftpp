@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 16:36:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/10 15:12:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/22 17:33:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,5 @@ lpp::unique_chrono::unique_chrono(std::string name) : __chrono(name){
 }
 
 lpp::unique_chrono::~unique_chrono(){
-	lpp::cout << __chrono << std::endl;
+	lpp::cout << lpp::logger::getLog(lpp::INFO) << __chrono << std::endl;
 }

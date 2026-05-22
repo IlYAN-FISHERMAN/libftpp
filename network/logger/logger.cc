@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/23 21:58:28 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/22 17:29:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,15 @@
 std::string lpp::logger::levelToString(lpp::LogLevel lvl){
 	switch (lvl) {
 	case DEBUG:
-		return "[DEBUG]";
+		return C_CYAN "[DEBUG]" C_RESET;
 	case INFO:
-		return "[INFO]";
+		return C_GREEN "[INFO]" C_RESET;
 	case WARNING:
-		return "[WARNING]";
+		return C_YELLOW "[WARNING]" C_RESET;
 	case ERROR:
-		return "[ERROR]";
+		return C_BRED "[ERROR]" C_RESET;
 	case CRITICAL:
-		return "[CRITICAL]";
+		return C_RED "[CRITICAL]" C_RESET;
 	default:
 		return "UNKNOWN";
 	}
@@ -33,7 +33,7 @@ std::string lpp::logger::levelToString(lpp::LogLevel lvl){
 
 lpp::logger::logger(const std::string& filePath, bool deleteFile, bool printFormat, bool isStdout) : _filePath(filePath), _deleteFile(deleteFile), _printFormat(printFormat), _isStdout(isStdout){}
 
-lpp::logger::logger() : _filePath(), _isStdout(false){}
+lpp::logger::logger() : _filePath(), _printFormat(true), _isStdout(false){}
 
 lpp::logger::~logger(){
 	if (logFile.is_open()){
@@ -55,10 +55,14 @@ std::string lpp::logger::getDate(){
 	return timestamp;
 }
 
+std::string lpp::logger::getLog(lpp::LogLevel level){
+	return "[" + getDate() + "] " + levelToString(level) + ": ";
+}
+
 void lpp::logger::log(LogLevel level, const std::string& message){
 	std::ostringstream logEntry;
 	if (_printFormat){
-		logEntry << "[" << getDate() << "] " << levelToString(level) << ": " << message << std::endl;
+		logEntry << getLog(level) << message << std::endl;
 	}
 	else
 		logEntry << message;
@@ -69,6 +73,10 @@ void lpp::logger::log(LogLevel level, const std::string& message){
 		}
 	} else
 		lpp::cout << logEntry.str() << std::flush;
+}
+
+void lpp::logger::cout(LogLevel level, const std::string& message){
+	lpp::cout << getLog(level) << message << std::endl;
 }
 
 bool lpp::logger::is_open(){return logFile.is_open();}

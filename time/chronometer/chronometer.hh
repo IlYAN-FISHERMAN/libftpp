@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 16:36:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 10:07:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/22 17:17:51 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <chrono>
 #include <iostream>
 #include "iostream/thread_safe_iostream.hh"
+#include "network/logger/logger.hh"
 
 namespace lpp{
 	class chronometer{

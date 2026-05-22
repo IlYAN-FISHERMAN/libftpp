@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/22 13:27:34 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/22 17:27:46 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ namespace lpp{
 		private:
 			std::ofstream logFile;
 			std::string _filePath;
-			std::string levelToString(LogLevel level);
+			static std::string levelToString(LogLevel level);
 			bool _deleteFile;
 			bool _printFormat;
 			bool _isStdout;
@@ -57,5 +57,7 @@ namespace lpp{
 			bool getPrintFormat();
 
 			static std::string getDate();
+			static std::string getLog(LogLevel level);
+			static void cout(LogLevel level, const std::string& message);
 	};
 }
