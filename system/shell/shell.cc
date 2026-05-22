@@ -6,18 +6,41 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:52:00 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/20 18:42:31 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/21 13:22:35 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.hh"
 
-lpp::shell::shell() : _worker(10){}
+lpp::system::shell::shell() : _worker(10){}
 
-lpp::shell::~shell(){}
+lpp::system::shell::~shell(){
+	_worker.wait();
+}
 
-void lpp::shell::cmd(){
-	
+lpp::system::system(){
+	_shell = std::make_unique<lpp::system::shell>();
+}
+
+lpp::system::~system(){
+	_shell->_worker.wait();
+}
+
+std::string lpp::system::cmd(const std::string &command){
+	std::array<char, 128> buffer;
+	std::string result;
+	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
+
+	if (!pipe)
+		throw std::runtime_error("popen() failed!");
+
+	while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr)
+		result += buffer.data();
+
+	return result;
+}
+
+void lpp::system::shell::cmd(){
 	std::string command(_in.pop_front());
 	std::array<char, 128> buffer;
 	std::string result;
@@ -32,32 +55,19 @@ void lpp::shell::cmd(){
 	_out.push_back(result);
 }
 
-void lpp::shell::execute(){
+void lpp::system::shell::execute(){
 	cmd();
 }
 
-void lpp::shell::add_exec(const std::string &cmd){
-	_in.push_back(cmd);
-	_worker.addJob(lpp::system);
+void lpp::system::add_exec(const std::string &cmd){
+	_shell->_in.push_back(cmd);
+	_shell->_worker.addJob(_shell);
 }
 
-std::optional<std::string> lpp::shell::get_exec(){
-	std::lock_guard<std::mutex> lock(_mutex);
-	auto t = _worker.running();
-	while(true){
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		lpp::cout << "test" << std::endl;
-		if (_worker.running() < t || !_out.empty()){
-			if (_out.empty())
-				return std::nullopt;
-			return _out.pop_front();
-		}
+std::optional<std::string> lpp::system::get_exec(){
+	_shell->_worker.wait();
+	if (_shell->_out.empty())
+		return std::nullopt;
 
-	}
-	return std::nullopt;
-	// _worker.wait();
-	// if (_out.empty())
-	// 	return std::nullopt;
-	//
-	// return _out.pop_front();
+	return _shell->_out.pop_front();
 }

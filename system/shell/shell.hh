@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:45:55 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/20 18:27:08 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/20 20:24:23 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,29 @@
 #include <optional>
 
 namespace lpp{
-	class shell : public lpp::worker_pool::IJobs, public lpp::NonCopyable{
+	class system{
 		private:
+			class shell : public lpp::worker_pool::IJobs, public lpp::NonCopyable{
+				private:
+					friend system;
+					lpp::worker_pool _worker;
+					lpp::thread_safe_queue<std::string> _in;
+					lpp::thread_safe_queue<std::string> _out;
+					mutable std::mutex _mutex;
 
-			lpp::worker_pool _worker;
-			lpp::thread_safe_queue<std::string> _in;
-			lpp::thread_safe_queue<std::string> _out;
-			mutable std::mutex _mutex;
-
-			virtual void execute() override;
-
-			void cmd();
+					virtual void execute() override;
+					void cmd();
+				public:
+					shell();
+					~shell();
+			};
+			std::shared_ptr<shell> _shell;
 		public:
-			shell();
-			~shell();
+			system();
+			~system();
+
 			void add_exec(const std::string &);
 			std::optional<std::string> get_exec();
+			static std::string cmd(const std::string &);
 	};
-
-	inline std::shared_ptr<lpp::shell> system = std::make_shared<lpp::shell>();
 }
