@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/22 17:30:48 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/22 21:56:15 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ int testVuln(int ac, char **av){
 	auto response = map.sniff(ips);
 
 	for (auto &it : response){
-		lpp::cout << "command output: \n" << std::endl << it << std::endl;
+		lpp::logger::cout(lpp::WARNING, "[NMAP RESULT]");
+		lpp::cout << it << std::endl;
 	}
 	return 0;
 }
