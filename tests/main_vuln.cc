@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/22 21:56:15 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/23 20:48:27 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ int testVuln(int ac, char **av){
 	for (int i = 1; i < ac; i++)
 		ips.emplace_back(av[i]);
 
-	// map.setAsync(true);
-	// map.setOptions("-A");
+	map.setAsync(true);
+	// map.setOptions("-F");
 
 	auto response = map.sniff(ips);
 
