@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:45:55 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/24 21:43:20 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 22:10:27 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ namespace lpp{
 			system();
 			~system();
 
-			void add_exec(const std::string &);
+			void add_exec(const std::string &) const;
 			std::optional<std::string> get_exec() const;
 
-			static std::string cmd(const std::string &);
+			static std::string exec(const std::string &) noexcept(false);
 	};
 }

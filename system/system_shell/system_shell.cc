@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:52:00 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/24 21:43:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 22:31:00 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ lpp::system::~system(){
 	_shell->_worker.wait();
 }
 
-std::string lpp::system::cmd(const std::string &command){
+std::string lpp::system::exec(const std::string &command){
 	std::array<char, 128> buffer;
 	std::string result;
 	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
@@ -59,7 +59,7 @@ void lpp::system::shell::execute(){
 	cmd();
 }
 
-void lpp::system::add_exec(const std::string &cmd){
+void lpp::system::add_exec(const std::string &cmd) const{
 	_shell->_in.push_back(cmd);
 	_shell->_worker.addJob(_shell);
 }

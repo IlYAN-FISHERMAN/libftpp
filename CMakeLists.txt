@@ -10,9 +10,12 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 option(BUILD_CLIENT "Build clientGUI" OFF)
 option(BUILD_BINARY "Build main binary" OFF)
+option(BUILD_NMAP "Build main binary" OFF)
 option(BUILD_MATT_DAEMON "Build matt_daemon binary" OFF)
+
 option(BUILD_LIB "Build lib" OFF)
 
 find_package(CURL REQUIRED)
@@ -49,30 +52,29 @@ endif()
 
 set(SOURCES
     tests/IoStat.cc
-    tests/main_pool.cpp
-    tests/main_data_buffer.cpp
-    tests/main_memento.cpp
-    tests/main_observer.cpp
-    tests/main_singleton.cpp
-    tests/main_state_machine.cpp
-    tests/main_thread_safe_iostream.cpp
-    tests/main_thread_safe_queue.cpp
-    tests/main_thread.cpp
-    tests/main_worker_pool.cpp
-    tests/main_persistent_worker.cpp
-    tests/main_server.cpp
-    tests/main_client.cpp
-    tests/main_vector_2.cpp
-    tests/main_vector_3.cpp
-    tests/main_random_2D_coordinate_generator.cpp
-    tests/main_perlin_2D.cpp
-    tests/main_arena_allocator.cc
-    tests/main_timer.cc
-    tests/main_responsability_chain.cc
-    tests/main_non_copyable.cc
-    tests/main_system.cc
-    tests/main_vuln.cc
-    tests/main_unique_memento.cc)
+    tests/test_pool.cc
+    tests/test_data_buffer.cc
+    tests/test_memento.cc
+    tests/test_observer.cc
+    tests/test_singleton.cc
+    tests/test_state_machine.cc
+    tests/test_thread_safe_iostream.cc
+    tests/test_thread_safe_queue.cc
+    tests/test_thread.cc
+    tests/test_worker_pool.cc
+    tests/test_persistent_worker.cc
+    tests/test_server.cc
+    tests/test_client.cc
+    tests/test_vector_2.cc
+    tests/test_vector_3.cc
+    tests/test_random_2D_coordinate_generator.cc
+    tests/test_perlin_2D.cc
+    tests/test_arena_allocator.cc
+    tests/test_timer.cc
+    tests/test_responsability_chain.cc
+    tests/test_non_copyable.cc
+    tests/test_system.cc
+    tests/test_unique_memento.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
 
@@ -95,7 +97,7 @@ set(SOURCES
     network/server/server.cc
     network/prompt/prompt.cc
     network/matt_daemon/matt_daemon.cc
-	network/vuln/nmap.cc)
+	network/vuln/nmap/nmap.cc)
 
 set(SOURCES
     ${SOURCES}
@@ -140,8 +142,12 @@ if(BUILD_CLIENT OR BUILD_BINARY)
 	  add_executable(matt-daemon network/matt_daemon/matt_daemon.cc)
 	  target_link_libraries(matt-daemon PRIVATE libftpp)
   endif()
+  if(BUILD_NMAP)
+	  add_executable(nmap network/vuln/attack/website_tracking.cc)
+	  target_link_libraries(nmap PRIVATE libftpp)
+  endif()
   if(BUILD_BINARY)
-	  add_executable(lib tests/main.cc)
+	  add_executable(lib tests/main_tests.cc)
 	  target_link_libraries(lib PRIVATE libftpp)
 	  target_link_libraries(lib PRIVATE CURL::libcurl)
   endif()

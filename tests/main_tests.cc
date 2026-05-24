@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   testMain.cc                                        :+:      :+:    :+:   */
+/*   main_tests.cc                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/22 16:59:51 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 23:11:55 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int main(int ac, char **av) {
 
 	// code = matt_daemon(ac, av);
 	// code = testSystem(ac, av);
-	code = testVuln(ac, av);
+	// code = testVuln(ac, av);
 	lpp::cout << "return code: " << code << std::endl;
 	return code;
 }
