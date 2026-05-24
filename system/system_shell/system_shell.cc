@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell.cc                                           :+:      :+:    :+:   */
+/*   system_shell.cc                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:52:00 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/21 13:22:35 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 21:43:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shell.hh"
+#include "system_shell.hh"
 
 lpp::system::shell::shell() : _worker(10){}
 
@@ -64,7 +64,7 @@ void lpp::system::add_exec(const std::string &cmd){
 	_shell->_worker.addJob(_shell);
 }
 
-std::optional<std::string> lpp::system::get_exec(){
+std::optional<std::string> lpp::system::get_exec() const{
 	_shell->_worker.wait();
 	if (_shell->_out.empty())
 		return std::nullopt;

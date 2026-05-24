@@ -6,16 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/23 20:48:27 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 21:39:27 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftpp.hh"
 
 int testVuln(int ac, char **av){
-	(void)ac;
-	(void)av;
-
 	lpp::nmap map;
 	std::vector<std::string> ips;
 
@@ -31,5 +28,6 @@ int testVuln(int ac, char **av){
 		lpp::logger::cout(lpp::WARNING, "[NMAP RESULT]");
 		lpp::cout << it << std::endl;
 	}
+
 	return 0;
 }

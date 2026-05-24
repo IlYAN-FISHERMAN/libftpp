@@ -6,9 +6,11 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:16:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/22 17:03:12 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 21:37:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 #include "system/system.hh"
 #include "time/time.hh"

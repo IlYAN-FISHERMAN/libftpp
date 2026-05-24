@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 11:38:40 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/04/30 17:26:59 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 21:45:53 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void printUsage(){
 	std::cout << std::endl;
 }
 
-int matt_daemon(int ac, char **av){
+int main(int ac, char **av){
 	lpp::server server;
 	server.setDaemonLogFile("matt_daemon.log");
 	server.setDaemonLockFile("matt_daemon.lock");

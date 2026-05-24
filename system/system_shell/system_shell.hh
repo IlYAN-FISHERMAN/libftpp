@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell.hh                                           :+:      :+:    :+:   */
+/*   system_shell.hh                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:45:55 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/20 20:24:23 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/24 21:43:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <optional>
 
 namespace lpp{
-	class system{
+	class system : public lpp::NonMovable, public lpp::NonCopyable{
 		private:
 			class shell : public lpp::worker_pool::IJobs, public lpp::NonCopyable{
 				private:
@@ -42,7 +42,8 @@ namespace lpp{
 			~system();
 
 			void add_exec(const std::string &);
-			std::optional<std::string> get_exec();
+			std::optional<std::string> get_exec() const;
+
 			static std::string cmd(const std::string &);
 	};
 }

@@ -104,7 +104,7 @@ set(SOURCES
 
 set(SOURCES ${SOURCES} time/chronometer/chronometer.cc time/timer/timer.cc)
 
-set(SOURCES ${SOURCES} system/shell/shell.cc)
+set(SOURCES ${SOURCES} system/system_shell/system_shell.cc)
 
 add_library(libftpp STATIC ${SOURCES})
 target_compile_features(libftpp PUBLIC cxx_std_23)
@@ -137,11 +137,11 @@ if(BUILD_CLIENT OR BUILD_BINARY)
     target_include_directories(server_client_gui PRIVATE imgui/misc/cpp/)
   endif()
   if(BUILD_MATT_DAEMON)
-	  add_executable(matt-daemon tests/testMain.cc)
+	  add_executable(matt-daemon network/matt_daemon/matt_daemon.cc)
 	  target_link_libraries(matt-daemon PRIVATE libftpp)
   endif()
   if(BUILD_BINARY)
-	  add_executable(lib tests/testMain.cc)
+	  add_executable(lib tests/main.cc)
 	  target_link_libraries(lib PRIVATE libftpp)
 	  target_link_libraries(lib PRIVATE CURL::libcurl)
   endif()
