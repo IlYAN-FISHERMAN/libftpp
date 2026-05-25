@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:16:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/24 23:55:24 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/25 13:08:14 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ lpp::nmap::nmap() : _async(false), _chrono("nmap sniffing"){
 lpp::nmap::~nmap(){}
 
 void lpp::nmap::setAsync(bool async){ _async = async;}
+
+void lpp::nmap::deleteOptions(){_options.clear();}
 
 void lpp::nmap::setOptions(std::string options){
 	if (!_options.empty())
@@ -80,5 +82,9 @@ std::vector<std::string> lpp::nmap::sniff(std::vector<std::string> &ip){
 
 std::string lpp::nmap::sniff(const std::string ip){
 	lpp::logger::cout(lpp::INFO, "start sniffing");
-	return lpp::system::exec("nmap " + _options + " " + ip);
+
+	std::string cmd = lpp::system::exec("nmap " + _options + " " + ip);
+
+	lpp::logger::cout(lpp::INFO, "sniffing end");
+	return cmd;
 }

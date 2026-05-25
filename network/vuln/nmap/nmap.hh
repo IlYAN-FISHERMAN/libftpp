@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:16:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/24 23:04:00 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/25 13:07:50 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ namespace lpp{
 			std::vector<std::string> sniff(std::vector<std::string> &ip);
 			void setAsync(bool);
 			void setOptions(std::string);
+			void deleteOptions();
 
 			std::vector<int> ports(const std::string &) const;
 			std::string sniff(const std::string ip);

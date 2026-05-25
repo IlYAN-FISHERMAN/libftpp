@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:52:00 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/24 22:31:00 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/25 10:15:20 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,19 @@ std::optional<std::string> lpp::system::get_exec() const{
 		return std::nullopt;
 
 	return _shell->_out.pop_front();
+}
+
+std::string lpp::system::get_system(){
+	static constexpr const char system[] =
+		#if defined(_WIN32)
+			"Windows";
+		#elif defined( __APPLE__)
+			"Apple";
+		#elif defined(__linux__)
+			"Linux";
+		#else
+			#error
+		#endif
+
+	return system;
 }
