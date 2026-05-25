@@ -6,11 +6,12 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/25 13:21:40 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/25 13:26:58 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftpp.hh"
+#include <map>
 
 std::string foundUser(std::string ip){
 	std::string user = lpp::system::exec("curl http://" + ip + ":9100/metrics 2>/dev/null | grep /home | awk -F'[\",/]\' \'{print $15}\' | head -n1");

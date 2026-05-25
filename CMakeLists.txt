@@ -112,7 +112,7 @@ add_library(libftpp STATIC ${SOURCES})
 target_compile_features(libftpp PUBLIC cxx_std_23)
 target_link_libraries(libftpp PRIVATE CURL::libcurl)
 
-if(BUILD_CLIENT OR BUILD_BINARY)
+if(BUILD_CLIENT OR BUILD_BINARY OR BUILD_NMAP OR BUILD_MATT_DAEMON)
   target_include_directories(libftpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
   if(BUILD_CLIENT)
