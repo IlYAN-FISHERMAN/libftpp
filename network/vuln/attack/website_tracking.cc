@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/25 13:26:58 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/25 14:11:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,26 @@
 #include <map>
 
 std::string foundUser(std::string ip){
+	std::regex reg(R"(^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$)", std::regex::optimize);
+
+	std::smatch match;
+	if (std::regex_match(ip, match, reg)){
+		if (match[2] == "12" || (match[2] != "11" && match[2] != "13")){
+			lpp::logger::cout(lpp::CRITICAL, "only 10.11.X.X and 10.13.X.X accepted");
+			throw std::runtime_error("found user ip error");
+		}
+	}else{
+		lpp::logger::cout(lpp::WARNING, "bad ip address format");
+		throw std::runtime_error("bad ip regex");
+	}
+
 	std::string user = lpp::system::exec("curl http://" + ip + ":9100/metrics 2>/dev/null | grep /home | awk -F'[\",/]\' \'{print $15}\' | head -n1");
 
 	if (user.find('\n') != std::string::npos)
 		user.erase(user.find('\n'));
 
+	if (user == "credentials" || user.empty())
+		user = "unknown";
 	return user;
 }
 
@@ -47,9 +62,10 @@ bool isOpenPort(std::vector<int> ports, bool is42 = false){
 }
 
 int runNmap(int ac, char **av){
+
 	if (ac == 3 && !strcmp(av[1], "--who")){
 		std::string user = foundUser(av[2]);
-		if (user == "credentials" || user.empty()){
+		if (user == "unknown"){
 			lpp::logger::cout(lpp::WARNING, "no one connected at " + std::string(av[2]));
 		} else
 			lpp::logger::cout(lpp::INFO, "login -> " + user);
@@ -62,6 +78,7 @@ int runNmap(int ac, char **av){
 
 	std::vector<std::string> args;
 	std::map<std::string, std::string> ips;
+	std::vector<std::string> tmp_ip;
 
 
 	for (int i = 1; i < ac; i++)
@@ -83,13 +100,15 @@ int runNmap(int ac, char **av){
 		else if (it == "-A" || it == "-F")
 			map.setOptions(it);
 		else{
-			std::regex reg(R"(\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b)", std::regex::optimize);
-			if (!std::regex_match(it, reg)){
-				lpp::logger::cout(lpp::WARNING, "bad ip address");
-				return 1;
-			}
-			ips.insert({foundUser(it), it});
+			tmp_ip.emplace_back(it);
 		}
+	}
+
+	for (auto &it : tmp_ip){
+		if (is42)
+			ips.insert({foundUser(it), it});
+		else
+			ips.insert({"unknown", it});
 	}
 
 	if (ips.empty()){
@@ -97,12 +116,8 @@ int runNmap(int ac, char **av){
 		return 0;
 	}
 	std::string tmp;
-	for (auto &it : ips){
-		if (it.first.empty())
-			tmp += " [disconnected]<" + it.second + ">";
-		else
-			tmp += " [" + it.first + "]<" + it.second + ">";
-	}
+	for (auto &it : ips)
+		tmp += " [" + it.first + "]<" + it.second + ">";
 
 	lpp::logger::cout(lpp::INFO, "scanning" + tmp);
 
@@ -172,7 +187,7 @@ int main(int ac, char **av){
 		} else
 			return runNmap(ac, av);
 	} catch(std::runtime_error &e){
-		lpp::cout << e.what() << std::endl;
+		lpp::logger::cout(lpp::CRITICAL, e.what());
 	}
 	return 0;
 }
