@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 21:19:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/26 21:36:44 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ std::string lpp::ip::_nextLine(){
 }
 
 bool lpp::ip::_isOpenPort(int port, bool is42){
-	if (port > 1024 && port < 65535){
+	if ((port > 1024 && port < 65535) || (port == 80 || port == 443)){
 		if (is42 && (port == 9100 || port == 2049 || port == 3306 || port == 5900))
 			return false;
 		return true;
@@ -75,7 +75,7 @@ bool lpp::ip::_isOpenPort(int port, bool is42){
 bool lpp::ip::_isOpenPort(std::vector<int> ports, [[maybe_unused]] bool is42){
 
 	for (auto &port : ports){
-		if (port > 1024 && port < 65535){
+		if ((port > 1024 && port < 65535) || (port == 80 || port == 443)){
 			if (is42 && (port == 9100 || port == 2049 || port == 3306 || port == 5900))
 				continue;
 			return true;
