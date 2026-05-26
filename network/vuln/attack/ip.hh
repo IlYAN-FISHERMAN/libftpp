@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:07 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 19:57:53 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/26 21:19:33 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ namespace lpp {
 			bool _https;
 			bool _openPort;
 			bool _nmapOutput;
+			bool _termuxOutput;
 
 			std::chrono::seconds _loopTime;
 			std::chrono::seconds _delay;
@@ -64,12 +65,14 @@ namespace lpp {
 			void setIsPrompt(bool);
 
 			void setIs42(bool);
+			void setNmapOutput(bool);
+			void setPortOutput(bool);
 
 			[[maybe_unused]] int parse(std::vector<std::string>&);
 
-			void who(std::vector<std::string> &);
+			[[maybe_unused]] std::vector<std::string> who(std::vector<std::string> &);
 
-			int run() noexcept(false);
+			[[nodiscard]] std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>> run() noexcept(false);
 
 			[[nodiscard]] static bool isIp(const std::string &, bool = false);
 			static void usage();

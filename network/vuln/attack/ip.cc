@@ -6,18 +6,21 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 20:08:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/26 21:19:03 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ip.hh"
 using namespace std::chrono_literals;
 
-lpp::ip::ip() : _prompt(false), _is42(false), _https(false), _openPort(true), _nmapOutput(false),
+lpp::ip::ip() : _prompt(false), _is42(false), _https(false), _openPort(true),
+	_nmapOutput(false), _termuxOutput(false),
 	_loopTime(0s), _delay(1s), _chrono("ip"), _sys_name(lpp::system::get_system()){
 }
 
-lpp::ip::ip(const ip &other) : _prompt(other._prompt), _is42(other._is42), _https(other._https),_openPort(true), _nmapOutput(false),
+lpp::ip::ip(const ip &other) : _prompt(other._prompt),
+	_is42(other._is42), _https(other._https), _openPort(true),
+	_nmapOutput(false), _termuxOutput(false),
 	_loopTime(other._loopTime), _delay(other._delay), _chrono("ip"), _sys_name(lpp::system::get_system()){
 }
 
@@ -112,22 +115,26 @@ std::string lpp::ip::_foundUser(std::string &ip, bool is42){
 
 lpp::ip::~ip(){}
 
-int lpp::ip::run(){
+std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>>  lpp::ip::run(){
 
 	if (_ips.empty()){
 		lpp::logger::cout(lpp::WARNING, "No target specified");
-		return 1;
+		return std::nullopt;
 	}
+
+	std::pair<std::vector<std::string>, std::vector<std::vector<int>>> rtn;
 
 	std::string open_cmd;
 	lpp::logger::cout(lpp::INFO, _sys_name + " OS detected");
-	if (_sys_name == "Apple")
+	if (_termuxOutput)
+		open_cmd = "termux-open ";
+	else if (_sys_name == "Apple")
 		open_cmd = "open ";
 	else if (_sys_name == "Linux")
 		open_cmd = "xdg-open ";
 	else{
 		lpp::logger::cout(lpp::CRITICAL, "Fuck windows");
-		return 1;
+		return std::nullopt;
 	}
 
 	if (_https)
@@ -148,10 +155,12 @@ int lpp::ip::run(){
 			}
 
 			auto sniff = _map.sniff(ip.second);
+			rtn.first.emplace_back(sniff);
 			if (_nmapOutput)
 				lpp::cout << sniff << std::endl;
 
 			auto ports = _map.ports(sniff);
+			rtn.second.emplace_back(ports);
 			if (_openPort){
 				lpp::logger::cout(lpp::INFO, ip.first + " connected at " + ip.second);
 				if (!_isOpenPort(ports, _is42)){
@@ -184,7 +193,8 @@ int lpp::ip::run(){
 	}
 
 	lpp::logger::cout(lpp::INFO, "end ip");
-	return 1;
+	
+	return rtn;
 }
 
 bool lpp::ip::isIp(const std::string &ip, [[maybe_unused]] bool is42){
@@ -241,6 +251,10 @@ void lpp::ip::addIp(std::string &ip){_ips.insert({"unknown", ip});}
 void lpp::ip::addOption(std::string &opt){_map.addOptions(opt);}
 
 void lpp::ip::clearIps(){_ips.clear();}
+
+void lpp::ip::setNmapOutput(bool nmap){_nmapOutput = nmap;}
+
+void lpp::ip::setPortOutput(bool port){_openPort = port;}
 
 void lpp::ip::clearIps(std::string &name){_ips.erase(name);}
 
@@ -319,6 +333,8 @@ int lpp::ip::parse(std::vector<std::string> &args){
 			_openPort = false;
 		} else if (*it == "--port"){
 			_openPort = true;
+		} else if (*it == "--termux"){
+			_termuxOutput = true;
 		}
 		else if (isIp(*it)) [[likely]]
 			_ips.insert({_foundUser(*it, _is42), *it});
@@ -329,14 +345,19 @@ int lpp::ip::parse(std::vector<std::string> &args){
 	return 0;
 }
 
-void lpp::ip::who(std::vector<std::string> &args){
+std::vector<std::string> lpp::ip::who(std::vector<std::string> &args){
+	std::vector<std::string> rtn;
+
 	if (args.empty())
 		throw std::runtime_error("empty argument");
 	for (auto it : args){
 		std::string user = _foundUser(it, true);
+		rtn.emplace_back(user);
 		if (user == "disconnected"){
 			lpp::logger::cout(lpp::WARNING, "no one connected at " + it);
 		} else if (user != "unknown")
 			lpp::logger::cout(lpp::INFO, "login -> " + user);
 	}
+
+	return rtn;
 }
