@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/22 17:27:46 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/26 16:02:45 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,6 @@ namespace lpp{
 
 			static std::string getDate();
 			static std::string getLog(LogLevel level);
-			static void cout(LogLevel level, const std::string& message);
+			static void cout(LogLevel level, const std::string& message, bool endl = true);
 	};
 }

@@ -6,10 +6,11 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:16:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/24 23:09:47 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/26 17:45:53 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "nmap/nmap.hh"
+#include "attack/ip.hh"

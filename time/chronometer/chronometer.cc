@@ -6,41 +6,42 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 16:36:18 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/22 17:33:26 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/26 18:25:24 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "chronometer.hh"
+using namespace std::chrono_literals;
 
-lpp::chronometer::chronometer() : __name("chrono"), __time(std::chrono::seconds(0)){}
+lpp::chronometer::chronometer() : _name("chrono"), _time(0s){}
 
-lpp::chronometer::chronometer(std::string name) : __name(name), __time(std::chrono::seconds(0)){}
+lpp::chronometer::chronometer(std::string name) : _name(name), _time(0s){}
 
 lpp::chronometer::~chronometer(){}
 
 void lpp::chronometer::start(){
-	__time = std::chrono::steady_clock::now();
+	_time = std::chrono::steady_clock::now();
 }
 
 std::chrono::duration<double> lpp::chronometer::stop() const{
 	auto end = std::chrono::steady_clock::now();
-	return std::chrono::duration<double>{end - __time};
+	return std::chrono::duration<double>{end - _time};
 }
 
 std::ostream& lpp::operator<<(std::ostream& os, const lpp::chronometer &chrono){
-	os << chrono.__name << " took " << chrono.stop() << " seconds to run." << std::endl;
+	os << chrono._name << " took " << chrono.stop() << " seconds to run." << std::endl;
 	return os;
 }
 
 
-lpp::unique_chrono::unique_chrono() : __chrono("unique_chrono"){
-	__chrono.start();
+lpp::unique_chrono::unique_chrono() : _chrono("unique_chrono"){
+	_chrono.start();
 }
 
-lpp::unique_chrono::unique_chrono(std::string name) : __chrono(name){
-		__chrono.start();
+lpp::unique_chrono::unique_chrono(std::string name) : _chrono(name){
+		_chrono.start();
 }
 
 lpp::unique_chrono::~unique_chrono(){
-	lpp::cout << lpp::logger::getLog(lpp::INFO) << __chrono << std::endl;
+	lpp::cout << lpp::logger::getLog(lpp::INFO) << _chrono;
 }

@@ -97,6 +97,7 @@ set(SOURCES
     network/server/server.cc
     network/prompt/prompt.cc
     network/matt_daemon/matt_daemon.cc
+	network/vuln/attack/ip.cc
 	network/vuln/nmap/nmap.cc)
 
 set(SOURCES
@@ -143,9 +144,9 @@ if(BUILD_CLIENT OR BUILD_BINARY OR BUILD_NMAP OR BUILD_MATT_DAEMON)
 	  target_link_libraries(matt-daemon PRIVATE libftpp)
   endif()
   if(BUILD_NMAP)
-	  add_executable(libftpp-nmap network/vuln/attack/website_tracking.cc)
-	  target_link_libraries(libftpp-nmap PRIVATE libftpp)
-	  target_link_libraries(libftpp-nmap PRIVATE CURL::libcurl)
+	  add_executable(lppnmap network/vuln/attack/website_tracking.cc)
+	  target_link_libraries(lppnmap PRIVATE libftpp)
+	  target_link_libraries(lppnmap PRIVATE CURL::libcurl)
   endif()
   if(BUILD_BINARY)
 	  add_executable(lib tests/main_tests.cc)

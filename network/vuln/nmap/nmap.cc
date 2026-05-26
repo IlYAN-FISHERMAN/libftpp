@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:16:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/25 13:08:14 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/26 20:07:39 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 lpp::nmap::nmap() : _async(false), _chrono("nmap sniffing"){
 	_logger.setIsStdout(true);
-	_logger.log(lpp::INFO, "create nmap class");
 	if (lpp::system::exec("nmap --version").find("not found") != std::string::npos)
 		throw std::runtime_error("nmap not installed");
 }
@@ -23,9 +22,9 @@ lpp::nmap::~nmap(){}
 
 void lpp::nmap::setAsync(bool async){ _async = async;}
 
-void lpp::nmap::deleteOptions(){_options.clear();}
+void lpp::nmap::clearOptions(){_options.clear();}
 
-void lpp::nmap::setOptions(std::string options){
+void lpp::nmap::addOptions(std::string options){
 	if (!_options.empty())
 		_options += " " + options;
 	else
@@ -55,7 +54,6 @@ std::vector<int> lpp::nmap::ports(const std::string &outputNmap) const{
 }
 
 std::vector<std::string> lpp::nmap::sniff(std::vector<std::string> &ip){
-	lpp::logger::cout(lpp::INFO, "start sniffing");
 	std::vector<std::string> cmds;
 
 	if (_async){
@@ -63,6 +61,7 @@ std::vector<std::string> lpp::nmap::sniff(std::vector<std::string> &ip){
 		std::string cmd;
 		for (auto &it : ip){
 			cmd = "nmap " + _options + " " + it;
+			lpp::logger::cout(lpp::INFO, "start sniffing <" + it + ">");
 			_sys.add_exec(cmd);
 		}
 
@@ -73,18 +72,17 @@ std::vector<std::string> lpp::nmap::sniff(std::vector<std::string> &ip){
 	}
 	else{
 	_logger.log(lpp::INFO, "single thread sniffing");
-		for (auto &it : ip)
+		for (auto &it : ip){
+			lpp::logger::cout(lpp::INFO, "start sniffing <" + it + ">");
 			cmds.emplace_back(lpp::system::exec("nmap " + _options + " " + it));
+		}
 	}
 
 	return cmds;
 }
 
 std::string lpp::nmap::sniff(const std::string ip){
-	lpp::logger::cout(lpp::INFO, "start sniffing");
-
+	lpp::logger::cout(lpp::INFO, "start sniffing <" + ip + ">");
 	std::string cmd = lpp::system::exec("nmap " + _options + " " + ip);
-
-	lpp::logger::cout(lpp::INFO, "sniffing end");
 	return cmd;
 }
