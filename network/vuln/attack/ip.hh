@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:07 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 13:35:52 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 14:28:48 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ namespace lpp {
 			bool _nmapOutput;
 			bool _termuxOutput;
 
-			std::chrono::seconds _loopTime;
+			int _loopTime;
 			std::chrono::seconds _delay;
 			std::vector<std::string> _args;
 			std::multimap<std::string, std::string> _ips;
@@ -54,31 +54,31 @@ namespace lpp {
 			ip(const ip &);
 			ip& operator=(const ip &);
 
-			void addIp(std::string &);
+			void addIp(const std::string &);
 			void clearIps();
-			void clearIps(std::string &);
+			void clearIps(const std::string &);
 
 			void clearOptions();
-			void addOption(std::string &);
+			void addOption(const std::string &);
 
 			void clear();
 
-			void setIterationTime(std::chrono::seconds iter, std::chrono::seconds delay);
-			void setIsPrompt(bool);
+			void setIterationTime(const int, const std::chrono::seconds);
+			void setIsPrompt(const bool);
 			bool setLogFile(const std::string &);
 
-			void setIs42(bool);
-			void setNmapOutput(bool);
-			void setPortOutput(bool);
+			void setIs42(const bool);
+			void setNmapOutput(const bool);
+			void setPortOutput(const bool);
 
 			[[maybe_unused]] int parse(std::vector<std::string>&);
 
-			[[maybe_unused]] std::vector<std::string> who(std::vector<std::string> &);
+			[[maybe_unused]] std::vector<std::string> who(const std::vector<std::string> &);
 
 			[[nodiscard]] std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>> run() noexcept(false);
 
-			[[nodiscard]] static bool isIp(const std::string &, bool = false);
-			[[nodiscard]] static bool isDomaine(const std::string &, bool = false);
+			[[nodiscard]] static bool isIp(const std::string &, const bool = false);
+			[[nodiscard]] static bool isDomaine(const std::string &, const bool = false);
 			static void usage();
 	};
 }

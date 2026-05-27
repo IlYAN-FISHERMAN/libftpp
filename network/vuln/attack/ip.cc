@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 13:47:26 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 14:31:57 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@ using namespace std::chrono_literals;
 
 lpp::ip::ip() : _prompt(false), _is42(false), _https(false), _openPort(true),
 	_nmapOutput(false), _termuxOutput(false),
-	_loopTime(0s), _delay(1s), _chrono("ip"), _sys_name(lpp::system::get_system()){
+	_loopTime(1), _delay(1s), _chrono("ip"), _sys_name(lpp::system::get_system()){
 	_logger.setIsStdout(true);
 }
 
@@ -47,7 +47,7 @@ bool lpp::ip::setLogFile(const std::string &path){
 }
 
 lpp::ip::ip(std::vector<std::string> &args) : _prompt(false), _is42(false), _https(false),
-	_loopTime(0s), _delay(1s), _args(args), _chrono("ip"), _sys_name(lpp::system::get_system()){
+	_loopTime(1), _delay(1s), _args(args), _chrono("ip"), _sys_name(lpp::system::get_system()){
 	if (args.empty())
 		throw std::runtime_error("empty argument");
 	if (_args.size() > 1 && _args[1] == "--who"){
@@ -161,8 +161,8 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 		tmp += " [" + it.first + "]<" + it.second + "> ";
 
 	_logger.log(lpp::INFO, "scanning " + tmp);
-	while(true){
-		for (auto &ip : _ips){
+	for (auto &ip : _ips){
+		for(auto nb = _loopTime; nb > 0; nb--){
 			if (ip.first == "disconnected" || ip.first.empty()){
 				_logger.log(lpp::WARNING, "no one connected at " + ip.second);
 				continue;
@@ -194,20 +194,17 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 					}
 				}
 			}
+			if (_prompt){
+				_logger.log(lpp::INFO, "press any key to scan again...");
+				[[maybe_unused]] auto reply = _nextLine();
+			}
+			if (nb > 1)
+				std::this_thread::sleep_for(_delay);
 		}
-		
-		if (_prompt){
-			_logger.log(lpp::INFO, "press any key to scan again...");
-			_nextLine();
-		} else if (_loopTime.count() > 0){
-			std::this_thread::sleep_for(1s);
-			_loopTime--;
-		} else
-			break;
 	}
+	
 
 	_logger.log(lpp::INFO, "end ip");
-	
 	return rtn;
 }
 
@@ -275,32 +272,30 @@ void lpp::ip::usage(){
 	std::cout << os.str();
 }
 
-void lpp::ip::addIp(std::string &ip){_ips.insert({"unknown", ip});}
+void lpp::ip::addIp(const std::string &ip){_ips.insert({"unknown", ip});}
 
-void lpp::ip::addOption(std::string &opt){_map.addOptions(opt);}
+void lpp::ip::addOption(const std::string &opt){_map.addOptions(opt);}
 
 void lpp::ip::clearIps(){_ips.clear();}
 
-void lpp::ip::setNmapOutput(bool nmap){_nmapOutput = nmap;}
+void lpp::ip::setNmapOutput(const bool nmap){_nmapOutput = nmap;}
 
-void lpp::ip::setPortOutput(bool port){_openPort = port;}
+void lpp::ip::setPortOutput(const bool port){_openPort = port;}
 
-void lpp::ip::clearIps(std::string &name){_ips.erase(name);}
+void lpp::ip::clearIps(const std::string &name){_ips.erase(name);}
 
 void lpp::ip::clearOptions(){_map.clearOptions();}
 
 void lpp::ip::clear(){
 	_ips.clear();
 	_prompt = false;
-	_loopTime = 0s;
+	_loopTime = 1;
 	_delay = 1s;
 	_https = false;
 	_args.clear();
 }
 
-void lpp::ip::setIterationTime(std::chrono::seconds s, std::chrono::seconds delay){
-	if (_prompt)
-		throw std::logic_error("can't define prompt and iteration time");
+void lpp::ip::setIterationTime(const int s, const std::chrono::seconds delay){
 	_loopTime = s;
 	_delay = delay;
 }
@@ -310,15 +305,6 @@ void lpp::ip::setIsPrompt(bool prompt){_prompt = prompt;}
 void lpp::ip::setIs42(bool is42){ _is42 = is42;}
 
 int lpp::ip::parse(std::vector<std::string> &args){
-	if (args.empty())
-		throw std::runtime_error("empty argument");
-
-	if (args.size() > 1 && args[0] == "--who"){
-		args.erase(args.begin());
-		who(args);
-		return 1;
-	}
-
 	for (auto it = args.begin(); it < args.end(); it++){
 		if (*it == "-42") [[unlikely]] {
 			_logger.log(lpp::INFO, "target 42 users");
@@ -330,7 +316,7 @@ int lpp::ip::parse(std::vector<std::string> &args){
 			_logger.log(lpp::INFO, "target https");
 			_https = true;
 		} else if (*it == "-p"){
-			if (_loopTime.count() == 0){
+			if (_loopTime == 0){
 				_logger.log(lpp::ERROR, "cant't specifie -p and -t");
 				return 1;
 			}
@@ -347,6 +333,13 @@ int lpp::ip::parse(std::vector<std::string> &args){
 			if (!_logger.is_open())
 				throw std::runtime_error("logger file open fail");
 
+		}else if (*it == "--who"){
+			it++;
+			if (it == args.end())
+				throw std::runtime_error("empty argument");
+			std::vector<std::string> tmp(it, args.end());
+			who(tmp);
+			return 1;
 		} else if (*it == "-t" || *it == "--time"){
 			if (_prompt){
 				_logger.log(lpp::ERROR, "cant't specifie -p and -t");
@@ -363,8 +356,23 @@ int lpp::ip::parse(std::vector<std::string> &args){
 				_logger.log(lpp::ERROR, "time option bad value");
 				return 1;
 			}
-			_loopTime = std::chrono::seconds(nbr);
-			_logger.log(lpp::INFO, "scan running " + std::to_string(_loopTime.count()) + " times");
+			_loopTime = nbr;
+			_logger.log(lpp::INFO, "scan running " + std::to_string(_loopTime) + " times");
+		} else if (*it == "-d" || *it == "--delay"){
+			it++;
+			if (it == args.end()){
+				_logger.log(lpp::ERROR, "delay option empty value");
+				return 1;
+			}
+			std::stringstream os(*it);
+			int nbr = 0;
+			os >> nbr;
+			if (!os.eof() || nbr == 0){
+				_logger.log(lpp::ERROR, "delay option bad value");
+				return 1;
+			}
+			_delay = std::chrono::seconds(nbr);
+			_logger.log(lpp::INFO, "scan running " + std::to_string(_loopTime) + " times, every " + std::to_string(_delay.count() + 1) + "s");
 		} else if (*it == "-m"){
 			_nmapOutput = true;
 			_openPort = false;
@@ -382,18 +390,22 @@ int lpp::ip::parse(std::vector<std::string> &args){
 	return 0;
 }
 
-std::vector<std::string> lpp::ip::who(std::vector<std::string> &args){
+std::vector<std::string> lpp::ip::who(const std::vector<std::string> &args){
 	std::vector<std::string> rtn;
 
 	if (args.empty())
 		throw std::runtime_error("empty argument");
-	for (auto it : args){
-		std::string user = _foundUser(it, true);
-		rtn.emplace_back(user);
-		if (user == "disconnected"){
-			_logger.log(lpp::WARNING, "no one connected at " + it);
-		} else if (user != "unknown")
-			_logger.log(lpp::INFO, "login -> " + user);
+	for (auto it = _loopTime; it > 0; it--){
+		for (auto it : args){
+			std::string user = _foundUser(it, true);
+			rtn.emplace_back(user);
+			if (user == "disconnected"){
+				_logger.log(lpp::WARNING, "no one connected at " + it);
+			} else if (user != "unknown")
+				_logger.log(lpp::INFO, "[" + it + "]login -> " + user);
+		}
+		if (it > 1)
+			std::this_thread::sleep_for(_delay);
 	}
 
 	return rtn;

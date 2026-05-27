@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 13:49:15 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 14:08:17 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void lpp::logger::cout(LogLevel level, const std::string& message, bool endl){
 bool lpp::logger::is_open(){return _logFile.is_open();}
 
 void lpp::logger::open(){
-	_logFile.open(_filePath, std::ios::trunc | std::ios::out);
+	_logFile.open(_filePath, std::ios::app);
 	_isStdout = false;
 }
 
