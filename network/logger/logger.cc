@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 16:02:14 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 13:49:15 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,41 @@ std::string lpp::logger::levelToString(lpp::LogLevel lvl){
 	}
 }
 
-lpp::logger::logger(const std::string& filePath, bool deleteFile, bool printFormat, bool isStdout) : _filePath(filePath), _deleteFile(deleteFile), _printFormat(printFormat), _isStdout(isStdout){}
+lpp::logger::logger(const std::string& filePath, bool deleteFile, bool printFormat, bool isStdout) : _filePath(filePath), _printFormat(printFormat), _isStdout(isStdout), _deleteFile(deleteFile){}
 
-lpp::logger::logger() : _filePath(), _printFormat(true), _isStdout(false){}
+lpp::logger::logger() : _filePath(), _printFormat(true), _isStdout(false), _deleteFile(false){}
 
 lpp::logger::~logger(){
-	if (logFile.is_open()){
-		logFile.close();
+	if (_logFile.is_open()){
+		_logFile.close();
 		if (_deleteFile)
 			std::filesystem::remove(_filePath);
 	}
+}
+
+lpp::logger::logger(const logger &other) : _filePath(other._filePath),
+	_printFormat(other._printFormat), _isStdout(other._isStdout), _deleteFile(other._deleteFile){
+
+	}
+
+lpp::logger& lpp::logger::operator=(const logger &other){
+	if (this != &other){
+		_filePath = other._filePath;
+		_printFormat = other._printFormat;
+		_isStdout = other._isStdout;
+		_deleteFile = other._deleteFile;
+
+		if (!other._isStdout){
+			other._logFile.close();
+			_logFile.open(_filePath, std::ios::trunc | std::ios::out);
+			if (!_logFile.is_open()){
+				throw std::runtime_error("lpp::logger copy constructor operator = logfile fail");
+			}
+		}
+
+	}
+
+	return *this;
 }
 
 std::string lpp::logger::getDate(){
@@ -67,9 +92,9 @@ void lpp::logger::log(LogLevel level, const std::string& message){
 	else
 		logEntry << message;
 	if (!_isStdout){
-		if (logFile.is_open()) {
-			logFile << logEntry.str();
-			logFile.flush();
+		if (_logFile.is_open()) {
+			_logFile << logEntry.str();
+			_logFile.flush();
 		}
 	} else
 		lpp::cout << logEntry.str() << std::flush;
@@ -80,10 +105,16 @@ void lpp::logger::cout(LogLevel level, const std::string& message, bool endl){
 	endl ? lpp::cout << std::endl : lpp::cout << std::flush;
 }
 
-bool lpp::logger::is_open(){return logFile.is_open();}
+bool lpp::logger::is_open(){return _logFile.is_open();}
 
 void lpp::logger::open(){
-	logFile.open(_filePath, std::ios::trunc);
+	_logFile.open(_filePath, std::ios::trunc | std::ios::out);
+	_isStdout = false;
+}
+
+void lpp::logger::close(){
+	if (_logFile.is_open())
+		_logFile.close();
 }
 
 void lpp::logger::setFilePath(const std::string name){_filePath = name;}

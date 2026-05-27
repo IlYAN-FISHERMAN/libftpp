@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 21:36:44 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 13:47:26 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ using namespace std::chrono_literals;
 lpp::ip::ip() : _prompt(false), _is42(false), _https(false), _openPort(true),
 	_nmapOutput(false), _termuxOutput(false),
 	_loopTime(0s), _delay(1s), _chrono("ip"), _sys_name(lpp::system::get_system()){
+	_logger.setIsStdout(true);
 }
 
 lpp::ip::ip(const ip &other) : _prompt(other._prompt),
 	_is42(other._is42), _https(other._https), _openPort(true),
 	_nmapOutput(false), _termuxOutput(false),
 	_loopTime(other._loopTime), _delay(other._delay), _chrono("ip"), _sys_name(lpp::system::get_system()){
+	_logger.setIsStdout(false);
 }
 
 lpp::ip& lpp::ip::operator=(const ip &other){
@@ -31,9 +33,17 @@ lpp::ip& lpp::ip::operator=(const ip &other){
 		_https = other._https;
 		_loopTime = other._loopTime;
 		_delay = other._delay;
+		_logger = other._logger;
 	}
 
 	return *this;
+}
+
+bool lpp::ip::setLogFile(const std::string &path){
+	_logger.setIsStdout(false);
+	_logger.setFilePath(path);
+	_logger.open();
+	return _logger.is_open();
 }
 
 lpp::ip::ip(std::vector<std::string> &args) : _prompt(false), _is42(false), _https(false),
@@ -44,11 +54,16 @@ lpp::ip::ip(std::vector<std::string> &args) : _prompt(false), _is42(false), _htt
 		for (size_t i = 2; i < _args.size(); i++){
 			std::string user = _foundUser(_args[i], true);
 			if (user == "disconnected"){
-				lpp::logger::cout(lpp::WARNING, "no one connected at " + std::string(args[i]));
+				_logger.log(lpp::WARNING, "no one connected at " + std::string(args[i]));
 			} else if (user != "unknown")
-				lpp::logger::cout(lpp::INFO, "login -> " + user);
+				_logger.log(lpp::INFO, "login -> " + user);
 		}
 	}
+
+	_logger.setFilePath("test.txt");
+	_logger.open();
+	if (!_logger.is_open())
+		throw std::runtime_error("logger open fail");
 }
 
 std::string lpp::ip::_nextLine(){
@@ -88,7 +103,7 @@ bool lpp::ip::_isOpenPort(std::vector<int> ports, [[maybe_unused]] bool is42){
 std::string lpp::ip::_foundUser(std::string &ip, bool is42){
 	std::string user;
 
-	if (is42 && isIp(ip, true)){
+	if (is42 && (isIp(ip, true) || isDomaine(ip, true))){
 		user = lpp::system::exec("curl http://" + ip + ":9100/metrics 2>/dev/null | grep /home | awk -F'[\",/]\' \'{print $15}\' | head -n2");
 		if (user.find('\n') != std::string::npos || user.empty()){
 			if (user.empty())
@@ -103,7 +118,7 @@ std::string lpp::ip::_foundUser(std::string &ip, bool is42){
 			}
 			else if (second != user){
 				user += "|" + second;
-				lpp::logger::cout(lpp::CRITICAL, "impossible happened, two user connected at <" + ip + "> [" + user + "]");
+				_logger.log(lpp::CRITICAL, "impossible happened, two user connected at <" + ip + "> [" + user + "]");
 			}
 		}
 	}
@@ -118,62 +133,61 @@ lpp::ip::~ip(){}
 std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>>  lpp::ip::run(){
 
 	if (_ips.empty()){
-		lpp::logger::cout(lpp::WARNING, "No target specified");
+		_logger.log(lpp::WARNING, "No target specified");
 		return std::nullopt;
 	}
 
 	std::pair<std::vector<std::string>, std::vector<std::vector<int>>> rtn;
 
-	std::string open_cmd;
-	lpp::logger::cout(lpp::INFO, _sys_name + " OS detected");
-	if (_termuxOutput)
-		open_cmd = "termux-open ";
-	else if (_sys_name == "Apple")
-		open_cmd = "open ";
-	else if (_sys_name == "Linux")
-		open_cmd = "xdg-open ";
-	else{
-		lpp::logger::cout(lpp::CRITICAL, "Fuck windows");
-		return std::nullopt;
+	static std::string open_cmd;
+	_logger.log(lpp::INFO, _sys_name + " OS detected");
+	if (open_cmd.empty()){
+		if (_termuxOutput)
+			open_cmd = "termux-open ";
+		else if (_sys_name == "Apple")
+			open_cmd = "open ";
+		else if (_sys_name == "Linux")
+			open_cmd = "xdg-open ";
+		else{
+			_logger.log(lpp::CRITICAL, "Fuck windows");
+			return std::nullopt;
+		}
 	}
 
-	if (_https)
-		open_cmd += "https://";
-	else
-		open_cmd += "http://";
+	lpp::unique_memento t(open_cmd, open_cmd + (_https ? "https://" : "http://"));
 
 	std::string tmp;
 	for (auto &it : _ips)
-		tmp += "[" + it.first + "]<" + it.second + ">\n";
+		tmp += " [" + it.first + "]<" + it.second + "> ";
 
-	lpp::logger::cout(lpp::INFO, "scanning\n" + tmp);
+	_logger.log(lpp::INFO, "scanning " + tmp);
 	while(true){
 		for (auto &ip : _ips){
 			if (ip.first == "disconnected" || ip.first.empty()){
-				lpp::logger::cout(lpp::WARNING, "no one connected at " + ip.second);
+				_logger.log(lpp::WARNING, "no one connected at " + ip.second);
 				continue;
 			}
 
 			auto sniff = _map.sniff(ip.second);
 			rtn.first.emplace_back(sniff);
 			if (_nmapOutput)
-				lpp::cout << sniff << std::endl;
+				_logger.log(INFO, sniff);
 
 			auto ports = _map.ports(sniff);
 			rtn.second.emplace_back(ports);
 			if (_openPort){
-				lpp::logger::cout(lpp::INFO, ip.first + " connected at " + ip.second);
+				_logger.log(lpp::INFO, ip.first + " connected at " + ip.second);
 				if (!_isOpenPort(ports, _is42)){
-					lpp::logger::cout(lpp::WARNING, "0 target port found for user <" + ip.first + ">");
+					_logger.log(lpp::WARNING, "0 target port found for user <" + ip.first + ">");
 					continue;
 				}
 				for (auto &it : ports){
 					if (_isOpenPort(it, _is42)){
-						lpp::logger::cout(lpp::INFO, "port: [" + std::to_string(it) + "] found for <" + ip.second + ">");
+						_logger.log(lpp::INFO, "port: [" + std::to_string(it) + "] found for <" + ip.second + ">");
 
 						std::string target;
 						target = open_cmd + ip.second + ":" + std::to_string(it);
-						lpp::logger::cout(lpp::INFO, "executing: " + target);
+						_logger.log(lpp::INFO, "executing: " + target);
 						lpp::system::exec(target);
 					} else{
 						continue;
@@ -183,7 +197,7 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 		}
 		
 		if (_prompt){
-			lpp::logger::cout(lpp::INFO, "press any key to scan again...");
+			_logger.log(lpp::INFO, "press any key to scan again...");
 			_nextLine();
 		} else if (_loopTime.count() > 0){
 			std::this_thread::sleep_for(1s);
@@ -192,22 +206,37 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 			break;
 	}
 
-	lpp::logger::cout(lpp::INFO, "end ip");
+	_logger.log(lpp::INFO, "end ip");
 	
 	return rtn;
 }
 
+bool lpp::ip::isDomaine(const std::string &d, bool is42){
+	static const std::regex pattern(R"(^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?$)");
+	static const std::regex users(R"(^c\d+r\d+s\d+$)");
+
+	if (is42){
+		if (std::regex_match(d, users)){
+			return true;
+		}
+	}
+    if (std::regex_match(d, pattern)){
+		return true;
+	}
+
+	return false;
+}
+
+
 bool lpp::ip::isIp(const std::string &ip, [[maybe_unused]] bool is42){
-	std::regex reg(R"(^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$)", std::regex::optimize);
+	static std::regex reg(R"(^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$)", std::regex::optimize);
 
 	std::smatch match;
 	if (std::regex_match(ip, match, reg)){
 		if (is42 && (match[2] == "12" || (match[2] != "11" && match[2] != "13"))){
-			lpp::logger::cout(lpp::CRITICAL, "only 10.11.X.X and 10.13.X.X accepted");
 			return false;
 		}
 	}else{
-		lpp::logger::cout(lpp::WARNING, "regex: <" + ip + "> is not an ip");
 		return false;
 	}
 
@@ -292,42 +321,50 @@ int lpp::ip::parse(std::vector<std::string> &args){
 
 	for (auto it = args.begin(); it < args.end(); it++){
 		if (*it == "-42") [[unlikely]] {
-			lpp::logger::cout(lpp::INFO, "target 42 users");
+			_logger.log(lpp::INFO, "target 42 users");
 			_is42 = true;
-		}
-		else if (*it == "--async" || *it == "-a") [[unlikely]] {
-			lpp::logger::cout(lpp::INFO, "async enable");
+		} else if (*it == "--async" || *it == "-a") [[unlikely]] {
+			_logger.log(lpp::INFO, "async enable");
 			_map.setAsync(true);
-		}
-		else if (*it == "--https" || *it == "-h"){
-			lpp::logger::cout(lpp::INFO, "target https");
+		} else if (*it == "--https" || *it == "-h"){
+			_logger.log(lpp::INFO, "target https");
 			_https = true;
-		}
-		else if (*it == "-p"){
+		} else if (*it == "-p"){
 			if (_loopTime.count() == 0){
-				lpp::logger::cout(lpp::ERROR, "cant't specifie -p and -t");
+				_logger.log(lpp::ERROR, "cant't specifie -p and -t");
 				return 1;
 			}
 			_prompt = true;
-		}
-		else if (*it == "-t" || *it == "--time"){
+		}else if (*it == "--file"){
+			it++;
+			if (it == args.end()){
+				_logger.log(lpp::ERROR, "log file option empty value");
+				return 1;
+			}
+			_logger.close();
+			_logger.setFilePath(*it);
+			_logger.open();
+			if (!_logger.is_open())
+				throw std::runtime_error("logger file open fail");
+
+		} else if (*it == "-t" || *it == "--time"){
 			if (_prompt){
-				lpp::logger::cout(lpp::ERROR, "cant't specifie -p and -t");
+				_logger.log(lpp::ERROR, "cant't specifie -p and -t");
 			}
 			it++;
 			if (it == args.end()){
-				lpp::logger::cout(lpp::ERROR, "time option empty value");
+				_logger.log(lpp::ERROR, "time option empty value");
 				return 1;
 			}
 			std::stringstream os(*it);
 			int nbr = 0;
 			os >> nbr;
 			if (!os.eof() || nbr == 0){
-				lpp::logger::cout(lpp::ERROR, "time option bad value");
+				_logger.log(lpp::ERROR, "time option bad value");
 				return 1;
 			}
 			_loopTime = std::chrono::seconds(nbr);
-			lpp::logger::cout(lpp::INFO, "scan running " + std::to_string(_loopTime.count()) + " times");
+			_logger.log(lpp::INFO, "scan running " + std::to_string(_loopTime.count()) + " times");
 		} else if (*it == "-m"){
 			_nmapOutput = true;
 			_openPort = false;
@@ -336,7 +373,7 @@ int lpp::ip::parse(std::vector<std::string> &args){
 		} else if (*it == "--termux"){
 			_termuxOutput = true;
 		}
-		else if (isIp(*it)) [[likely]]
+		else if (isIp(*it, _is42) || isDomaine(*it, _is42)) [[likely]]
 			_ips.insert({_foundUser(*it, _is42), *it});
 		else
 			_map.addOptions(*it);
@@ -354,9 +391,9 @@ std::vector<std::string> lpp::ip::who(std::vector<std::string> &args){
 		std::string user = _foundUser(it, true);
 		rtn.emplace_back(user);
 		if (user == "disconnected"){
-			lpp::logger::cout(lpp::WARNING, "no one connected at " + it);
+			_logger.log(lpp::WARNING, "no one connected at " + it);
 		} else if (user != "unknown")
-			lpp::logger::cout(lpp::INFO, "login -> " + user);
+			_logger.log(lpp::INFO, "login -> " + user);
 	}
 
 	return rtn;

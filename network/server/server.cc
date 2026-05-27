@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:21:10 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/16 00:22:32 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 12:47:08 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void lpp::server::_workerLoop(){
 	{
 		std::lock_guard<std::mutex> lock(_mutex);
 		_logger.setFilePath(_logPath + logger::getDate() + '_' + _logFile);
-		_logger.setPrintFormat(true);
 		_logger.open();
 		try{
 			if (!_logger.is_open()){

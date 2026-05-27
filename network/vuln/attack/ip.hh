@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:07 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 21:19:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 13:35:52 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #include "network/vuln/nmap/nmap.hh"
 #include "time/chronometer/chronometer.hh"
+#include "design_patterns/memento/unique_memento.hh"
 
 namespace lpp {
 	class ip{
@@ -36,6 +37,7 @@ namespace lpp {
 			std::multimap<std::string, std::string> _ips;
 			lpp::unique_chrono _chrono;
 			std::string _sys_name;
+			lpp::logger _logger;
 
 			[[nodiscard]] std::string _foundUser(std::string &, bool = false);
 
@@ -63,6 +65,7 @@ namespace lpp {
 
 			void setIterationTime(std::chrono::seconds iter, std::chrono::seconds delay);
 			void setIsPrompt(bool);
+			bool setLogFile(const std::string &);
 
 			void setIs42(bool);
 			void setNmapOutput(bool);
@@ -75,6 +78,7 @@ namespace lpp {
 			[[nodiscard]] std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>> run() noexcept(false);
 
 			[[nodiscard]] static bool isIp(const std::string &, bool = false);
+			[[nodiscard]] static bool isDomaine(const std::string &, bool = false);
 			static void usage();
 	};
 }

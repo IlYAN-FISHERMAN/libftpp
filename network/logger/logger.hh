@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 16:02:45 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 13:45:35 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,24 @@ namespace lpp{
 
 	class logger : lpp::NonCopyable{
 		private:
-			std::ofstream logFile;
+			mutable std::ofstream _logFile;
 			std::string _filePath;
 			static std::string levelToString(LogLevel level);
-			bool _deleteFile;
 			bool _printFormat;
 			bool _isStdout;
+			bool _deleteFile;
 
 		public:
 			logger();
+			logger(const logger&);
+			logger& operator=(const logger&);
 			logger(const std::string& filePath, bool deleteFile = false, bool printformat = true, bool isStdout = false);
 			~logger();
 
 			void log(LogLevel level, const std::string& message);
 			bool is_open();
 			void open();
+			void close();
 
 			void setFilePath(const std::string);
 			void setDeleteFile(bool);
