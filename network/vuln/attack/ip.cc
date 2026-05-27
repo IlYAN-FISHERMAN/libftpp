@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 14:51:56 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 17:23:06 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 			if (_openPort){
 				_logger.log(lpp::INFO, ip.first + " connected at " + ip.second);
 				if (!_isOpenPort(ports, _is42))
-					_logger.log(lpp::WARNING, "0 target port found for user <" + ip.first + ">");
+					_logger.log(lpp::WARNING, "0 target port found for user [" + ip.first + "]<" + ip.second + ">");
 				else{
 					for (auto &it : ports){
 						if (_isOpenPort(it, _is42)){
@@ -207,33 +207,39 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 }
 
 bool lpp::ip::isDomaine(const std::string &d, bool is42){
-	static const std::regex pattern(R"(^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?$)");
+	static const std::regex pattern(R"(^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}\.?$)");
 	static const std::regex users(R"(^c\d+r\d+s\d+$)");
 
-	if (is42){
-		if (std::regex_match(d, users)){
-			return true;
-		}
-	}
-    if (std::regex_match(d, pattern)){
+	if (is42 && std::regex_match(d, users))
 		return true;
-	}
+    if (std::regex_match(d, pattern))
+		return true;
 
 	return false;
 }
 
 
-bool lpp::ip::isIp(const std::string &ip, [[maybe_unused]] bool is42){
-	static std::regex reg(R"(^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$)", std::regex::optimize);
+bool lpp::ip::isIp(const std::string &ip, bool is42){
+	static const std::regex reg(
+		R"(^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
+		R"((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
+		R"((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
+		R"((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$)"
+	);
+
+	static const std::regex cidrRegex(
+		R"(^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
+		R"((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
+		R"((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
+		R"((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)"
+		R"(\/([0-9]|[12]\d|3[0-2]))$)"
+	);
 
 	std::smatch match;
-	if (std::regex_match(ip, match, reg)){
-		if (is42 && (match[2] == "12" || (match[2] != "11" && match[2] != "13"))){
-			return false;
-		}
-	}else{
+	if (!std::regex_match(ip, match, reg) && !std::regex_match(ip, match, cidrRegex))
 		return false;
-	}
+	if (is42 && (match[2] == "12" || (match[2] != "11" && match[2] != "13")))
+		return false;
 
 	return true;
 }
@@ -270,7 +276,11 @@ void lpp::ip::usage(){
 	std::cout << os.str();
 }
 
-void lpp::ip::addIp(const std::string &ip){_ips.insert({"unknown", ip});}
+void lpp::ip::addIp(const std::string &ip){
+	lpp::cout << std::boolalpha << isIp(ip) << " | " << isDomaine(ip) << std::endl;
+	if (isIp(ip) || isDomaine(ip))
+		_ips.insert({"unknown", ip});
+}
 
 void lpp::ip::addOption(const std::string &opt){_map.addOptions(opt);}
 

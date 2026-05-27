@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 21:17:37 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 17:23:19 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,13 @@ int main(int ac, char **av){
 
 	try {
 		if (ac == 1){
-			lpp::ip::usage();
+			// lpp::ip::usage();
+			lpp::ip ip;
+
+			ip.setIs42(true);
+			ip.addIp("192.168.1.178");
+			ip.addIp("192.168.1.0/24");
+			auto it = ip.run();
 			return 0;
 		}
 
