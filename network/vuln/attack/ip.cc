@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 17:23:06 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 21:08:54 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,39 +245,29 @@ bool lpp::ip::isIp(const std::string &ip, bool is42){
 }
 
 void lpp::ip::usage(){
-	std::stringstream os;
-	os << "Usage:" << std::endl;
-	os << "  " << "lppnmap" << " [options] [ip] [ip...]" << std::endl;
-	os << std::endl;
+    std::cout <<
+	R"(Usage: lppnmap [options] <targets>
+Options:
+  -42              Enable target 42 student
+  -a, --async      Enable async mode
+  -h, --https      Target HTTPS services
+  -p               Prompt mode (cannot be used with -t)
+  -t, --time N     Run scan N times
+  -d, --delay N    Delay between scans (seconds)
+  --file PATH      Log output to file
+  --who ARG        Display student-login at the ip
+  -m               Output Nmap format
+  --port           Show open ports only (can be used with -m)
+  --termux         Enable this if you use termux
+  --help, -h       Show this help message
 
-	os << "META OPTIONS" << std::endl;
-	os << "   -h, --help\tshow list of command-line options" << std::endl;
-	os << std::endl;
-
-	os << "OPTIONS" << std::endl;
-	os << "            -42,\t\ttarget ips is only for 42 students" << std::endl;
-	os << "            --who <ip>,\t\tgive the name of the student connected at the local ip" << std::endl;
-	os << "            -a, --async\t\tenable async command, all the ips is scanned in the same time" << std::endl;
-	os << "            -h, --https\tclear all logs from all instance of the matt-daemon servers" << std::endl;
-	os << "            <nmap options>,\t\tyou can add all the option of nmap" << std::endl;
-	os << std::endl;
-
-	os << "ACTIONS" << std::endl;
-	os << std::endl;
-	os << "The matt-daemon server has predefined possible actions. By default, three of them exist, with the following format:" << std::endl;
-	os << std::endl;
-	os << "   code [1] server authentification system: \t\"1|username=<user> password=<server_password>\"" << std::endl;
-	os << "   code [2] email sender: \t\t\t\"2|To=<example@mail.com> Body=<text_to_send>\"" << std::endl;
-	os << "   code [3] remote shell of the server: \t\"3|<command>\"" << std::endl;
-	os << std::endl;
-	os << "When running the server, you must define at least the SERVER_PASSWORD variable in a .env file located in the build folder.\nSee the env.example file for more details." << std::endl;
-	os << std::endl;
-
-	std::cout << os.str();
+Targets:
+  IP addresses or domains
+	)" << std::endl;
 }
 
+
 void lpp::ip::addIp(const std::string &ip){
-	lpp::cout << std::boolalpha << isIp(ip) << " | " << isDomaine(ip) << std::endl;
 	if (isIp(ip) || isDomaine(ip))
 		_ips.insert({"unknown", ip});
 }
