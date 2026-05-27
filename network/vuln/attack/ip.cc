@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 14:31:57 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/27 14:51:56 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,20 +177,18 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 			rtn.second.emplace_back(ports);
 			if (_openPort){
 				_logger.log(lpp::INFO, ip.first + " connected at " + ip.second);
-				if (!_isOpenPort(ports, _is42)){
+				if (!_isOpenPort(ports, _is42))
 					_logger.log(lpp::WARNING, "0 target port found for user <" + ip.first + ">");
-					continue;
-				}
-				for (auto &it : ports){
-					if (_isOpenPort(it, _is42)){
-						_logger.log(lpp::INFO, "port: [" + std::to_string(it) + "] found for <" + ip.second + ">");
+				else{
+					for (auto &it : ports){
+						if (_isOpenPort(it, _is42)){
+							_logger.log(lpp::INFO, "port: [" + std::to_string(it) + "] found for <" + ip.second + ">");
 
-						std::string target;
-						target = open_cmd + ip.second + ":" + std::to_string(it);
-						_logger.log(lpp::INFO, "executing: " + target);
-						lpp::system::exec(target);
-					} else{
-						continue;
+							std::string target;
+							target = open_cmd + ip.second + ":" + std::to_string(it);
+							_logger.log(lpp::INFO, "executing: " + target);
+							lpp::system::exec(target);
+						}
 					}
 				}
 			}
@@ -198,7 +196,7 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 				_logger.log(lpp::INFO, "press any key to scan again...");
 				[[maybe_unused]] auto reply = _nextLine();
 			}
-			if (nb > 1)
+			if (nb > 1 && _delay.count() > 0)
 				std::this_thread::sleep_for(_delay);
 		}
 	}
@@ -372,7 +370,7 @@ int lpp::ip::parse(std::vector<std::string> &args){
 				return 1;
 			}
 			_delay = std::chrono::seconds(nbr);
-			_logger.log(lpp::INFO, "scan running " + std::to_string(_loopTime) + " times, every " + std::to_string(_delay.count() + 1) + "s");
+			_logger.log(lpp::INFO, "delay set to " + std::to_string(_delay.count()) + "s");
 		} else if (*it == "-m"){
 			_nmapOutput = true;
 			_openPort = false;
