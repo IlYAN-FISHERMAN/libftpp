@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 14:08:17 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/28 15:01:13 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ std::string lpp::logger::getLog(lpp::LogLevel level){
 	return "[" + getDate() + "] " + levelToString(level) + ": ";
 }
 
-void lpp::logger::log(LogLevel level, const std::string& message){
+void lpp::logger::log(const LogLevel level, const std::string& message) const noexcept{
 	std::ostringstream logEntry;
 	if (_printFormat){
 		logEntry << getLog(level) << message << std::endl;

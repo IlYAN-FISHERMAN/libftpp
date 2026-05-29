@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 13:45:35 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/28 15:01:29 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ namespace lpp{
 			logger(const std::string& filePath, bool deleteFile = false, bool printformat = true, bool isStdout = false);
 			~logger();
 
-			void log(LogLevel level, const std::string& message);
+			void log(const LogLevel level, const std::string& message) const noexcept;
 			bool is_open();
 			void open();
 			void close();

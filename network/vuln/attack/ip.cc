@@ -6,12 +6,35 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 21:08:54 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/29 14:31:16 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ip.hh"
 using namespace std::chrono_literals;
+
+void lpp::ip::usage(){
+    std::cout <<
+	R"(Usage: lppnmap [options] <targets>
+Options:
+  -42              Enable target 42 student
+  -a, --async      Enable async mode
+  -h, --https      Target HTTPS services
+  -p               Prompt mode (cannot be used with -t)
+  -t, --time N     Run scan N times
+  -d, --delay N    Delay between scans (seconds)
+  --file PATH      Log output to file
+  --who ARG        Display student-login at the ip
+  -m               Output Nmap format
+  --port           Show open ports only (can be used with -m)
+  -ip              Add your own ip to the ips target
+  --termux         Enable this if you use termux
+  --help, -h       Show this help message
+
+Targets:
+  IP addresses or domains
+	)" << std::endl;
+}
 
 lpp::ip::ip() : _prompt(false), _is42(false), _https(false), _openPort(true),
 	_nmapOutput(false), _termuxOutput(false),
@@ -39,7 +62,7 @@ lpp::ip& lpp::ip::operator=(const ip &other){
 	return *this;
 }
 
-bool lpp::ip::setLogFile(const std::string &path){
+bool lpp::ip::setLogFile(const std::string &path) noexcept{
 	_logger.setIsStdout(false);
 	_logger.setFilePath(path);
 	_logger.open();
@@ -47,12 +70,12 @@ bool lpp::ip::setLogFile(const std::string &path){
 }
 
 lpp::ip::ip(std::vector<std::string> &args) : _prompt(false), _is42(false), _https(false),
-	_loopTime(1), _delay(1s), _args(args), _chrono("ip"), _sys_name(lpp::system::get_system()){
+	_loopTime(1), _delay(1s), _chrono("ip"), _sys_name(lpp::system::get_system()){
 	if (args.empty())
 		throw std::runtime_error("empty argument");
-	if (_args.size() > 1 && _args[1] == "--who"){
-		for (size_t i = 2; i < _args.size(); i++){
-			std::string user = _foundUser(_args[i], true);
+	if (args.size() > 1 && args[1] == "--who"){
+		for (size_t i = 2; i < args.size(); i++){
+			std::string user = _foundUser(args[i], true);
 			if (user == "disconnected"){
 				_logger.log(lpp::WARNING, "no one connected at " + std::string(args[i]));
 			} else if (user != "unknown")
@@ -66,7 +89,7 @@ lpp::ip::ip(std::vector<std::string> &args) : _prompt(false), _is42(false), _htt
 		throw std::runtime_error("logger open fail");
 }
 
-std::string lpp::ip::_nextLine(){
+std::string lpp::ip::_nextLine() const noexcept{
 	while (true){
 		std::string input;
 		lpp::cout.prompt("[lppnmap]-> ", input);
@@ -77,7 +100,7 @@ std::string lpp::ip::_nextLine(){
 	}
 }
 
-bool lpp::ip::_isOpenPort(int port, bool is42){
+bool lpp::ip::_isOpenPort(int port, bool is42) const noexcept{
 	if ((port > 1024 && port < 65535) || (port == 80 || port == 443)){
 		if (is42 && (port == 9100 || port == 2049 || port == 3306 || port == 5900))
 			return false;
@@ -87,7 +110,7 @@ bool lpp::ip::_isOpenPort(int port, bool is42){
 	return false;
 }
 
-bool lpp::ip::_isOpenPort(std::vector<int> ports, [[maybe_unused]] bool is42){
+bool lpp::ip::_isOpenPort(std::vector<int> ports, [[maybe_unused]] bool is42) const noexcept{
 
 	for (auto &port : ports){
 		if ((port > 1024 && port < 65535) || (port == 80 || port == 443)){
@@ -100,7 +123,7 @@ bool lpp::ip::_isOpenPort(std::vector<int> ports, [[maybe_unused]] bool is42){
 	return false;
 }
 
-std::string lpp::ip::_foundUser(std::string &ip, bool is42){
+std::string lpp::ip::_foundUser(std::string &ip, bool is42) const noexcept{
 	std::string user;
 
 	if (is42 && (isIp(ip, true) || isDomaine(ip, true))){
@@ -130,7 +153,7 @@ std::string lpp::ip::_foundUser(std::string &ip, bool is42){
 
 lpp::ip::~ip(){}
 
-std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>>  lpp::ip::run(){
+std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>>  lpp::ip::run() noexcept(false){
 
 	if (_ips.empty()){
 		_logger.log(lpp::WARNING, "No target specified");
@@ -139,7 +162,7 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 
 	std::pair<std::vector<std::string>, std::vector<std::vector<int>>> rtn;
 
-	static std::string open_cmd;
+	static constinit std::string open_cmd;
 	_logger.log(lpp::INFO, _sys_name + " OS detected");
 	if (open_cmd.empty()){
 		if (_termuxOutput)
@@ -152,9 +175,9 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 			_logger.log(lpp::CRITICAL, "Fuck windows");
 			return std::nullopt;
 		}
+		open_cmd += (_https ? "https://" : "http://");
 	}
 
-	lpp::unique_memento t(open_cmd, open_cmd + (_https ? "https://" : "http://"));
 
 	std::string tmp;
 	for (auto &it : _ips)
@@ -206,7 +229,7 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 	return rtn;
 }
 
-bool lpp::ip::isDomaine(const std::string &d, bool is42){
+bool lpp::ip::isDomaine(const std::string &d, bool is42) noexcept{
 	static const std::regex pattern(R"(^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}\.?$)");
 	static const std::regex users(R"(^c\d+r\d+s\d+$)");
 
@@ -219,7 +242,7 @@ bool lpp::ip::isDomaine(const std::string &d, bool is42){
 }
 
 
-bool lpp::ip::isIp(const std::string &ip, bool is42){
+bool lpp::ip::isIp(const std::string &ip, bool is42) noexcept{
 	static const std::regex reg(
 		R"(^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
 		R"((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.)"
@@ -244,65 +267,53 @@ bool lpp::ip::isIp(const std::string &ip, bool is42){
 	return true;
 }
 
-void lpp::ip::usage(){
-    std::cout <<
-	R"(Usage: lppnmap [options] <targets>
-Options:
-  -42              Enable target 42 student
-  -a, --async      Enable async mode
-  -h, --https      Target HTTPS services
-  -p               Prompt mode (cannot be used with -t)
-  -t, --time N     Run scan N times
-  -d, --delay N    Delay between scans (seconds)
-  --file PATH      Log output to file
-  --who ARG        Display student-login at the ip
-  -m               Output Nmap format
-  --port           Show open ports only (can be used with -m)
-  --termux         Enable this if you use termux
-  --help, -h       Show this help message
-
-Targets:
-  IP addresses or domains
-	)" << std::endl;
-}
-
-
-void lpp::ip::addIp(const std::string &ip){
+void lpp::ip::addIp(const std::string &ip) noexcept{
 	if (isIp(ip) || isDomaine(ip))
 		_ips.insert({"unknown", ip});
 }
 
-void lpp::ip::addOption(const std::string &opt){_map.addOptions(opt);}
+void lpp::ip::addOption(const std::string &opt) noexcept {_map.addOptions(opt);}
 
-void lpp::ip::clearIps(){_ips.clear();}
+consteval void lpp::ip::clearIps(){_ips.clear();}
 
-void lpp::ip::setNmapOutput(const bool nmap){_nmapOutput = nmap;}
+void lpp::ip::setNmapOutput(const bool nmap) noexcept {_nmapOutput = nmap;}
 
-void lpp::ip::setPortOutput(const bool port){_openPort = port;}
+void lpp::ip::setPortOutput(const bool port) noexcept {_openPort = port;}
 
-void lpp::ip::clearIps(const std::string &name){_ips.erase(name);}
+void lpp::ip::clearIps(const std::string &name) noexcept {_ips.erase(name);}
 
-void lpp::ip::clearOptions(){_map.clearOptions();}
+void lpp::ip::clearOptions() noexcept {_map.clearOptions();}
 
-void lpp::ip::clear(){
+void lpp::ip::clear() noexcept {
 	_ips.clear();
 	_prompt = false;
 	_loopTime = 1;
 	_delay = 1s;
 	_https = false;
-	_args.clear();
 }
 
-void lpp::ip::setIterationTime(const int s, const std::chrono::seconds delay){
+void lpp::ip::setIterationTime(const int s, const std::chrono::seconds delay) noexcept {
 	_loopTime = s;
 	_delay = delay;
 }
 
-void lpp::ip::setIsPrompt(bool prompt){_prompt = prompt;}
+void lpp::ip::setIsPrompt(const bool prompt) noexcept {_prompt = prompt;}
 
-void lpp::ip::setIs42(bool is42){ _is42 = is42;}
+void lpp::ip::setIs42(const bool is42) noexcept { _is42 = is42;}
 
-int lpp::ip::parse(std::vector<std::string> &args){
+std::string lpp::ip::get(const std::string interface){
+
+	std::string ip;
+	if (_sys_name == "Apple")
+		ip = lpp::system::exec("ipconfig getifaddr " + interface);
+	else if (_sys_name == "Linux")
+		ip = lpp::system::exec(R"(hostname -i | awk '{print $2}')");
+
+	std::cout << "\"" << ip << "\"" << std::endl;
+	return ip;
+}
+
+int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
 	for (auto it = args.begin(); it < args.end(); it++){
 		if (*it == "-42") [[unlikely]] {
 			_logger.log(lpp::INFO, "target 42 users");
@@ -378,6 +389,8 @@ int lpp::ip::parse(std::vector<std::string> &args){
 			_openPort = true;
 		} else if (*it == "--termux"){
 			_termuxOutput = true;
+		} else if (*it == "-ip"){
+			addIp(ip::get());
 		}
 		else if (isIp(*it, _is42) || isDomaine(*it, _is42)) [[likely]]
 			_ips.insert({_foundUser(*it, _is42), *it});
@@ -388,7 +401,7 @@ int lpp::ip::parse(std::vector<std::string> &args){
 	return 0;
 }
 
-std::vector<std::string> lpp::ip::who(const std::vector<std::string> &args){
+std::vector<std::string> lpp::ip::who(const std::vector<std::string> &args) const noexcept(false){
 	std::vector<std::string> rtn;
 
 	if (args.empty())

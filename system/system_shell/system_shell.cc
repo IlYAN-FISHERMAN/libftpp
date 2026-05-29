@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:52:00 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/25 10:15:20 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/28 19:20:38 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@ std::string lpp::system::exec(const std::string &command){
 
 	while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr)
 		result += buffer.data();
+
+	if (result[result.size() - 1] == '\n'){
+		result.erase(result.size() - 1);
+	}
 
 	return result;
 }

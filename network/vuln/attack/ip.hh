@@ -6,16 +6,13 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:07 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/27 19:55:19 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/29 14:37:32 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <map>
-
-#include <iostream>
 #include <regex>
-
 #include "network/vuln/nmap/nmap.hh"
 #include "time/chronometer/chronometer.hh"
 #include "design_patterns/memento/unique_memento.hh"
@@ -24,61 +21,93 @@ namespace lpp {
 	class ip{
 		private:
 			lpp::nmap _map;
-			bool _prompt;
-			bool _is42;
-			bool _https;
-			bool _openPort;
-			bool _nmapOutput;
-			bool _termuxOutput;
+			[[no_unique_address]] bool _prompt;
+			[[no_unique_address]] bool _is42;
+			[[no_unique_address]] bool _https;
+			[[no_unique_address]] bool _openPort;
+			[[no_unique_address]] bool _nmapOutput;
+			[[no_unique_address]] bool _termuxOutput;
 
 			int _loopTime;
 			std::chrono::seconds _delay;
-			std::vector<std::string> _args;
 			std::multimap<std::string, std::string> _ips;
 			lpp::unique_chrono _chrono;
 			std::string _sys_name;
 			lpp::logger _logger;
 
-			[[nodiscard]] std::string _foundUser(std::string &, bool = false);
+			[[gnu::hot]]
+			bool _isOpenPort(int, bool = false) const noexcept;
 
-			bool _isOpenPort(int, bool = false);
-			bool _isOpenPort(std::vector<int>, bool = false);
+			[[gnu::hot]]
+			bool _isOpenPort(std::vector<int>, [[maybe_unused]] bool = false) const noexcept;
 
-			[[maybe_unused]] std::string _nextLine();
+			[[gnu::hot]]
+			[[nodiscard]] std::string _foundUser(std::string &, bool = false) const noexcept;
+
+			[[gnu::cold]]
+			[[maybe_unused]] std::string _nextLine() const noexcept;
 
 		public:
 			ip();
 			~ip();
-			ip(std::vector<std::string>&);
+			explicit ip(std::vector<std::string>&);
 
-			ip(const ip &);
+			explicit ip(const ip &);
 			ip& operator=(const ip &);
 
-			void addIp(const std::string &);
-			void clearIps();
-			void clearIps(const std::string &);
+			[[gnu::cold]]
+			void addIp(const std::string &)noexcept;
 
-			void clearOptions();
-			void addOption(const std::string &);
+			[[gnu::cold]]
+			consteval void clearIps();
 
-			void clear();
+			[[gnu::cold]]
+			void clearIps(const std::string &) noexcept;
 
-			void setIterationTime(const int, const std::chrono::seconds);
-			void setIsPrompt(const bool);
-			bool setLogFile(const std::string &);
+			[[gnu::cold]]
+			void clearOptions() noexcept;
 
-			void setIs42(const bool);
-			void setNmapOutput(const bool);
-			void setPortOutput(const bool);
+			[[gnu::cold]]
+			void addOption(const std::string &) noexcept;
 
-			[[maybe_unused]] int parse(std::vector<std::string>&);
+			[[gnu::cold]]
+			void clear() noexcept;
 
-			[[maybe_unused]] std::vector<std::string> who(const std::vector<std::string> &);
+			[[gnu::cold]]
+			void setIterationTime(const int, const std::chrono::seconds) noexcept;
 
-			[[nodiscard]] std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>> run() noexcept(false);
+			[[gnu::cold]]
+			void setIsPrompt(const bool) noexcept;
 
-			[[nodiscard]] static bool isIp(const std::string &, const bool = false);
-			[[nodiscard]] static bool isDomaine(const std::string &, const bool = false);
+			[[gnu::cold]]
+			bool setLogFile(const std::string &) noexcept;
+
+			[[gnu::cold]]
+			void setIs42(const bool) noexcept;
+
+			[[gnu::cold]]
+			void setNmapOutput(const bool) noexcept;
+
+			[[gnu::cold]]
+			void setPortOutput(const bool) noexcept;
+
+			[[gnu::hot]]
+			[[maybe_unused]] int parse(std::vector<std::string>&) noexcept(false);
+
+			[[maybe_unused]] std::vector<std::string> who(const std::vector<std::string> &) const noexcept(false);
+
+			[[gnu::hot]]
+			[[nodiscard("very big data")]] std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>> run() noexcept(false);
+
+			[[gnu::hot]]
+			[[nodiscard]] static bool isIp(const std::string &, const bool = false) noexcept;
+
+			[[gnu::hot]]
+			[[nodiscard]] static bool isDomaine(const std::string &, const bool = false) noexcept;
 			static void usage();
+
+			[[gnu::cold]]
+			std::string get(const std::string = "en0");
 	};
+
 }
