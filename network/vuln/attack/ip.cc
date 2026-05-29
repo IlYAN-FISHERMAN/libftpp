@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/29 14:31:16 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/05/29 14:45:54 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,7 +274,7 @@ void lpp::ip::addIp(const std::string &ip) noexcept{
 
 void lpp::ip::addOption(const std::string &opt) noexcept {_map.addOptions(opt);}
 
-consteval void lpp::ip::clearIps(){_ips.clear();}
+void lpp::ip::clearIps(){_ips.clear();}
 
 void lpp::ip::setNmapOutput(const bool nmap) noexcept {_nmapOutput = nmap;}
 
