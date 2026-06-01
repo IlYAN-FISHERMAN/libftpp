@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 15:31:58 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/03/27 13:38:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/01 22:41:11 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,8 +326,9 @@ int main(void){
 		std::string str;
         msg >> str;
 		lpp::cout << str << std::endl;
-		if (str == "pong")
+		if (str == "pong"){
 			client.getLogger().log(lpp::INFO, "server work!");
+		}
 	});
 
 	try{
