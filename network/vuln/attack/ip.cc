@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/01 17:51:58 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/08 11:50:38 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,12 @@ Options:
 
 Targets:
   IP addresses or domains
-	)" << std::endl;
+
+EXAMPLES:
+	lppnmap -42 c2r5s1 (need -42 if you target student domaine)
+	lppnmap --https --async -t 10 -d 5 --file logins.txt 10.11.10.2 (target the 10.11.10.2 ip, only https, with async scan.
+	                                                                 Scan 10 time with 5 second delay between them and print the output log at logins.txt)
+)" << std::endl;
 }
 
 lpp::ip::ip() : _prompt(false), _is42(false), _https(false), _openPort(true),
@@ -392,10 +397,14 @@ int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
 		} else if (*it == "-ip"){
 			addIp(ip::get());
 		}
-		else if (isIp(*it, _is42) || isDomaine(*it, _is42)) [[likely]]
+		else if (isIp(*it, _is42) || isDomaine(*it, _is42)) [[likely]]{
+			_logger.log(INFO, "found ip/domaine at " + *it);
 			_ips.insert({_foundUser(*it, _is42), *it});
-		else
+		}
+		else{
+			_logger.log(INFO, "add option to nmap: " + *it);
 			_map.addOptions(*it);
+		}
 	}
 
 	return 0;
