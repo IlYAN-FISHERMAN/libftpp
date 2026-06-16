@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/01 22:41:24 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/14 22:15:32 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ namespace lpp{
 			~logger();
 
 			void log(const LogLevel level, const std::string& message) const noexcept;
+			void log(const std::string& message) const noexcept;
 			bool is_open();
 			void open();
 			void close();

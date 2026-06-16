@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/01 22:41:19 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/14 22:15:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,19 @@ void lpp::logger::log(const LogLevel level, const std::string& message) const no
 		logEntry << getLog(level) << message << std::endl;
 	}
 	else
-		logEntry << message;
+		logEntry << message << std::endl;
+	if (!_isStdout){
+		if (_logFile.is_open()) {
+			_logFile << logEntry.str();
+			_logFile.flush();
+		}
+	} else
+		lpp::cout << logEntry.str() << std::flush;
+}
+
+void lpp::logger::log(const std::string& message) const noexcept{
+	std::ostringstream logEntry;
+	logEntry << message << std::endl;
 	if (!_isStdout){
 		if (_logFile.is_open()) {
 			_logFile << logEntry.str();
