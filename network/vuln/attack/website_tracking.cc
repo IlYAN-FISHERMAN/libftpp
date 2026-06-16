@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 18:14:54 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/29 14:29:31 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 16:36:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ int main(int ac, char **av){
 				// }
 			}
 		}
-
 	} catch(std::runtime_error &e){
 		lpp::logger::cout(lpp::CRITICAL, e.what());
 	}

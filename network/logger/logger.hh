@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/14 22:15:32 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 16:40:03 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@
 namespace lpp{
 	enum LogLevel {
 		INFO,
+		NETWORK,
+		SKIP,
+		NOT_SKIP,
+		EXEC,
 		DEBUG,
 		WARNING,
 		ERROR,

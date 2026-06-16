@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 12:05:39 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/14 22:15:25 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 16:50:36 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,24 @@
 
 std::string lpp::logger::levelToString(lpp::LogLevel lvl){
 	switch (lvl) {
-	case DEBUG:
-		return C_CYAN "[DEBUG]" C_RESET;
 	case INFO:
 		return C_GREEN "[INFO]" C_RESET;
+	case NETWORK:
+		return C_BLUE C_REVERSE "[NETWORK]" C_RESET;
+	case SKIP:
+		return C_YELLOW "[SKIP]" C_RESET;
+	case NOT_SKIP:
+		return C_RED C_UNDERLINE "[NOT_SKIP]" C_RESET;
+	case EXEC:
+		return C_BLUE "[EXEC]" C_RESET;
+	case DEBUG:
+		return C_BYELLOW "[DEBUG]" C_RESET;
 	case WARNING:
 		return C_YELLOW "[WARNING]" C_RESET;
 	case ERROR:
-		return C_BRED "[ERROR]" C_RESET;
+		return C_RED "[ERROR]" C_RESET;
 	case CRITICAL:
-		return C_RED "[CRITICAL]" C_RESET;
+		return C_BRED "[CRITICAL]" C_RESET;
 	default:
 		return "UNKNOWN";
 	}

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/16 14:00:03 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 16:53:25 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,11 +210,11 @@ std::optional<std::pair<std::vector<std::string>, std::vector<std::vector<int>>>
 				else{
 					for (auto &it : ports){
 						if (_isOpenPort(it, _is42)){
-							_logger.log(lpp::INFO, "port: [" + std::to_string(it) + "] found for <" + ip.second + ">");
+							_logger.log(lpp::NETWORK, "port: [" + std::to_string(it) + "] found for <" + ip.second + ">");
 
 							std::string target;
 							target = open_cmd + ip.second + ":" + std::to_string(it);
-							_logger.log(lpp::INFO, "executing: " + target);
+							_logger.log(lpp::EXEC, "executing: " + target);
 							lpp::system::exec(target);
 						}
 					}
@@ -358,6 +358,9 @@ int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
 		if (*it == "-42") [[unlikely]] {
 			_logger.log(lpp::INFO, "target 42 users");
 			_is42 = true;
+		} else if (*it == "-n42") [[unlikely]] {
+			_logger.log(lpp::INFO, "target undifined user");
+			_is42 = false;
 		} else if (*it == "--async" || *it == "-a") [[unlikely]] {
 			_logger.log(lpp::INFO, "async enable");
 			_map.setAsync(true);
@@ -446,7 +449,7 @@ int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
 				_logger.log(ERROR, "bad ip interface");
 				return 1;
 			}
-			lpp::cout << "add ip: " + ip::get(rps) << "\"" << std::endl;
+			_logger.log(INFO, "add ip <" + ip::get(rps) + ">");
 			addIp(ip::get(rps));
 		}
 		else if (isIp(*it) || isDomaine(*it)) [[likely]]{

@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 12:16:41 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/26 20:07:39 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 16:52:50 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ std::vector<std::string> lpp::nmap::sniff(std::vector<std::string> &ip){
 		std::string cmd;
 		for (auto &it : ip){
 			cmd = "nmap " + _options + " " + it;
-			lpp::logger::cout(lpp::INFO, "start sniffing <" + it + ">");
+			lpp::logger::cout(lpp::NETWORK, "start sniffing <" + it + ">");
 			_sys.add_exec(cmd);
 		}
 
@@ -73,7 +73,7 @@ std::vector<std::string> lpp::nmap::sniff(std::vector<std::string> &ip){
 	else{
 	_logger.log(lpp::INFO, "single thread sniffing");
 		for (auto &it : ip){
-			lpp::logger::cout(lpp::INFO, "start sniffing <" + it + ">");
+			lpp::logger::cout(lpp::NETWORK, "start sniffing <" + it + ">");
 			cmds.emplace_back(lpp::system::exec("nmap " + _options + " " + it));
 		}
 	}
@@ -82,7 +82,7 @@ std::vector<std::string> lpp::nmap::sniff(std::vector<std::string> &ip){
 }
 
 std::string lpp::nmap::sniff(const std::string ip){
-	lpp::logger::cout(lpp::INFO, "start sniffing <" + ip + ">");
+	lpp::logger::cout(lpp::NETWORK, "start sniffing <" + ip + ">");
 	std::string cmd = lpp::system::exec("nmap " + _options + " " + ip);
 	return cmd;
 }
