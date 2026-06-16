@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:07 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/29 14:45:33 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 12:05:37 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 #include "network/vuln/nmap/nmap.hh"
 #include "time/chronometer/chronometer.hh"
 #include "design_patterns/memento/unique_memento.hh"
+#include <ifaddrs.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
 namespace lpp {
 	class ip{

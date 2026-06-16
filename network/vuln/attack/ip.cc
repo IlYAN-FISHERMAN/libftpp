@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/08 11:50:38 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 12:07:54 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,16 +306,34 @@ void lpp::ip::setIsPrompt(const bool prompt) noexcept {_prompt = prompt;}
 
 void lpp::ip::setIs42(const bool is42) noexcept { _is42 = is42;}
 
-std::string lpp::ip::get(const std::string interface){
+std::string lpp::ip::get([[maybe_unused]]const std::string interface){
+    struct ifaddrs* ifaddr = nullptr;
 
-	std::string ip;
-	if (_sys_name == "Apple")
-		ip = lpp::system::exec("ipconfig getifaddr " + interface);
-	else if (_sys_name == "Linux")
-		ip = lpp::system::exec(R"(hostname -i | awk '{print $2}')");
+    if (getifaddrs(&ifaddr) == -1)
+        return "";
 
-	std::cout << "\"" << ip << "\"" << std::endl;
-	return ip;
+    std::string result;
+
+    for (struct ifaddrs* iface = ifaddr; iface != nullptr; iface = iface->ifa_next)
+    {
+        if (iface->ifa_addr == nullptr || interface != iface->ifa_name)
+            continue;
+
+        if (iface->ifa_addr->sa_family == AF_INET)
+        {
+            char ip[INET_ADDRSTRLEN]{0};
+            auto* addr = reinterpret_cast<struct sockaddr_in*>(iface->ifa_addr);
+
+            if (inet_ntop(AF_INET, &addr->sin_addr, ip, sizeof(ip)) != nullptr)
+            {
+                result = ip;
+                break;
+            }
+        }
+    }
+
+    freeifaddrs(ifaddr);
+    return result;
 }
 
 int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
