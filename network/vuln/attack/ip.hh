@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:07 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/16 12:05:37 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 12:15:24 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,8 @@ namespace lpp {
 			[[nodiscard]] static bool isDomaine(const std::string &, const bool = false) noexcept;
 			static void usage();
 
-			std::string get(const std::string = "en0");
+			std::string get(const std::string = "en0") const noexcept;
+			std::vector<std::string> interface() const noexcept;
 	};
 
 }

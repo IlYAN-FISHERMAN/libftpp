@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/16 12:07:54 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 12:26:11 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,7 +306,7 @@ void lpp::ip::setIsPrompt(const bool prompt) noexcept {_prompt = prompt;}
 
 void lpp::ip::setIs42(const bool is42) noexcept { _is42 = is42;}
 
-std::string lpp::ip::get([[maybe_unused]]const std::string interface){
+std::string lpp::ip::get([[maybe_unused]]const std::string interface) const noexcept{
     struct ifaddrs* ifaddr = nullptr;
 
     if (getifaddrs(&ifaddr) == -1)
@@ -334,6 +334,37 @@ std::string lpp::ip::get([[maybe_unused]]const std::string interface){
 
     freeifaddrs(ifaddr);
     return result;
+}
+
+std::vector<std::string> lpp::ip::interface() const noexcept{
+	std::vector<std::string> intf;
+
+    struct ifaddrs* ifaddr = nullptr;
+
+    if (getifaddrs(&ifaddr) == -1)
+        return std::vector<std::string>();
+
+    std::string result;
+
+    for (struct ifaddrs* iface = ifaddr; iface != nullptr; iface = iface->ifa_next)
+    {
+		intf.emplace_back(iface->ifa_name);
+        //
+        // if (iface->ifa_addr->sa_family == AF_INET)
+        // {
+        //     char ip[INET_ADDRSTRLEN]{0};
+        //     auto* addr = reinterpret_cast<struct sockaddr_in*>(iface->ifa_addr);
+        //
+        //     if (inet_ntop(AF_INET, &addr->sin_addr, ip, sizeof(ip)) != nullptr)
+        //     {
+        //         result = ip;
+        //         break;
+        //     }
+        // }
+    }
+
+    freeifaddrs(ifaddr);
+    return intf;
 }
 
 int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
@@ -413,7 +444,23 @@ int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
 		} else if (*it == "--termux"){
 			_termuxOutput = true;
 		} else if (*it == "-ip"){
-			addIp(ip::get());
+			std::vector<std::string> intf = ip::interface();
+			if (intf.empty()){
+				_logger.log(ERROR, "no ip interface found");
+				return 1;
+			}
+			std::string question = "which interface to choose?\n";
+			for (auto it : intf)
+				question += "  - " + it + "\n";
+			question += "\n-> ";
+			std::string rps;
+			lpp::cout.prompt(question, rps);
+
+			if (std::find(intf.begin(), intf.end(), rps) == intf.end()){
+				_logger.log(ERROR, "bad ip interface");
+				return 1;
+			}
+			addIp(ip::get(rps));
 		}
 		else if (isIp(*it, _is42) || isDomaine(*it, _is42)) [[likely]]{
 			_logger.log(INFO, "found ip/domaine at " + *it);
