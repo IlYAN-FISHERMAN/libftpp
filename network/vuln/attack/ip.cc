@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 16:43:11 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/06/16 12:26:11 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/06/16 14:00:03 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,18 +131,18 @@ bool lpp::ip::_isOpenPort(std::vector<int> ports, [[maybe_unused]] bool is42) co
 std::string lpp::ip::_foundUser(std::string &ip, bool is42) const noexcept{
 	std::string user;
 
-	if (is42 && (isIp(ip, true) || isDomaine(ip, true))){
-		user = lpp::system::exec("curl http://" + ip + ":9100/metrics 2>/dev/null | grep /home | awk -F'[\",/]\' \'{print $15}\' | head -n2");
+	if (is42 && (isIp(ip, is42) || isDomaine(ip, is42))){
+		if (is42 && ip.find("10.12.") == std::string::npos)
+			user = lpp::system::exec("curl http://" + ip + ":9100/metrics 2>/dev/null | grep /home | awk -F'[\",/]\' \'{print $15}\' | head -n2");
 		if (user.find('\n') != std::string::npos || user.empty()){
 			if (user.empty())
-				return "disconnected";
+				return "unknown";
 
 			std::string second = user.substr(user.find('\n') + 1, (user.size() - user.find('\n')) - 2);
 			user.erase(user.find('\n'), user.size() - user.find('\n'));
 
-			if (user == "credentials" || user.empty()){
-				if (is42)
-					user = "disconnected";
+			if ((user == "credentials" || user.empty()) && is42){
+				return "disconnected";
 			}
 			else if (second != user){
 				user += "|" + second;
@@ -266,7 +266,7 @@ bool lpp::ip::isIp(const std::string &ip, bool is42) noexcept{
 	std::smatch match;
 	if (!std::regex_match(ip, match, reg) && !std::regex_match(ip, match, cidrRegex))
 		return false;
-	if (is42 && (match[2] == "12" || (match[2] != "11" && match[2] != "13")))
+	if (is42 && (match[2] != "11" && match[2] != "12" && match[2] != "13"))
 		return false;
 
 	return true;
@@ -347,21 +347,7 @@ std::vector<std::string> lpp::ip::interface() const noexcept{
     std::string result;
 
     for (struct ifaddrs* iface = ifaddr; iface != nullptr; iface = iface->ifa_next)
-    {
 		intf.emplace_back(iface->ifa_name);
-        //
-        // if (iface->ifa_addr->sa_family == AF_INET)
-        // {
-        //     char ip[INET_ADDRSTRLEN]{0};
-        //     auto* addr = reinterpret_cast<struct sockaddr_in*>(iface->ifa_addr);
-        //
-        //     if (inet_ntop(AF_INET, &addr->sin_addr, ip, sizeof(ip)) != nullptr)
-        //     {
-        //         result = ip;
-        //         break;
-        //     }
-        // }
-    }
 
     freeifaddrs(ifaddr);
     return intf;
@@ -460,10 +446,19 @@ int lpp::ip::parse(std::vector<std::string> &args) noexcept(false){
 				_logger.log(ERROR, "bad ip interface");
 				return 1;
 			}
+			lpp::cout << "add ip: " + ip::get(rps) << "\"" << std::endl;
 			addIp(ip::get(rps));
 		}
-		else if (isIp(*it, _is42) || isDomaine(*it, _is42)) [[likely]]{
-			_logger.log(INFO, "found ip/domaine at " + *it);
+		else if (isIp(*it) || isDomaine(*it)) [[likely]]{
+			if (_is42){
+				if (!isIp(*it, _is42) && !isDomaine(*it, _is42)){
+					_logger.log(ERROR, "error target <" + *it + "> 42 user");
+					return 1;
+				}
+				_logger.log(INFO, "found 42 user at " + *it);
+			}
+			else
+				_logger.log(INFO, "found ip/domaine at " + *it);
 			_ips.insert({_foundUser(*it, _is42), *it});
 		}
 		else{
