@@ -6,7 +6,7 @@
 /*   By: ilyanar <ilyanar@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:07:27 by ilyanar           #+#    #+#             */
-/*   Updated: 2026/05/24 23:11:55 by ilyanar          ###   LAUSANNE.ch       */
+/*   Updated: 2026/08/07 12:11:19 by ilyanar          ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int main(int ac, char **av) {
 	// code = deleteTestPool();
 	// code = benchPoolTest();
 	// code = testDataBuffer();
-//
+	//
 	// code = testMemento();
 	// code = myTestMemento();
 	// code = testObserver();
@@ -31,10 +31,10 @@ int main(int ac, char **av) {
 	// code = testSingleton();
 	// code = testStateMachine();
 	// code = myTestStateMachine();
-//
+	//
 	// code = testThreadSafeIostream();
 	// code = myTestThreadSafeIostream();
-//
+	//
 	// code = testThreadSafeQueue();
 	// code = testThread();
 	// code = testWorkerPool();
@@ -56,6 +56,7 @@ int main(int ac, char **av) {
 	// code = matt_daemon(ac, av);
 	// code = testSystem(ac, av);
 	// code = testVuln(ac, av);
+	test_random();
 	lpp::cout << "return code: " << code << std::endl;
 	return code;
 }

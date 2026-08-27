@@ -74,6 +74,7 @@ set(SOURCES
     tests/test_responsability_chain.cc
     tests/test_non_copyable.cc
     tests/test_system.cc
+    tests/test_random.cc
     tests/test_unique_memento.cc)
 
 set(SOURCES ${SOURCES} data_structures/data_buffer/data_buffer.cc)
